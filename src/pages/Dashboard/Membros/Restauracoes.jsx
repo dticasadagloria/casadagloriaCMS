@@ -246,8 +246,8 @@ export default function RestauracoesList() {
       const headers = { Authorization: `Bearer ${token}` };
 
       const [resMembros, resRestauracoes] = await Promise.all([
-        fetch("http://localhost:3000/api/membros", { headers }),
-        fetch("http://localhost:3000/api/restauracoes", { headers }),
+        fetch("https://iicgp-backend-cms.onrender.com/api/membros", { headers }),
+        fetch("https://iicgp-backend-cms.onrender.com/api/restauracoes", { headers }),
       ]);
 
       const membrosData = await resMembros.json();
@@ -267,7 +267,7 @@ export default function RestauracoesList() {
     setConcluindoId(id);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:3000/api/restauracoes/${id}`, {
+      const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/restauracoes/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

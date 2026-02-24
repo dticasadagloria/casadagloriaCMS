@@ -206,7 +206,7 @@ const ProfilePage = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res   = await fetch("http://localhost:3000/auth/change-password", {
+      const res   = await fetch("https://iicgp-backend-cms.onrender.com/auth/change-password", {
         method:  "PUT",
         headers: {
           "Content-Type":  "application/json",

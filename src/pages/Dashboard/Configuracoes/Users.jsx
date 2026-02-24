@@ -168,7 +168,7 @@ const UsersPage = () => {
     setError(null);
     try {
       const token = localStorage.getItem("token");
-      const res   = await fetch("http://localhost:3000/test/users", {
+      const res   = await fetch("https://iicgp-backend-cms.onrender.com/test/users", {
         headers: { Authorization: `Bearer ${token}` },
       });
 

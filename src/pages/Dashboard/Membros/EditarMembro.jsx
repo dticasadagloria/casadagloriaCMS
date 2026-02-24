@@ -167,7 +167,7 @@ const EditarMembro = () => {
   const fetchMembro = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:3000/api/membros/${id}`, {
+      const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -253,7 +253,7 @@ const EditarMembro = () => {
       };
       console.log("payload enviado:", JSON.stringify(payload));
 
-      const res = await fetch(`http://localhost:3000/api/membros/${id}`, {
+      const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
