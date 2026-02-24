@@ -43,7 +43,7 @@ const MembroDetalhes = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:3000/api/membros/${id}`, {
+      const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -63,7 +63,7 @@ const MembroDetalhes = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:3000/api/membros/${id}`, {
+      await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -84,7 +84,7 @@ const MembroDetalhes = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:3000/api/membros/${id}/hard`, {
+      const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}/hard`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -120,7 +120,7 @@ const MembroDetalhes = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:3000/api/membros/${id}/reactivate`,
+        `https://iicgp-backend-cms.onrender.com/api/membros/${id}/reactivate`,
         {
           method: "PATCH",
           headers: { Authorization: `Bearer ${token}` },
