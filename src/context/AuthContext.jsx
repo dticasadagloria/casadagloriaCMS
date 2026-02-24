@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/auth/me", {
+      const res = await fetch("https://iicgp-backend-cms.onrender.com/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   // ── LOGIN ─────────────────────────────────────────────────────────────────
   const login = async (username, password) => {
     try {
-      const res = await fetch("http://localhost:3000/auth/login", {
+      const res = await fetch("https://iicgp-backend-cms.onrender.com/auth/login", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ username, password }),
