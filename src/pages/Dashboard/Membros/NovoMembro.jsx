@@ -119,7 +119,7 @@ const NovoMembro = () => {
         bairro: "",
         estado_civil: "",
         batizado: false,
-        data_batismo: "",
+        data_batismo: null,
         ocupacao: "",
         branch_id: "",
         ano_ingresso: new Date().getFullYear().toString(),
@@ -186,7 +186,7 @@ const NovoMembro = () => {
             setSuccess(true);
 
             setTimeout(() => {
-                navigate("/dashboard");
+                navigate("/dashboard/membros");
             }, 1500);
         } catch {
             setError("Erro ao conectar com o servidor");
@@ -389,14 +389,14 @@ const NovoMembro = () => {
                         />
                     </div>
 
-                    <div className="mt-4">
+                    {/* <div className="mt-4">
                         <Checkbox
                             label="É batizado?"
                             name="batizado"
                             form={form}
                             onChange={handleChange}
                         />
-                    </div>
+                    </div> */}
                 </Section>
 
                 {/* Escola da Verdade */}
@@ -428,7 +428,7 @@ const NovoMembro = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <Checkbox
-                            label="Batizado"
+                            label="É Batizado?"
                             name="batizado"
                             form={form}
                             onChange={handleChange}
