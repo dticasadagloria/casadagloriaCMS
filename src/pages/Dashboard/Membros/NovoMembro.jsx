@@ -167,7 +167,7 @@ const NovoMembro = () => {
 
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch("http://localhost:3000/api/membros", {
+            const res = await fetch("https://iicgp-backend-cms.onrender.com/api/membros", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
