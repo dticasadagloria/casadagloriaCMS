@@ -68,7 +68,7 @@ export default function MembrosPage() {
     .filter((m) => {
       const q = search.toLowerCase();
       return (
-        m.nome?.toLowerCase().includes(q) ||
+        m.nome_membro?.toLowerCase().includes(q) ||
         m.codigo?.toLowerCase().includes(q) ||
         m.genero?.toLowerCase().includes(q)
       );

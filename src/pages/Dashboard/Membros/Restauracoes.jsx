@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import {
   Plus,
@@ -10,6 +11,7 @@ import {
   Search,
   AlertCircle,
   Calendar,
+  Ban
 } from "lucide-react";
 
 // ─── Componentes auxiliares fora do componente principal ─────────────────────
@@ -234,6 +236,7 @@ export default function RestauracoesList() {
   const [filtro, setFiltro] = useState("todos"); // todos | em_andamento | concluido
   const [search, setSearch] = useState("");
   const [concluindoId, setConcluindoId] = useState(null);
+  const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
     carregarDados();
@@ -292,7 +295,37 @@ export default function RestauracoesList() {
     setRestauracoes((prev) => [nova, ...prev]);
     setShowModal(false);
   };
+    
 
+   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const decoded = jwtDecode(token);
+    const role = decoded.role_id; // ou decoded.role_name se enviares o nome no token
+
+    //Aqui defines quem pode entrar
+    const rolesPermitidos = [9]; // 1 = Pastor, por exemplo
+    if (rolesPermitidos.includes(role)) {
+      setAllowed(true);
+    }
+  }, []);
+
+  if (!allowed) {
+    return (
+      <div className="flex items-center justify-center h-[70vh]">
+        <div className="text-center">
+          <div className="flex items-center justify-center">
+            <Ban size={48} className="text-red-600" />
+          </div>
+          <h2 className="text-xl font-semibold text-red-600">Acesso negado</h2>
+          <p className="text-slate-600 mt-2">
+            Você não tem permissão para acessar o módulo de restaurações.
+          </p>
+        </div>
+      </div>
+    );
+  }
   // Filtros
   const restauracoesFiltradas = restauracoes.filter((r) => {
     const matchFiltro =

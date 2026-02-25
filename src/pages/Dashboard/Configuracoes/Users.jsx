@@ -12,6 +12,9 @@ import {
   User,
   MoreVertical,
   SlidersHorizontal,
+  Phone,
+  HeartPulse,
+  BarChart3,
 } from "lucide-react";
 
 // ─── ROLE CONFIG ──────────────────────────────────────────────────────────────
@@ -52,6 +55,33 @@ const ROLE_CONFIG = {
     card:    "border-slate-200/60 hover:border-slate-300",
     glow:    "shadow-slate-100",
   },
+  5: {
+    label:   "Call Center",
+    icon:    Phone,  
+    avatar:  "from-blue-400 to-blue-600",
+    pill:    "bg-blue-50 text-blue-700 border border-blue-200",
+    dot:     "bg-blue-500",
+    card:    "border-blue-200/60 hover:border-blue-300",
+    glow:    "shadow-blue-100",
+  },
+  10: {
+    label:   "SOS Socorros",
+    icon:    HeartPulse,  
+    avatar:  "from-red-400 to-red-600",
+    pill:    "bg-red-50 text-red-700 border border-red-200",
+    dot:     "bg-red-500",
+    card:    "border-red-200/60 hover:border-red-300",
+    glow:    "shadow-red-100",
+  },
+  8: {
+    label:   "Estatística",
+    icon:    BarChart3,  
+    avatar:  "from-green-400 to-green-600",
+    pill:    "bg-green-50 text-green-700 border border-green-200",
+    dot:     "bg-green-500",
+    card:    "border-green-200/60 hover:border-green-300",
+    glow:    "shadow-green-100",
+  },
 };
 
 const DEFAULT_ROLE = ROLE_CONFIG[4];
@@ -68,6 +98,9 @@ const FILTERS = [
   { key: "2",    label: "Pastor"      },
   { key: "3",    label: "Finanças"    },
   { key: "4",    label: "Membro"      },
+  { key: "5",    label: "Call Center" },
+  { key: "10",   label: "SOS Socorros" },
+  { key: "8",    label: "Estatística" },
 ];
 
 // ─── USER CARD ────────────────────────────────────────────────────────────────

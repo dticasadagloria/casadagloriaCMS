@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import { useState, useEffect } from "react";
 import {
   Menu,
@@ -16,6 +17,9 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   UserX,
+  HeartHandshake,
+  Landmark,
+  BarChart3,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Membros from "./Membros/Membros";
@@ -24,6 +28,11 @@ import EditarMembro from "./Membros/EditarMembro";
 import Restauracoes from "./Membros/Restauracoes";
 import Usuarios from "./Configuracoes/Users";
 import ProfilePage from "./Configuracoes/ProfilePage";
+import SosSocorros from "./Socorros/SosSocorros";
+import Finances from "./Finanças/Finances";
+import CallCenter from "./Call_Center/CallCenter";
+import Estatistica from "./Estatistica/Estatistica";
+import Cultos from "./Estatistica/Cultos";
 
 // ─── TABS CONFIG ─────────────────────────────────────────────────────────────
 const tabs = [
@@ -44,14 +53,28 @@ const tabs = [
     ],
   },
   {
+    key: "estatistica",
+    label: "Estatística",
+    icon: BarChart3,
+    children: [
+      { key: "estatistica", label: "Dashboard", icon: BarChart3 },
+      { key: "cultos", label: "Cultos", icon: UserPlus },
+    ],
+  },
+  {
     key: "financas",
     label: "Finanças",
-    icon: BookOpen,
+    icon: Landmark,
   },
   {
     key: "call-center",
     label: "Call Center",
     icon: Headphones,
+  },
+  {
+    key: "sos-socorros",
+    label: "SOS Socorros",
+    icon: HeartHandshake,
   },
   {
     key: "configuracoes",
@@ -65,13 +88,20 @@ const tabs = [
   },
 ];
 
-
-
 // ─── NAV ITEM ─────────────────────────────────────────────────────────────────
-const NavItem = ({ tab, activeTab, setActiveTab, collapsed, openMenus, toggleMenu, closeSidebar }) => {
+const NavItem = ({
+  tab,
+  activeTab,
+  setActiveTab,
+  collapsed,
+  openMenus,
+  toggleMenu,
+  closeSidebar,
+}) => {
   const Icon = tab.icon;
   const hasKids = !!tab.children?.length;
-  const isActive = activeTab === tab.key || tab.children?.some((c) => c.key === activeTab);
+  const isActive =
+    activeTab === tab.key || tab.children?.some((c) => c.key === activeTab);
   const isOpen = openMenus[tab.key];
 
   return (
@@ -90,9 +120,10 @@ const NavItem = ({ tab, activeTab, setActiveTab, collapsed, openMenus, toggleMen
         className={`
           group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
           text-sm font-medium transition-all duration-200 select-none
-          ${isActive
-            ? "bg-gradient-to-r from-amber-500/30 to-yellow-500/20 text-amber-100 shadow-inner border border-amber-500/30"
-            : "text-amber-200/80 hover:bg-amber-800/40 hover:text-amber-100 border border-transparent"
+          ${
+            isActive
+              ? "bg-gradient-to-r from-amber-500/30 to-yellow-500/20 text-amber-100 shadow-inner border border-amber-500/30"
+              : "text-amber-200/80 hover:bg-amber-800/40 hover:text-amber-100 border border-transparent"
           }
         `}
       >
@@ -102,7 +133,9 @@ const NavItem = ({ tab, activeTab, setActiveTab, collapsed, openMenus, toggleMen
         )}
 
         {/* Icon */}
-        <span className={`flex-shrink-0 transition-transform duration-200 ${isActive ? "text-amber-300" : "text-amber-400/70 group-hover:text-amber-300"}`}>
+        <span
+          className={`flex-shrink-0 transition-transform duration-200 ${isActive ? "text-amber-300" : "text-amber-400/70 group-hover:text-amber-300"}`}
+        >
           <Icon size={18} />
         </span>
 
@@ -137,13 +170,16 @@ const NavItem = ({ tab, activeTab, setActiveTab, collapsed, openMenus, toggleMen
                 className={`
                   group w-full flex items-center gap-2.5 px-3 py-2 rounded-lg
                   text-[13px] font-medium transition-all duration-150
-                  ${childActive
-                    ? "bg-amber-500/25 text-amber-100 border border-amber-500/30"
-                    : "text-amber-300/70 hover:bg-amber-800/40 hover:text-amber-200 border border-transparent"
+                  ${
+                    childActive
+                      ? "bg-amber-500/25 text-amber-100 border border-amber-500/30"
+                      : "text-amber-300/70 hover:bg-amber-800/40 hover:text-amber-200 border border-transparent"
                   }
                 `}
               >
-                <span className={`flex-shrink-0 transition-colors ${childActive ? "text-amber-300" : "text-amber-500/60 group-hover:text-amber-400"}`}>
+                <span
+                  className={`flex-shrink-0 transition-colors ${childActive ? "text-amber-300" : "text-amber-500/60 group-hover:text-amber-400"}`}
+                >
                   <ChildIcon size={14} />
                 </span>
                 <span className="truncate">{child.label}</span>
@@ -164,17 +200,27 @@ const StatCard = ({ title, value, change, changeType, Icon, gradient }) => (
   <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100/60 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
     <div className="flex items-start justify-between mb-4">
       <div>
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{title}</p>
-        <p className={`text-3xl font-bold mt-1 bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}>
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+          {title}
+        </p>
+        <p
+          className={`text-3xl font-bold mt-1 bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}
+        >
           {value}
         </p>
       </div>
-      <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200`}>
+      <div
+        className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200`}
+      >
         <Icon className="w-5 h-5 text-white" />
       </div>
     </div>
-    <div className={`flex items-center gap-1.5 text-xs font-medium ${changeType === "up" ? "text-emerald-600" : changeType === "down" ? "text-red-500" : "text-amber-500"}`}>
-      <span>{changeType === "up" ? "↑" : changeType === "down" ? "↓" : "→"}</span>
+    <div
+      className={`flex items-center gap-1.5 text-xs font-medium ${changeType === "up" ? "text-emerald-600" : changeType === "down" ? "text-red-500" : "text-amber-500"}`}
+    >
+      <span>
+        {changeType === "up" ? "↑" : changeType === "down" ? "↓" : "→"}
+      </span>
       <span>{change}</span>
     </div>
   </div>
@@ -190,7 +236,61 @@ const Dashboard = () => {
   const [membrosActivos, setMembrosActivos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:3000/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setCurrentUser(data);
+      } catch (err) {
+        console.error("Erro ao buscar utilizador:", err);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  // const ROLES_COM_RESTAURACOES = [1, 2];
+  // ─── ROLES ───────────────────────────────────────────────────────────────────
+// Adiciona aqui os IDs de cada role do teu sistema
+const ROLES = {
+  ADMIN: 1,
+  PASTOR: 2,
+  FINANCAS: 3,
+  ESTATISTICA: 8,
+  CALLCENTER: 9,
+  SOSSOCORROS: 10,
+  // NOVO_ROLE: 5,  <-- adiciona aqui futuramente
+};
+
+// ─── PERMISSÕES POR TAB ──────────────────────────────────────────────────────
+// null = todos têm acesso | [1,2] = só esses roles têm acesso
+const PERMISSOES = {
+  "dashboard":      null,
+  "membros":        [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.ESTATISTICA],
+  "lista-membros":  [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.ESTATISTICA],
+  "novo-membro":    [ROLES.ADMIN, ROLES.PASTOR, ROLES.SECRETARIO, ROLES.ESTATISTICA],
+  "restauracoes":   [ROLES.ADMIN, ROLES.PASTOR],
+  "financas":       [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS],
+  "call-center":    [ROLES.ADMIN, ROLES.PASTOR, ROLES.CALLCENTER],
+  "sos-socorros":   [ROLES.ADMIN, ROLES.PASTOR, ROLES.SOSSOCORROS],
+  "usuarios":       [ROLES.ADMIN],
+  "perfil":         null,
+  "permissoes":     [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.ESTATISTICA, ROLES.CALLCENTER, ROLES.SOSSOCORROS],
+  // "novo-tab":    [ROLES.ADMIN],  <-- adiciona aqui futuramente
+};
+
+// ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
+const temAcesso = (key, roleId) => {
+  const permitidos = PERMISSOES[key];
+  if (!permitidos) return true; // null = acesso livre
+  return permitidos.includes(roleId);
+};
 
   const toggleMenu = (key) =>
     setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -207,7 +307,19 @@ const Dashboard = () => {
     return "Dashboard";
   })();
 
-
+  const tabsFiltradas = tabs
+  .filter((tab) => temAcesso(tab.key, currentUser?.role_id))
+  .map((tab) => {
+    if (tab.children) {
+      return {
+        ...tab,
+        children: tab.children.filter((child) =>
+          temAcesso(child.key, currentUser?.role_id)
+        ),
+      };
+    }
+    return tab;
+  });
 
   // ── Fetch ────────────────────────────────────────────────────────────────
   const fetchMembros = async () => {
@@ -215,9 +327,12 @@ const Dashboard = () => {
     setError(null);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("https://iicgp-backend-cms.onrender.com/api/membros", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        "https://iicgp-backend-cms.onrender.com/api/membros",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
 
@@ -248,8 +363,6 @@ const Dashboard = () => {
   const ativos = membros.filter((m) => m.ativo).length;
   const inativos = total - ativos;
 
-
-
   return (
     <>
       <style>{`
@@ -266,7 +379,6 @@ const Dashboard = () => {
         <Header setActiveTab={setActiveTab} />
 
         <div className="flex min-h-[calc(100vh-64px)] bg-slate-50">
-
           {/* ── SIDEBAR ────────────────────────────────────── */}
           <aside
             className={`
@@ -291,8 +403,22 @@ const Dashboard = () => {
             )}
 
             {/* NAV */}
-            <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-0.5 scrollbar-thin">
+            {/* <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-0.5 scrollbar-thin">
               {tabs.map((tab) => (
+                <NavItem
+                  key={tab.key}
+                  tab={tab}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  collapsed={isSidebarCollapsed}
+                  openMenus={openMenus}
+                  toggleMenu={toggleMenu}
+                  closeSidebar={closeSidebar}
+                />
+              ))}
+            </nav> */}
+            <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-0.5 scrollbar-thin">
+              {tabsFiltradas.map((tab) => (
                 <NavItem
                   key={tab.key}
                   tab={tab}
@@ -314,15 +440,18 @@ const Dashboard = () => {
                 title={isSidebarCollapsed ? "Expandir" : "Colapsar"}
                 className="hidden lg:flex items-center justify-center w-9 h-9 rounded-xl text-amber-400/70 hover:bg-amber-800/40 hover:text-amber-300 transition-all duration-150"
               >
-                {isSidebarCollapsed
-                  ? <PanelLeftOpen size={18} />
-                  : <PanelLeftClose size={18} />
-                }
+                {isSidebarCollapsed ? (
+                  <PanelLeftOpen size={18} />
+                ) : (
+                  <PanelLeftClose size={18} />
+                )}
               </button>
 
               {/* Version tag */}
               {!isSidebarCollapsed && (
-                <span className="text-[10px] text-amber-700/50 font-mono ml-1">v1.0.0</span>
+                <span className="text-[10px] text-amber-700/50 font-mono ml-1">
+                  v1.0.0
+                </span>
               )}
 
               {/* Mobile close */}
@@ -344,8 +473,9 @@ const Dashboard = () => {
           )}
 
           {/* ── MAIN ───────────────────────────────────────── */}
-          <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? "lg:ml-[72px]" : "lg:ml-64"}`}>
-
+          <div
+            className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarCollapsed ? "lg:ml-[72px]" : "lg:ml-64"}`}
+          >
             {/* Sub-topbar: breadcrumb + mobile hamburger */}
             <div className="sticky top-16 z-20 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 h-12 flex items-center justify-between shadow-sm">
               <div className="flex items-center gap-3">
@@ -360,26 +490,36 @@ const Dashboard = () => {
                 <div className="flex items-center gap-1.5 text-sm">
                   <span className="text-slate-400 font-medium">IICGP</span>
                   <ChevronRight size={13} className="text-slate-300" />
-                  <span className="text-slate-700 font-semibold">{activeLabel}</span>
+                  <span className="text-slate-700 font-semibold">
+                    {activeLabel}
+                  </span>
                 </div>
               </div>
 
               {/* Today's date */}
               <span className="text-[11px] font-mono text-slate-400">
-                {new Date().toLocaleDateString("pt-PT", { weekday: "short", day: "2-digit", month: "short", year: "numeric" })}
+                {new Date().toLocaleDateString("pt-PT", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
               </span>
             </div>
 
             {/* PAGE CONTENT */}
             <main className="flex-1 p-6 overflow-y-auto">
               <div className="max-w-7xl mx-auto">
-
                 {/* ── DASHBOARD HOME ── */}
                 {activeTab === "dashboard" && (
                   <div className="space-y-6">
                     <div>
-                      <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Visão Geral</h1>
-                      <p className="text-sm text-slate-400 mt-0.5">Bem-vindo ao painel de gestão da IICGP</p>
+                      <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+                        Visão Geral
+                      </h1>
+                      <p className="text-sm text-slate-400 mt-0.5">
+                        Bem-vindo ao painel de gestão da IICGP
+                      </p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -420,20 +560,17 @@ const Dashboard = () => {
                 )}
 
                 {/* ── MEMBROS ── */}
-                {(activeTab === "membros" || activeTab === "lista-membros") && (
+                {(activeTab === "membros" || activeTab === "lista-membros") && temAcesso("membros", currentUser?.role_id) && (
                   <Membros />
                 )}
 
                 {/* Editar membro */}
-                {(activeTab === "editar-membro" || activeTab === "editar-membro") && (
-                  <EditarMembro />
-                )}
+                {(activeTab === "editar-membro" ||
+                  activeTab === "editar-membro") && temAcesso("editar-membro", currentUser?.role_id) && <EditarMembro />}
                 {/*Restauracoes*/}
-                {(activeTab === "restauracoes" || activeTab === "restauracoes") && (
-                  <Restauracoes />
-                )}
+                {activeTab === "restauracoes" && temAcesso("restauracoes", currentUser?.role_id) && <Restauracoes />}
                 {/* Usuários */}
-                {(activeTab === "usuarios" || activeTab === "usuarios") && (
+                {(activeTab === "usuarios" || activeTab === "usuarios") && temAcesso("usuarios", currentUser?.role_id) && (
                   <Usuarios />
                 )}
 
@@ -443,25 +580,61 @@ const Dashboard = () => {
                 )}
 
                 {/*Novo Membro*/}
-                {(activeTab === "novo-membro" || activeTab === "novo-membro") && (
-                  <NovoMembro />
+                {(activeTab === "novo-membro" ||
+                  activeTab === "novo-membro") && temAcesso("novo-membro", currentUser?.role_id) && <NovoMembro />}
+
+                {/*Finanças*/}
+                {(activeTab === "financas" || activeTab === "financas") && temAcesso("financas", currentUser?.role_id) && (
+                  <Finances />
                 )}
 
+                {/*Call Center*/}
+                {(activeTab === "call-center" ||
+                  activeTab === "call-center") && temAcesso("call-center", currentUser?.role_id) && <CallCenter />}
+
+                {/*Sos Socorros*/}
+                {(activeTab === "sos-socorros" ||
+                  activeTab === "sos-socorros") && temAcesso("sos-socorros", currentUser?.role_id) && <SosSocorros />}
+
+                
+                {/*Estatistica*/}
+                {(activeTab === "estatistica" ||
+                  activeTab === "estatistica") && temAcesso("estatistica", currentUser?.role_id) && <Estatistica />}
+
+                {/*Cultos*/}
+                {(activeTab === "cultos" ||
+                  activeTab === "cultos") && temAcesso("cultos", currentUser?.role_id) && <Cultos />}
+
                 {/* ── PLACEHOLDER PAGES ── */}
-                {!["dashboard", "membros", "lista-membros", "usuarios", "novo-membro", "editar-membro", "restauracoes"].includes(activeTab) && (
+                {![
+                  "dashboard",
+                  "membros",
+                  "lista-membros",
+                  "usuarios",
+                  "novo-membro",
+                  "editar-membro",
+                  "restauracoes",
+                  "sos-socorros",
+                  "financas",
+                  "call-center",
+                  "estatistica",
+                  "cultos",
+                ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
                       <Settings className="w-7 h-7 text-amber-400" />
                     </div>
-                    <h2 className="text-lg font-semibold text-slate-700">{activeLabel}</h2>
-                    <p className="text-sm text-slate-400 mt-1">Esta secção está em desenvolvimento.</p>
+                    <h2 className="text-lg font-semibold text-slate-700">
+                      {activeLabel}
+                    </h2>
+                    <p className="text-sm text-slate-400 mt-1">
+                      Esta secção está em desenvolvimento.
+                    </p>
                   </div>
                 )}
-
               </div>
             </main>
           </div>
-
         </div>
       </div>
     </>
