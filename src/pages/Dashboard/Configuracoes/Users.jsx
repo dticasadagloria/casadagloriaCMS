@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import api from "@/api/api"
 import {
   Users,
   Search,
@@ -55,7 +56,7 @@ const ROLE_CONFIG = {
     card:    "border-slate-200/60 hover:border-slate-300",
     glow:    "shadow-slate-100",
   },
-  5: {
+  9: {
     label:   "Call Center",
     icon:    Phone,  
     avatar:  "from-blue-400 to-blue-600",
@@ -98,7 +99,7 @@ const FILTERS = [
   { key: "2",    label: "Pastor"      },
   { key: "3",    label: "Finanças"    },
   { key: "4",    label: "Membro"      },
-  { key: "5",    label: "Call Center" },
+  { key: "9",    label: "Call Center" },
   { key: "10",   label: "SOS Socorros" },
   { key: "8",    label: "Estatística" },
 ];
@@ -200,31 +201,22 @@ const UsersPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem("token");
-      const res   = await fetch("https://iicgp-backend-cms.onrender.com/test/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
-
-      const data = await res.json();
-
-      // Suporta ambos os formatos: array directo ou { users: [] }
-      const lista = Array.isArray(data)
-        ? data
-        : Array.isArray(data.users)
+      const res = await api.get("/test/users");
+    const data = res.data;
+    const lista = Array.isArray(data)
+      ? data
+      : Array.isArray(data.users)
         ? data.users
         : [];
-
-      setUsers(lista);
-    } catch (err) {
-      console.error("fetchUsers error:", err);
-      setError(err.message || "Não foi possível carregar os utilizadores.");
-      setUsers([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setUsers(lista);
+  } catch (err) {
+    console.error("fetchUsers error:", err);
+    setError(err.response?.data?.message || "Não foi possível carregar os utilizadores.");
+    setUsers([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => { fetchUsers(); }, []);
 

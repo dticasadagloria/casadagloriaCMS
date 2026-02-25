@@ -33,7 +33,7 @@ import Finances from "./Finanças/Finances";
 import CallCenter from "./Call_Center/CallCenter";
 import Estatistica from "./Estatistica/Estatistica";
 import Cultos from "./Estatistica/Cultos";
-
+import api from "@/api/api";
 // ─── TABS CONFIG ─────────────────────────────────────────────────────────────
 const tabs = [
   {
@@ -238,22 +238,21 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await fetch("https://iicgp-backend-cms.onrender.com/auth/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setCurrentUser(data);
-      } catch (err) {
-        console.error("Erro ao buscar utilizador:", err);
-      }
-    };
+ useEffect(() => {
+  const fetchCurrentUser = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await api.get("/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCurrentUser(res.data); 
+    } catch (err) {
+      console.error("Erro ao buscar utilizador:", err);
+    }
+  };
 
-    fetchCurrentUser();
-  }, []);
+  fetchCurrentUser();
+}, []);
 
   // const ROLES_COM_RESTAURACOES = [1, 2];
   // ─── ROLES ───────────────────────────────────────────────────────────────────
@@ -272,7 +271,7 @@ const ROLES = {
 // null = todos têm acesso | [1,2] = só esses roles têm acesso
 const PERMISSOES = {
   "dashboard":      null,
-  "membros":        [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.ESTATISTICA],
+  "membros":        [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.ESTATISTICA, ROLES.CALLCENTER],
   "lista-membros":  [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.ESTATISTICA],
   "novo-membro":    [ROLES.ADMIN, ROLES.PASTOR, ROLES.SECRETARIO, ROLES.ESTATISTICA],
   "restauracoes":   [ROLES.ADMIN, ROLES.PASTOR],
@@ -322,42 +321,32 @@ const temAcesso = (key, roleId) => {
   });
 
   // ── Fetch ────────────────────────────────────────────────────────────────
-  const fetchMembros = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        "https://iicgp-backend-cms.onrender.com/api/membros",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+ const fetchMembros = async () => {
+  setLoading(true);
+  setError(null);
+  try {
+    const res = await api.get("/api/membros");
 
-      if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
+    const data = res.data;
+    const lista = Array.isArray(data)
+      ? data
+      : Array.isArray(data.membros)
+        ? data.membros
+        : [];
 
-      const data = await res.json();
+    setMembros(lista);
+  } catch (err) {
+    console.error("fetchMembros error:", err);
+    setError(err.response?.data?.message || "Não foi possível carregar os membros.");
+    setMembros([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
-      //FIX: a API retorna { membros: [...] } — extrai o array correctamente
-      const lista = Array.isArray(data)
-        ? data
-        : Array.isArray(data.membros)
-          ? data.membros
-          : [];
-
-      setMembros(lista);
-    } catch (err) {
-      console.error("fetchMembros error:", err);
-      setError(err.message || "Não foi possível carregar os membros.");
-      setMembros([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMembros();
-  }, []);
+useEffect(() => {
+  fetchMembros();
+}, []);
 
   const total = membros.length;
   const ativos = membros.filter((m) => m.ativo).length;

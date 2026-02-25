@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Eye, EyeOff, Lock, User, LogIn, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./components/ui/button";
+import api from "@/api/api.js";
+
 
 
 const Login = () => {
@@ -23,6 +25,8 @@ const Login = () => {
     if (error) setError("");
   };
 
+
+  //fetch the url from api.js
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -36,22 +40,15 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch("https://iicgp-backend-cms.onrender.com/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await api.post("/auth/login", formData); // ← usa o axios directamente
 
-      const data = await response.json();
+      const data = response.data;
 
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        setSuccess("Login realizado com sucesso!");
-        setTimeout(() => navigate("/dashboard"), 1000);
-      } else {
-        setError(data.message || "Credenciais inválidas");
-      }
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setSuccess("Login realizado com sucesso!");
+      setTimeout(() => navigate("/dashboard"), 1000);
+
     } catch (err) {
       setError("Erro ao conectar com o servidor. Tente novamente.");
       console.error("Login error:", err);

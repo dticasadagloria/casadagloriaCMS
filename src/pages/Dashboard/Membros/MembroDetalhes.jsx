@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import Header from "../../../components/Header";
 import { gerarFichaPDF } from "@/lib/pdfGenerator";
 import logo from "/Logo1.png"
+import api from "@/api/api";
 import {
   ArrowLeft,
   Edit,
@@ -39,101 +40,55 @@ const MembroDetalhes = () => {
     fetchMembro();
   }, [id]);
 
-  const fetchMembro = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  //Aqui é para buscar membro
+ const fetchMembro = async () => {
+  setLoading(true);
+  try {
+    const res = await api.get(`/api/membros/${id}`);
+    setMembro(res.data.membro || res.data);
+  } catch (err) {
+    setError(err.response?.data?.message || "Membro não encontrado");
+  } finally {
+    setLoading(false);
+  }
+};
 
-      if (!res.ok) throw new Error("Membro não encontrado");
+//Aqui é para desactivar membro
+const handleDelete = async () => {
+  if (!confirm("Tem certeza que deseja desactivar este membro?")) return;
+  try {
+    await api.delete(`/api/membros/${id}`);
+    navigate("/dashboard");
+  } catch {
+    alert("Erro ao desactivar membro");
+  }
+};
 
-      const data = await res.json();
-      setMembro(data.membro || data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+//Aqui é para apagar o membro da base de dados
+const handleHardDelete = async () => {
+  if (!window.confirm("Isto irá apagar permanentemente o membro. Tem certeza?")) return;
+  try {
+    await api.delete(`/api/membros/${id}/hard`);
+    alert("Membro eliminado permanentemente");
+    navigate("/dashboard");
+  } catch (err) {
+    alert(err.response?.data?.message || "Erro ao eliminar membro");
+  }
+};
 
-  const handleDelete = async () => {
-    if (!confirm("Tem certeza que deseja desactivar este membro?")) return;
 
-    try {
-      const token = localStorage.getItem("token");
-      await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      navigate("/dashboard");
-    } catch {
-      alert("Erro ao desactivar membro");
-    }
-  };
-
-  //Aqui é para apagar o membro da base de dados
-  const handleHardDelete = async () => {
-    const confirmDelete = window.confirm(
-      "Isto irá apagar permanentemente o membro. Tem certeza?",
-    );
-
-    if (!confirmDelete) return;
-
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}/hard`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "Erro ao eliminar membro");
-        return;
-      }
-
-      alert("Membro eliminado permanentemente");
-
-      // redireciona para lista
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("Erro:", error);
-      alert("Erro ao conectar com servidor");
-    }
-  };
-
-  //Aqui para reactivar membro para ativo
-  const handleReactivate = async () => {
-    const confirmReactivate = window.confirm(
-      "Tem certeza que deseja reactivar este membro?",
-    );
-
-    if (!confirmReactivate) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `https://iicgp-backend-cms.onrender.com/api/membros/${id}/reactivate`,
-        {
-          method: "PATCH",
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      const data = await res.json();
-      setMembro(data.membro || data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+//Aqui para reactivar membro para ativo
+const handleReactivate = async () => {
+  if (!window.confirm("Tem certeza que deseja reactivar este membro?")) return;
+  try {
+    const res = await api.patch(`/api/membros/${id}/reactivate`);
+    setMembro(res.data.membro || res.data);
+  } catch (err) {
+    setError(err.response?.data?.message || "Erro ao reactivar membro");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const Detail = ({ icon: Icon, label, value }) => (
     <div className="flex items-start gap-3 py-3 border-b border-slate-100 last:border-0">

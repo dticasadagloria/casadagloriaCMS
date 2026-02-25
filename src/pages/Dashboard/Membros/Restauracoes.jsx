@@ -1,5 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
+import api from "@/api/api.js";
 import {
   Plus,
   X,
@@ -11,7 +12,7 @@ import {
   Search,
   AlertCircle,
   Calendar,
-  Ban
+  Ban,
 } from "lucide-react";
 
 // ─── Componentes auxiliares fora do componente principal ─────────────────────
@@ -37,15 +38,23 @@ const EmptyState = () => (
     <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
       <FileText size={22} className="text-slate-400" />
     </div>
-    <p className="text-sm font-semibold text-slate-600">Nenhuma restauração registada</p>
-    <p className="text-xs text-slate-400 mt-1">Clique em "Nova Restauração" para começar</p>
+    <p className="text-sm font-semibold text-slate-600">
+      Nenhuma restauração registada
+    </p>
+    <p className="text-xs text-slate-400 mt-1">
+      Clique em "Nova Restauração" para começar
+    </p>
   </div>
 );
 
 // ─── Modal de nova restauração ───────────────────────────────────────────────
 
 const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
-  const [form, setForm] = useState({ membro_id: "", motivo: "", observacoes: "" });
+  const [form, setForm] = useState({
+    membro_id: "",
+    motivo: "",
+    observacoes: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -53,7 +62,7 @@ const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
   const membrosFiltrados = membros.filter(
     (m) =>
       m.nome_membro?.toLowerCase().includes(search.toLowerCase()) ||
-      m.codigo?.toLowerCase().includes(search.toLowerCase())
+      m.codigo?.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleSubmit = async (e) => {
@@ -65,26 +74,14 @@ const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
     setError("");
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3000/api/restauracoes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || data.message || "Erro ao criar restauração");
-        return;
-      }
-
-      onSuccess(data.data);
-    } catch {
-      setError("Erro ao conectar com o servidor");
+      const res = await api.post("/api/restauracoes", form);
+      onSuccess(res.data.data);
+    } catch (err) {
+      setError(
+        err.response?.data?.error ||
+          err.response?.data?.message ||
+          "Erro ao criar restauração",
+      );
     } finally {
       setLoading(false);
     }
@@ -106,7 +103,9 @@ const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
             <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
               <Plus size={14} className="text-amber-600" />
             </div>
-            <h2 className="text-[14px] font-bold text-slate-800">Nova Restauração</h2>
+            <h2 className="text-[14px] font-bold text-slate-800">
+              Nova Restauração
+            </h2>
           </div>
           <button
             onClick={onClose}
@@ -123,7 +122,10 @@ const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
               Membro *
             </label>
             <div className="relative mb-2">
-              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              <Search
+                size={13}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+              />
               <input
                 type="text"
                 placeholder="Pesquisar membro..."
@@ -133,7 +135,10 @@ const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
               />
             </div>
             <div className="relative">
-              <User size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" />
+              <User
+                size={13}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10"
+              />
               <select
                 value={form.membro_id}
                 onChange={(e) => {
@@ -150,7 +155,10 @@ const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
                   </option>
                 ))}
               </select>
-              <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              <ChevronDown
+                size={12}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+              />
             </div>
           </div>
 
@@ -179,7 +187,9 @@ const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
             <textarea
               placeholder="Detalhes adicionais sobre a restauração..."
               value={form.observacoes}
-              onChange={(e) => setForm({ ...form, observacoes: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, observacoes: e.target.value })
+              }
               rows={3}
               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 focus:bg-white transition-all resize-none"
             />
@@ -249,14 +259,20 @@ export default function RestauracoesList() {
       const headers = { Authorization: `Bearer ${token}` };
 
       const [resMembros, resRestauracoes] = await Promise.all([
-        fetch("https://iicgp-backend-cms.onrender.com/api/membros", { headers }),
-        fetch("https://iicgp-backend-cms.onrender.com/api/restauracoes", { headers }),
+        fetch("https://iicgp-backend-cms.onrender.com/api/membros", {
+          headers,
+        }),
+        fetch("https://iicgp-backend-cms.onrender.com/api/restauracoes", {
+          headers,
+        }),
       ]);
 
       const membrosData = await resMembros.json();
       const restData = await resRestauracoes.json();
 
-      setMembros(Array.isArray(membrosData) ? membrosData : membrosData.membros || []);
+      setMembros(
+        Array.isArray(membrosData) ? membrosData : membrosData.membros || [],
+      );
       setRestauracoes(Array.isArray(restData) ? restData : []);
     } catch (err) {
       console.error("Erro ao carregar dados:", err);
@@ -270,18 +286,21 @@ export default function RestauracoesList() {
     setConcluindoId(id);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/restauracoes/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        `https://iicgp-backend-cms.onrender.com/api/restauracoes/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: "Concluído" }),
         },
-        body: JSON.stringify({ status: "Concluído" }),
-      });
+      );
 
       if (res.ok) {
         setRestauracoes((prev) =>
-          prev.map((r) => (r.id === id ? { ...r, status: "Concluído" } : r))
+          prev.map((r) => (r.id === id ? { ...r, status: "Concluído" } : r)),
         );
       }
     } catch (err) {
@@ -295,9 +314,8 @@ export default function RestauracoesList() {
     setRestauracoes((prev) => [nova, ...prev]);
     setShowModal(false);
   };
-    
 
-   useEffect(() => {
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
@@ -341,16 +359,24 @@ export default function RestauracoesList() {
     return matchFiltro && matchSearch;
   });
 
-  const totalEmAndamento = restauracoes.filter((r) => r.status === "Em andamento").length;
-  const totalConcluidas = restauracoes.filter((r) => r.status === "Concluído").length;
+  const totalEmAndamento = restauracoes.filter(
+    (r) => r.status === "Em andamento",
+  ).length;
+  const totalConcluidas = restauracoes.filter(
+    (r) => r.status === "Concluído",
+  ).length;
 
   return (
     <div className="space-y-5 max-w-6xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Restaurações</h1>
-          <p className="text-sm text-slate-400 mt-0.5">Gestão de restaurações de membros</p>
+          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+            Restaurações
+          </h1>
+          <p className="text-sm text-slate-400 mt-0.5">
+            Gestão de restaurações de membros
+          </p>
         </div>
         <button
           onClick={() => setShowModal(true)}
@@ -364,13 +390,38 @@ export default function RestauracoesList() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Total", value: restauracoes.length, color: "text-slate-700", bg: "bg-slate-50", border: "border-slate-100" },
-          { label: "Em Andamento", value: totalEmAndamento, color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-100" },
-          { label: "Concluídas", value: totalConcluidas, color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-100" },
+          {
+            label: "Total",
+            value: restauracoes.length,
+            color: "text-slate-700",
+            bg: "bg-slate-50",
+            border: "border-slate-100",
+          },
+          {
+            label: "Em Andamento",
+            value: totalEmAndamento,
+            color: "text-amber-700",
+            bg: "bg-amber-50",
+            border: "border-amber-100",
+          },
+          {
+            label: "Concluídas",
+            value: totalConcluidas,
+            color: "text-emerald-700",
+            bg: "bg-emerald-50",
+            border: "border-emerald-100",
+          },
         ].map((stat) => (
-          <div key={stat.label} className={`${stat.bg} border ${stat.border} rounded-2xl p-4`}>
-            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">{stat.label}</p>
-            <p className={`text-2xl font-bold mt-1 ${stat.color}`}>{stat.value}</p>
+          <div
+            key={stat.label}
+            className={`${stat.bg} border ${stat.border} rounded-2xl p-4`}
+          >
+            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+              {stat.label}
+            </p>
+            <p className={`text-2xl font-bold mt-1 ${stat.color}`}>
+              {stat.value}
+            </p>
           </div>
         ))}
       </div>
@@ -401,7 +452,10 @@ export default function RestauracoesList() {
 
           {/* Search */}
           <div className="relative">
-            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <Search
+              size={13}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+            />
             <input
               type="text"
               placeholder="Pesquisar..."
@@ -424,8 +478,18 @@ export default function RestauracoesList() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-100">
-                  {["Membro", "Data Início", "Status", "Motivo", "Observações", "Ações"].map((h) => (
-                    <th key={h} className="px-5 py-3 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                  {[
+                    "Membro",
+                    "Data Início",
+                    "Status",
+                    "Motivo",
+                    "Observações",
+                    "Ações",
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="px-5 py-3 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider"
+                    >
                       {h}
                     </th>
                   ))}
@@ -433,18 +497,30 @@ export default function RestauracoesList() {
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {restauracoesFiltradas.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr
+                    key={r.id}
+                    className="hover:bg-slate-50/50 transition-colors"
+                  >
                     {/* Membro */}
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center flex-shrink-0">
                           <span className="text-white text-[11px] font-bold">
-                            {r.nome_membro?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase()}
+                            {r.nome_membro
+                              ?.split(" ")
+                              .slice(0, 2)
+                              .map((w) => w[0])
+                              .join("")
+                              .toUpperCase()}
                           </span>
                         </div>
                         <div>
-                          <p className="text-[13px] font-semibold text-slate-800">{r.nome_membro}</p>
-                          <p className="text-[11px] text-slate-400">{r.codigo_membro}</p>
+                          <p className="text-[13px] font-semibold text-slate-800">
+                            {r.nome_membro}
+                          </p>
+                          <p className="text-[11px] text-slate-400">
+                            {r.codigo_membro}
+                          </p>
                         </div>
                       </div>
                     </td>
@@ -464,12 +540,16 @@ export default function RestauracoesList() {
 
                     {/* Motivo */}
                     <td className="px-5 py-3.5">
-                      <p className="text-[13px] text-slate-700 max-w-[180px] truncate">{r.motivo || "—"}</p>
+                      <p className="text-[13px] text-slate-700 max-w-[180px] truncate">
+                        {r.motivo || "—"}
+                      </p>
                     </td>
 
                     {/* Observações */}
                     <td className="px-5 py-3.5">
-                      <p className="text-[13px] text-slate-500 max-w-[180px] truncate">{r.observacoes || "—"}</p>
+                      <p className="text-[13px] text-slate-500 max-w-[180px] truncate">
+                        {r.observacoes || "—"}
+                      </p>
                     </td>
 
                     {/* Ações */}

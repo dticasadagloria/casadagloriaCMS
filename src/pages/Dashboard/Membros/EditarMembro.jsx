@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../../../components/Header";
+import api from "@/api/api.js";
 import {
   Save,
   X,
@@ -164,53 +165,91 @@ const EditarMembro = () => {
     fetchMembro();
   }, [id]);
 
-  const fetchMembro = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  // const fetchMembro = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
 
-      if (!res.ok) throw new Error("Membro não encontrado");
+  //     if (!res.ok) throw new Error("Membro não encontrado");
 
-      const data = await res.json();
-      const membro = data.membro || data;
+  //     const data = await res.json();
+  //     const membro = data.membro || data;
 
-      setForm({
-        codigo: membro.codigo || "",
-        nome: membro.nome || "",
-        genero: membro.genero || "",
-        data_nascimento: membro.data_nascimento
-          ? membro.data_nascimento.split("T")[0]
-          : "",
-        bairro: membro.bairro || "",
-        estado_civil: membro.estado_civil || "",
-        faixa_etaria: membro.faixa_etaria || "",
-        batizado: !!membro.batizado,
-        data_batismo: membro.data_batismo
-          ? membro.data_batismo.split("T")[0]
-          : null, // null se não existir
-        ocupacao: membro.ocupacao || "",
-        branch_id: membro.branch_id ? String(membro.branch_id) : "",
-        celula_id: membro.celula_id ? String(membro.celula_id) : "",
-        ano_ingresso: membro.ano_ingresso ? String(membro.ano_ingresso) : "",
-        escola_da_verdade: membro.escola_da_verdade || "",
-        data_conclusao_escola: membro.data_conclusao_escola
-          ? membro.data_conclusao_escola.split("T")[0]
-          : "",
-        contacto: membro.contacto || "",
-        tipo_documento: membro.tipo_documento || "",
-        numero_documento: membro.numero_documento || "",
-        parceiro: !!membro.parceiro,
-        email: membro.email || "",
-      });
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     setForm({
+  //       codigo: membro.codigo || "",
+  //       nome: membro.nome || "",
+  //       genero: membro.genero || "",
+  //       data_nascimento: membro.data_nascimento
+  //         ? membro.data_nascimento.split("T")[0]
+  //         : "",
+  //       bairro: membro.bairro || "",
+  //       estado_civil: membro.estado_civil || "",
+  //       faixa_etaria: membro.faixa_etaria || "",
+  //       batizado: !!membro.batizado,
+  //       data_batismo: membro.data_batismo
+  //         ? membro.data_batismo.split("T")[0]
+  //         : null, // null se não existir
+  //       ocupacao: membro.ocupacao || "",
+  //       branch_id: membro.branch_id ? String(membro.branch_id) : "",
+  //       celula_id: membro.celula_id ? String(membro.celula_id) : "",
+  //       ano_ingresso: membro.ano_ingresso ? String(membro.ano_ingresso) : "",
+  //       escola_da_verdade: membro.escola_da_verdade || "",
+  //       data_conclusao_escola: membro.data_conclusao_escola
+  //         ? membro.data_conclusao_escola.split("T")[0]
+  //         : "",
+  //       contacto: membro.contacto || "",
+  //       tipo_documento: membro.tipo_documento || "",
+  //       numero_documento: membro.numero_documento || "",
+  //       parceiro: !!membro.parceiro,
+  //       email: membro.email || "",
+  //     });
+  //   } catch (err) {
+  //     setError(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+const fetchMembro = async () => {
+  try {
+    const res = await api.get(`/api/membros/${id}`);
+    const membro = res.data.membro || res.data;
 
+    setForm({
+      codigo: membro.codigo || "",
+      nome: membro.nome || "",
+      genero: membro.genero || "",
+      data_nascimento: membro.data_nascimento
+        ? membro.data_nascimento.split("T")[0]
+        : "",
+      bairro: membro.bairro || "",
+      estado_civil: membro.estado_civil || "",
+      faixa_etaria: membro.faixa_etaria || "",
+      batizado: !!membro.batizado,
+      data_batismo: membro.data_batismo
+        ? membro.data_batismo.split("T")[0]
+        : null,
+      ocupacao: membro.ocupacao || "",
+      branch_id: membro.branch_id ? String(membro.branch_id) : "",
+      celula_id: membro.celula_id ? String(membro.celula_id) : "",
+      ano_ingresso: membro.ano_ingresso ? String(membro.ano_ingresso) : "",
+      escola_da_verdade: membro.escola_da_verdade || "",
+      data_conclusao_escola: membro.data_conclusao_escola
+        ? membro.data_conclusao_escola.split("T")[0]
+        : "",
+      contacto: membro.contacto || "",
+      tipo_documento: membro.tipo_documento || "",
+      numero_documento: membro.numero_documento || "",
+      parceiro: !!membro.parceiro,
+      email: membro.email || "",
+    });
+  } catch (err) {
+    setError(err.response?.data?.message || "Membro não encontrado");
+  } finally {
+    setLoading(false);
+  }
+};
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import api from "@/api/api.js"
 import {
   Users,
   Search,
@@ -20,36 +21,26 @@ export default function MembrosPage() {
   const [sortDir, setSortDir] = useState("asc");
   const navigate = useNavigate();
   // ── Fetch ────────────────────────────────────────────────────────────────
-  const fetchMembros = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("https://iicgp-backend-cms.onrender.com/api/membros", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
-
-      const data = await res.json();
-
-      //FIX: a API retorna { membros: [...] } — extrai o array correctamente
-      const lista = Array.isArray(data)
-        ? data
-        : Array.isArray(data.membros)
-          ? data.membros
-          : [];
-
-      setMembros(lista);
-    } catch (err) {
-      console.error("fetchMembros error:", err);
-      setError(err.message || "Não foi possível carregar os membros.");
-      setMembros([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+ const fetchMembros = async () => {
+  setLoading(true);
+  setError(null);
+  try {
+    const res = await api.get("/api/membros");
+    const data = res.data;
+    const lista = Array.isArray(data)
+      ? data
+      : Array.isArray(data.membros)
+        ? data.membros
+        : [];
+    setMembros(lista);
+  } catch (err) {
+    console.error("fetchMembros error:", err);
+    setError(err.response?.data?.message || "Não foi possível carregar os membros.");
+    setMembros([]);
+  } finally {
+    setLoading(false);
+  }
+};
   useEffect(() => {
     fetchMembros();
   }, []);
