@@ -8,6 +8,8 @@ import ProfilePage from "@/pages/Dashboard/Configuracoes/ProfilePage";
 import EditarMembro from "@/pages/Dashboard/Membros/EditarMembro";
 import MembroDetalhes from "@/pages/Dashboard/Membros/MembroDetalhes";
 import NovoMembro from "@/pages/Dashboard/Membros/NovoMembro";
+import LoginMembro from "../pages/LoginMembro"
+import UserDashboard from "@/pages/Dashboard/users/UserDashboard";
 
 
 const router = createBrowserRouter([
@@ -61,6 +63,20 @@ const router = createBrowserRouter([
     {
         path: "/register",
         element: <Register />
+    },
+    //Rotas para membros
+    {
+        path: "/member-login",
+        element: <LoginMembro />
+    },
+    //Rotas para usuarios
+    {
+        path: "/dashboard/users",
+        element: <AuthProvider>
+            <ProtectedRoute>
+                <UserDashboard />
+            </ProtectedRoute>
+        </AuthProvider>
     }
 ]);
 

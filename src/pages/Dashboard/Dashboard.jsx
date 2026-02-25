@@ -242,7 +242,7 @@ const Dashboard = () => {
     const fetchCurrentUser = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3000/auth/me", {
+        const res = await fetch("https://iicgp-backend-cms.onrender.com/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

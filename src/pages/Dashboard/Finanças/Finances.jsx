@@ -16,7 +16,7 @@ const Finances = () => {
     const role = decoded.role_id; // ou decoded.role_name se enviares o nome no token
 
     //Aqui defines quem pode entrar
-    const rolesPermitidos = [3]; // 1 = Pastor, por exemplo
+    const rolesPermitidos = [1, 2, 3]; // 1 = Admin 2 = Pastor, 3 = Finanças
     if (rolesPermitidos.includes(role)) {
       setAllowed(true);
     }

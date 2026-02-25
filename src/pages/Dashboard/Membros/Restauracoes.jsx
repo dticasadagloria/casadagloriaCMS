@@ -305,7 +305,7 @@ export default function RestauracoesList() {
     const role = decoded.role_id; // ou decoded.role_name se enviares o nome no token
 
     //Aqui defines quem pode entrar
-    const rolesPermitidos = [9]; // 1 = Pastor, por exemplo
+    const rolesPermitidos = [1]; // 1 = Pastor, por exemplo
     if (rolesPermitidos.includes(role)) {
       setAllowed(true);
     }
