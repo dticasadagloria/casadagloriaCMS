@@ -1,8 +1,13 @@
 import React from 'react'
+import EstatisticasCultos from "@/components/charts/EstatisticasCultos.jsx";
+import RankingsCultos from "@/components/charts/RankingsCultos.jsx";
 
 const Estatistica = () => {
   return (
-    <div>Estatistica</div>
+   <>
+    <EstatisticasCultos />
+    <RankingsCultos />
+   </>
   )
 }
 

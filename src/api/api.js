@@ -7,7 +7,6 @@ const api = axios.create({
   },
 });
 
-console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
 
 // Envia o token automaticamente em todos os pedidos
 api.interceptors.request.use((config) => {

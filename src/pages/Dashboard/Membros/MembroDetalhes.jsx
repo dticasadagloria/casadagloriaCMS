@@ -35,7 +35,7 @@ const MembroDetalhes = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  console.log("Membro atual:", membro);
+  // console.log("Membro atual:", membro);
   useEffect(() => {
     fetchMembro();
   }, [id]);

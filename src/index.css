@@ -79,6 +79,16 @@
     backdrop-filter: blur(10px);
   }
 
+
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE e Edge antigo */
+  scrollbar-width: none;     /* Firefox */
+}
   /* Animações */
   @keyframes accordion-down {
     from {

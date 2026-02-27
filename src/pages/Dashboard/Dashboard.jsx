@@ -33,8 +33,10 @@ import Finances from "./Finanças/Finances";
 import CallCenter from "./Call_Center/CallCenter";
 import Estatistica from "./Estatistica/Estatistica";
 import Cultos from "./Estatistica/Cultos";
-import DonutBatizados from "../../components/charts/DonutBatizados.jsx";
+import DonutBatizados from "@/components/charts/DonutBatizados.jsx";
 import BarEscolaDaVerdade from "@/components/charts/BarEscolaDaVerdade.jsx";
+import LinhaCrescimento from "@/components/charts/LinhaCrescimento.jsx";
+import DashboardSocorros from "./Socorros/DashboardSocorros";
 import api from "@/api/api";
 // ─── TABS CONFIG ─────────────────────────────────────────────────────────────
 const tabs = [
@@ -77,6 +79,9 @@ const tabs = [
     key: "sos-socorros",
     label: "SOS Socorros",
     icon: HeartHandshake,
+    children: [
+      { key: "dashboard-socorros", label: "Painel de Controle", icon: BarChart3 },
+    ],
   },
   {
     key: "configuracoes",
@@ -241,7 +246,7 @@ const StatCard = ({
 
 // ─── DASHBOARD ────────────────────────────────────────────────────────────────
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("membros");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [openMenus, setOpenMenus] = useState({});
@@ -290,12 +295,15 @@ const Dashboard = () => {
       ROLES.FINANCAS,
       ROLES.ESTATISTICA,
       ROLES.CALLCENTER,
+      ROLES.SOSSOCORROS,
     ],
     "lista-membros": [
       ROLES.ADMIN,
       ROLES.PASTOR,
       ROLES.FINANCAS,
       ROLES.ESTATISTICA,
+      ROLES.CALLCENTER,
+      ROLES.SOSSOCORROS,
     ],
     "novo-membro": [
       ROLES.ADMIN,
@@ -472,7 +480,7 @@ const Dashboard = () => {
                 />
               ))}
             </nav> */}
-            <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-0.5 scrollbar-thin">
+            <nav className="flex-1 overflow-y-auto no-scrollbar px-3 py-2 space-y-0.5">
               {tabsFiltradas.map((tab) => (
                 <NavItem
                   key={tab.key}
@@ -602,7 +610,7 @@ const Dashboard = () => {
                         change="Ver membros inactivos"
                         changeType="neutral"
                         Icon={UserX}
-                        gradient="from-amber-600 to-yellow-600"
+                        gradient="from-red-600 to-red-600"
                         onClick={() => handleCardClick("inativos")}
                       />
                       <StatCard
@@ -610,7 +618,7 @@ const Dashboard = () => {
                         value="33"
                         change="Ver líderes"
                         changeType="up"
-                        Icon={Headphones}
+                        Icon={Users}
                         gradient="from-yellow-500 to-amber-600"
                         onClick={() => handleCardClick("lideres")}
                       />
@@ -662,6 +670,7 @@ const Dashboard = () => {
                         onFiltrar={handleCardClick}
                       />
                     </div>
+                    <LinhaCrescimento membros={membros} />
                   </div>
                 )}
 
@@ -706,10 +715,10 @@ const Dashboard = () => {
                   )}
 
                 {/*Sos Socorros*/}
-                {(activeTab === "sos-socorros" ||
-                  activeTab === "sos-socorros") &&
-                  temAcesso("sos-socorros", currentUser?.role_id) && (
-                    <SosSocorros />
+                {(activeTab === "dashboard-socorros" ||
+                  activeTab === "dashboard-socorros") &&
+                  temAcesso("dashboard-socorros", currentUser?.role_id) && (
+                    <DashboardSocorros />
                   )}
 
                 {/*Estatistica*/}
@@ -736,6 +745,7 @@ const Dashboard = () => {
                   "call-center",
                   "estatistica",
                   "cultos",
+                  "dashboard-socorros",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
