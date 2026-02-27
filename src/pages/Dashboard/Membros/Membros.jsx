@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "@/api/api.js"
+import api from "@/api/api.js";
 import {
   Users,
   Search,
@@ -12,16 +12,80 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+// ── Função pura de filtro — fora do componente ────────────────────────────────
+const aplicarFiltro = (lista, filtro) => {
+  switch (filtro) {
+    case "ativos":              return lista.filter((m) => m.ativo === true);
+    case "inativos":            return lista.filter((m) => !m.ativo);
+    case "batizados":           return lista.filter((m) => m.batizado === true);
+    case "nao_batizados":       return lista.filter((m) => m.batizado === false);
+    case "escola_concluido":    return lista.filter((m) => m.escola_da_verdade === "Concluido");
+    case "escola_emcurso":      return lista.filter((m) => m.escola_da_verdade === "Em curso");
+    case "escola_naofrequenta": return lista.filter((m) => m.escola_da_verdade === "Nao frequenta");
+    case "lideres":             return lista.filter((m) => m.lider_celula === true);
+    default:                    return lista; // "todos" ou null — mostra tudo
+  }
+};
+
 export default function MembrosPage() {
   const [membros, setMembros] = useState([]);
+  const [membrosOriginais, setMembrosOriginais] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState("nome");
   const [sortDir, setSortDir] = useState("asc");
+ const [filtroActivo, setFiltroActivo] = useState(() => {
+  // lê o filtro logo ao inicializar o estado
+  const f = sessionStorage.getItem("filtroMembros");
+  sessionStorage.removeItem("filtroMembros");
+  return f || null;
+});
   const navigate = useNavigate();
-  // ── Fetch ────────────────────────────────────────────────────────────────
- const fetchMembros = async () => {
+
+  // ── Fetch ─────────────────────────────────────────────────────────────────
+  // const fetchMembros = async () => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const res = await api.get("/api/membros");
+  //     const data = res.data;
+  //     const lista = Array.isArray(data)
+  //       ? data
+  //       : Array.isArray(data.membros)
+  //         ? data.membros
+  //         : [];
+
+  //     setMembrosOriginais(lista);
+
+  //     // lê o filtro do sessionStorage e aplica imediatamente
+  //     const filtro = sessionStorage.getItem("filtroMembros");
+  //     sessionStorage.removeItem("filtroMembros"); // limpa logo
+
+  //     const listaFiltrada = aplicarFiltro(lista, filtro);
+  //     setMembros(listaFiltrada);
+
+  //     // guarda label do filtro activo para mostrar ao utilizador
+  //     const labels = {
+  //       ativos: "Activos",
+  //       inativos: "Inactivos",
+  //       batizados: "Batizados",
+  //       escola_concluido: "Escola Concluída",
+  //       escola_emcurso: "Escola Em Curso",
+  //       escola_naofrequenta: "Não Frequentam Escola",
+  //       lideres: "Líderes de Células",
+  //     };
+  //     setFiltroActivo(filtro && filtro !== "todos" ? labels[filtro] || null : null);
+
+  //   } catch (err) {
+  //     console.error("fetchMembros error:", err);
+  //     setError(err.response?.data?.message || "Não foi possível carregar os membros.");
+  //     setMembros([]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const fetchMembros = async (filtro) => {
   setLoading(true);
   setError(null);
   try {
@@ -32,7 +96,13 @@ export default function MembrosPage() {
       : Array.isArray(data.membros)
         ? data.membros
         : [];
-    setMembros(lista);
+
+    setMembrosOriginais(lista);
+
+    // usa o filtro passado como argumento, ou o estado actual
+    const filtroParaUsar = filtro !== undefined ? filtro : filtroActivo;
+    setMembros(aplicarFiltro(lista, filtroParaUsar));
+
   } catch (err) {
     console.error("fetchMembros error:", err);
     setError(err.response?.data?.message || "Não foi possível carregar os membros.");
@@ -41,11 +111,22 @@ export default function MembrosPage() {
     setLoading(false);
   }
 };
+
+useEffect(() => {
+  fetchMembros(filtroActivo); // passa o filtro inicial
+}, []);
+
   useEffect(() => {
     fetchMembros();
   }, []);
 
-  // ── Sort ─────────────────────────────────────────────────────────────────
+  // ── Limpar filtro e mostrar todos ─────────────────────────────────────────
+ const limparFiltro = () => {
+  setFiltroActivo(null);
+  setMembros(membrosOriginais);
+};
+
+  // ── Sort ──────────────────────────────────────────────────────────────────
   const handleSort = (key) => {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else {
@@ -54,7 +135,7 @@ export default function MembrosPage() {
     }
   };
 
-  // ── Filter + Sort ────────────────────────────────────────────────────────
+  // ── Filter + Sort ─────────────────────────────────────────────────────────
   const filtered = membros
     .filter((m) => {
       const q = search.toLowerCase();
@@ -74,7 +155,7 @@ export default function MembrosPage() {
   const ativos = membros.filter((m) => m.ativo).length;
   const inativos = total - ativos;
 
-  // ── Helpers ──────────────────────────────────────────────────────────────
+  // ── Helpers ───────────────────────────────────────────────────────────────
   const SortIcon = ({ col }) => {
     if (sortKey !== col)
       return <ChevronsUpDown size={13} className="text-amber-400/40" />;
@@ -146,14 +227,37 @@ export default function MembrosPage() {
             Gerir todos os membros registados na IICGP
           </p>
         </div>
-        <button
+        {/* <button
           onClick={fetchMembros}
           className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
         >
           <RefreshCw size={14} />
           Actualizar
-        </button>
+        </button> */}
+        <button
+  onClick={() => fetchMembros(filtroActivo)} // ← passa o filtro activo
+  className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+>
+  <RefreshCw size={14} />
+  Actualizar
+</button>
       </div>
+
+      {/* ── FILTRO ACTIVO BADGE ── */}
+      {filtroActivo && (
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-500">A mostrar:</span>
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold border border-amber-200">
+            {filtroActivo}
+            <button
+              onClick={limparFiltro}
+              className="ml-1 hover:text-amber-900 transition-colors font-bold"
+            >
+              ×
+            </button>
+          </span>
+        </div>
+      )}
 
       {/* ── STAT CHIPS ── */}
       <div className="flex flex-wrap gap-3">
@@ -220,16 +324,16 @@ export default function MembrosPage() {
         {/* Table header info */}
         <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
           <p className="text-[12px] font-semibold text-slate-500">
-            {filtered.length === total
+            {filtered.length === membrosOriginais.length
               ? `${total} membros`
-              : `${filtered.length} de ${total} membros`}
+              : `${filtered.length} de ${membrosOriginais.length} membros`}
           </p>
           {search && (
             <button
               onClick={() => setSearch("")}
               className="text-[11px] text-amber-600 hover:text-amber-700 font-semibold transition-colors"
             >
-              Limpar filtro ×
+              Limpar pesquisa ×
             </button>
           )}
         </div>
@@ -240,19 +344,11 @@ export default function MembrosPage() {
               <tr>
                 <Th col="codigo">Código</Th>
                 <Th col="nome">Nome</Th>
-                {/* <Th col="genero">Género</Th> */}
-                {/* <Th col="data_nascimento">Data de Nascimento</Th> */}
-                {/* <Th col="bairro">Bairro</Th> */}
-                {/* <Th col="estado civil">Estado Civil</Th> */}
-                {/* <Th col="ocupacao">Ocupação</Th> */}
                 <Th col="branch_id">Filial</Th>
                 <Th col="parceiro">Parceiro da Igreja</Th>
                 <Th col="ano_de_ingresso">Ano de Ingresso</Th>
                 <Th col="escola_da_verdade">Escola da Verdade</Th>
-                {/* <Th col="data_de_conclusao">Data de Conclusao</Th> */}
                 <Th col="contacto">Contacto</Th>
-                {/* <Th col="tipo_documento">Documento de Identificação</Th>
-                <Th col="numero_documento">Número de Identificação</Th> */}
                 <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-amber-700/70">
                   Estado
                 </th>
@@ -261,7 +357,7 @@ export default function MembrosPage() {
             <tbody className="divide-y divide-slate-100">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-16 text-center">
+                  <td colSpan={8} className="py-16 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <Users className="w-8 h-8 text-slate-300" />
                       <p className="text-sm text-slate-400 font-medium">
@@ -276,8 +372,8 @@ export default function MembrosPage() {
                 filtered.map((m, i) => (
                   <tr
                     key={m.id ?? i}
-                    onClick={() => navigate(`/dashboard/membros/${m.id}`)} // ← ADICIONA AQUI
-                    className="hover:bg-amber-50/40 transition-colors group"
+                    onClick={() => navigate(`/dashboard/membros/${m.id}`)}
+                    className="hover:bg-amber-50/40 transition-colors group cursor-pointer"
                   >
                     {/* Código */}
                     <td className="px-4 py-3.5">
@@ -305,53 +401,6 @@ export default function MembrosPage() {
                       </div>
                     </td>
 
-                    {/* Género */}
-                    {/* <td className="px-4 py-3.5">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border
-                        ${
-                          m.genero === "M" ||
-                          m.genero?.toLowerCase() === "masculino"
-                            ? "bg-blue-50 text-blue-700 border-blue-100"
-                            : "bg-pink-50 text-pink-700 border-pink-100"
-                        }`}
-                      >
-                        {m.genero ?? "—"}
-                      </span>
-                    </td> */}
-
-                    {/* Data de Nascimento */}
-                    {/* <td className="px-4 py-3.5">
-                      <span className="text-[13px] text-slate-600">
-                        {m.data_nascimento
-                          ? new Date(m.data_nascimento).toLocaleDateString(
-                              "pt-MZ",
-                            ) // formato local de Moçambique
-                          : "—"}
-                      </span>
-                    </td> */}
-
-                    {/*Bairro */}
-                    {/* <td className="px-4 py-3.5">
-                      <span className="text-[13px] text-slate-600">
-                        {m.bairro ?? "—"}
-                      </span>
-                    </td> */}
-
-                    {/* Estado Civil */}
-                    {/* <td className="px-4 py-3.5">
-                      <span className="text-[13px] font-semibold text-slate-600">
-                        {m.estado_civil ?? "—"}
-                      </span>
-                    </td> */}
-
-                    {/* Ocupacao */}
-                    {/* <td className="px-4 py-3.5">
-                      <span className="text-[13px] font-semibold text-slate-600">
-                        {m.ocupacao ?? "—"}
-                      </span>
-                    </td> */}
-
                     {/* Branch */}
                     <td className="px-4 py-3.5">
                       <span className="text-[13px] font-semibold text-slate-600">
@@ -359,31 +408,31 @@ export default function MembrosPage() {
                       </span>
                     </td>
 
-                    {/* Parceiro Boolean*/}
+                    {/* Parceiro */}
                     <td className="px-4 py-3.5">
                       <span className="text-[13px] font-semibold text-slate-600">
                         {m.parceiro ? "Sim" : "Não"}
                       </span>
                     </td>
 
-                    {/*Ano de Ingresso */}
+                    {/* Ano de Ingresso */}
                     <td className="px-4 py-3.5">
                       <span className="text-[13px] font-semibold text-slate-600">
                         {m.ano_ingresso ?? "—"}
                       </span>
                     </td>
 
-                    {/* Escolda da Verdade */}
+                    {/* Escola da Verdade */}
                     <td className="px-4 py-3.5">
                       <span
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border
-    ${
-      m.escola_da_verdade === "Concluido"
-        ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-        : m.escola_da_verdade === "Em curso"
-          ? "bg-amber-50 text-amber-700 border-amber-100"
-          : "bg-red-50 text-red-600 border-red-100"
-    }`}
+                          ${
+                            m.escola_da_verdade === "Concluido"
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                              : m.escola_da_verdade === "Em curso"
+                                ? "bg-amber-50 text-amber-700 border-amber-100"
+                                : "bg-red-50 text-red-600 border-red-100"
+                          }`}
                       >
                         <span
                           className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
@@ -398,54 +447,31 @@ export default function MembrosPage() {
                           Concluido: "Concluído",
                           "Em curso": "Em curso",
                           "Nao frequenta": "Não frequenta",
-                        }[m.escola_da_verdade] || "-"}
+                        }[m.escola_da_verdade] || "—"}
                       </span>
                     </td>
 
-                    {/* Data de Conclusao */}
-                    {/* <td className="px-4 py-3.5">
-                      <span className="text-[13px] text-slate-600">
-                        {m.data_conclusao_escola
-                          ? new Date(
-                              m.data_conclusao_escola,
-                            ).toLocaleDateString("pt-MZ") // formato local de Moçambique
-                          : "—"}
-                      </span>
-                    </td> */}
-
-                    {/*Contacto */}
+                    {/* Contacto */}
                     <td className="px-4 py-3.5">
                       <span className="text-[13px] text-slate-600">
-                        {m.contacto}
+                        {m.contacto ?? "—"}
                       </span>
                     </td>
-
-                    {/*Tipo de Documento*/}
-                    {/* <td className="px-4 py-3.5">
-                      <span className="text-[13px] text-slate-600">
-                        {m.tipo_documento}
-                      </span>
-                    </td> */}
-
-                    {/*Numero de documento*/}
-                    {/* <td className="px-4 py-3.5">
-                      <span className="text-[13px] text-slate-600">
-                        {m.numero_documento}
-                      </span>
-                    </td> */}
 
                     {/* Estado */}
                     <td className="px-4 py-3.5">
                       <span
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border
-                        ${
-                          m.ativo
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                            : "bg-red-50 text-red-600 border-red-100"
-                        }`}
+                          ${
+                            m.ativo
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                              : "bg-red-50 text-red-600 border-red-100"
+                          }`}
                       >
                         <span
-                          className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${m.ativo ? "bg-emerald-500" : "bg-red-400"}`}
+                          className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                            m.ativo ? "bg-emerald-500" : "bg-red-400"
+                          }`}
                         />
                         {m.ativo ? "Activo" : "Inactivo"}
                       </span>

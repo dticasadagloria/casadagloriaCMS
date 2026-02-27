@@ -33,6 +33,8 @@ import Finances from "./Finanças/Finances";
 import CallCenter from "./Call_Center/CallCenter";
 import Estatistica from "./Estatistica/Estatistica";
 import Cultos from "./Estatistica/Cultos";
+import DonutBatizados from "../../components/charts/DonutBatizados.jsx";
+import BarEscolaDaVerdade from "@/components/charts/BarEscolaDaVerdade.jsx";
 import api from "@/api/api";
 // ─── TABS CONFIG ─────────────────────────────────────────────────────────────
 const tabs = [
@@ -196,8 +198,19 @@ const NavItem = ({
 };
 
 // ─── STATS CARD ──────────────────────────────────────────────────────────────
-const StatCard = ({ title, value, change, changeType, Icon, gradient }) => (
-  <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100/60 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group">
+const StatCard = ({
+  title,
+  value,
+  change,
+  changeType,
+  Icon,
+  gradient,
+  onClick,
+}) => (
+  <div
+    onClick={onClick}
+    className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100/60 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+  >
     <div className="flex items-start justify-between mb-4">
       <div>
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
@@ -238,58 +251,81 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
- useEffect(() => {
-  const fetchCurrentUser = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await api.get("/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setCurrentUser(res.data); 
-    } catch (err) {
-      console.error("Erro ao buscar utilizador:", err);
-    }
-  };
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await api.get("/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setCurrentUser(res.data);
+      } catch (err) {
+        console.error("Erro ao buscar utilizador:", err);
+      }
+    };
 
-  fetchCurrentUser();
-}, []);
+    fetchCurrentUser();
+  }, []);
 
   // const ROLES_COM_RESTAURACOES = [1, 2];
   // ─── ROLES ───────────────────────────────────────────────────────────────────
-// Adiciona aqui os IDs de cada role do teu sistema
-const ROLES = {
-  ADMIN: 1,
-  PASTOR: 2,
-  FINANCAS: 3,
-  ESTATISTICA: 8,
-  CALLCENTER: 9,
-  SOSSOCORROS: 10,
-  // NOVO_ROLE: 5,  <-- adiciona aqui futuramente
-};
+  // Adiciona aqui os IDs de cada role do teu sistema
+  const ROLES = {
+    ADMIN: 1,
+    PASTOR: 2,
+    FINANCAS: 3,
+    ESTATISTICA: 8,
+    CALLCENTER: 9,
+    SOSSOCORROS: 10,
+    // NOVO_ROLE: 5,  <-- adiciona aqui futuramente
+  };
 
-// ─── PERMISSÕES POR TAB ──────────────────────────────────────────────────────
-// null = todos têm acesso | [1,2] = só esses roles têm acesso
-const PERMISSOES = {
-  "dashboard":      null,
-  "membros":        [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.ESTATISTICA, ROLES.CALLCENTER],
-  "lista-membros":  [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.ESTATISTICA],
-  "novo-membro":    [ROLES.ADMIN, ROLES.PASTOR, ROLES.SECRETARIO, ROLES.ESTATISTICA],
-  "restauracoes":   [ROLES.ADMIN, ROLES.PASTOR],
-  "financas":       [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS],
-  "call-center":    [ROLES.ADMIN, ROLES.PASTOR, ROLES.CALLCENTER],
-  "sos-socorros":   [ROLES.ADMIN, ROLES.PASTOR, ROLES.SOSSOCORROS],
-  "usuarios":       [ROLES.ADMIN],
-  "perfil":         null,
-  "permissoes":     [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.ESTATISTICA, ROLES.CALLCENTER, ROLES.SOSSOCORROS],
-  // "novo-tab":    [ROLES.ADMIN],  <-- adiciona aqui futuramente
-};
+  // ─── PERMISSÕES POR TAB ──────────────────────────────────────────────────────
+  // null = todos têm acesso | [1,2] = só esses roles têm acesso
+  const PERMISSOES = {
+    dashboard: null,
+    membros: [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.FINANCAS,
+      ROLES.ESTATISTICA,
+      ROLES.CALLCENTER,
+    ],
+    "lista-membros": [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.FINANCAS,
+      ROLES.ESTATISTICA,
+    ],
+    "novo-membro": [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.SECRETARIO,
+      ROLES.ESTATISTICA,
+    ],
+    restauracoes: [ROLES.ADMIN, ROLES.PASTOR],
+    financas: [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS],
+    "call-center": [ROLES.ADMIN, ROLES.PASTOR, ROLES.CALLCENTER],
+    "sos-socorros": [ROLES.ADMIN, ROLES.PASTOR, ROLES.SOSSOCORROS],
+    usuarios: [ROLES.ADMIN],
+    perfil: null,
+    permissoes: [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.FINANCAS,
+      ROLES.ESTATISTICA,
+      ROLES.CALLCENTER,
+      ROLES.SOSSOCORROS,
+    ],
+    // "novo-tab":    [ROLES.ADMIN],  <-- adiciona aqui futuramente
+  };
 
-// ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
-const temAcesso = (key, roleId) => {
-  const permitidos = PERMISSOES[key];
-  if (!permitidos) return true; // null = acesso livre
-  return permitidos.includes(roleId);
-};
+  // ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
+  const temAcesso = (key, roleId) => {
+    const permitidos = PERMISSOES[key];
+    if (!permitidos) return true; // null = acesso livre
+    return permitidos.includes(roleId);
+  };
 
   const toggleMenu = (key) =>
     setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -307,50 +343,80 @@ const temAcesso = (key, roleId) => {
   })();
 
   const tabsFiltradas = tabs
-  .filter((tab) => temAcesso(tab.key, currentUser?.role_id))
-  .map((tab) => {
-    if (tab.children) {
-      return {
-        ...tab,
-        children: tab.children.filter((child) =>
-          temAcesso(child.key, currentUser?.role_id)
-        ),
-      };
-    }
-    return tab;
-  });
+    .filter((tab) => temAcesso(tab.key, currentUser?.role_id))
+    .map((tab) => {
+      if (tab.children) {
+        return {
+          ...tab,
+          children: tab.children.filter((child) =>
+            temAcesso(child.key, currentUser?.role_id),
+          ),
+        };
+      }
+      return tab;
+    });
 
   // ── Fetch ────────────────────────────────────────────────────────────────
- const fetchMembros = async () => {
-  setLoading(true);
-  setError(null);
-  try {
-    const res = await api.get("/api/membros");
+  const fetchMembros = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await api.get("/api/membros");
 
-    const data = res.data;
-    const lista = Array.isArray(data)
-      ? data
-      : Array.isArray(data.membros)
-        ? data.membros
-        : [];
+      const data = res.data;
+      const lista = Array.isArray(data)
+        ? data
+        : Array.isArray(data.membros)
+          ? data.membros
+          : [];
 
-    setMembros(lista);
-  } catch (err) {
-    console.error("fetchMembros error:", err);
-    setError(err.response?.data?.message || "Não foi possível carregar os membros.");
-    setMembros([]);
-  } finally {
-    setLoading(false);
-  }
-};
+      setMembros(lista);
+    } catch (err) {
+      console.error("fetchMembros error:", err);
+      setError(
+        err.response?.data?.message || "Não foi possível carregar os membros.",
+      );
+      setMembros([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-useEffect(() => {
-  fetchMembros();
-}, []);
+  useEffect(() => {
+    fetchMembros();
+  }, []);
 
   const total = membros.length;
   const ativos = membros.filter((m) => m.ativo).length;
+  const totalBatizados = membros.filter((m) => m.batizado === true).length;
+  const naoBatizados = membros.filter((m) => m.batizado === false).length;
+  const totalEscolaConcluido = membros.filter(
+    (m) => m.escola_da_verdade === "Concluido",
+  ).length;
+  const totalEscolaEmCurso = membros.filter(
+    (m) => m.escola_da_verdade === "Em curso",
+  ).length;
+  const totalEscolaNaoFrequenta = membros.filter(
+    (m) => m.escola_da_verdade === "Nao frequenta",
+  ).length;
   const inativos = total - ativos;
+
+  //   const handleCardClick = (type) => {
+  //   if (type === "batizados") {
+  //     setActiveTab("lista-membros");
+  //     sessionStorage.setItem("filtroMembros", "batizados");
+  //   } else if (type === "escola_concluido") {
+  //     setActiveTab("lista-membros");
+  //     sessionStorage.setItem("filtroMembros", "escola_concluido");
+  //   } else if (type === "escola_emcurso") {
+  //     setActiveTab("lista-membros");
+  //     sessionStorage.setItem("filtroMembros", "escola_emcurso");
+  //   }
+  // };
+  const handleCardClick = (type) => {
+    setActiveTab("lista-membros");
+    sessionStorage.setItem("filtroMembros", type);
+  };
 
   return (
     <>
@@ -515,53 +581,108 @@ useEffect(() => {
                       <StatCard
                         title="Membros da Igreja"
                         value={membros.length}
-                        change="Membros Adicionados"
+                        change="Ver todos os membros"
                         changeType="up"
                         Icon={Users}
                         gradient="from-amber-500 to-amber-600"
+                        onClick={() => handleCardClick("todos")}
                       />
                       <StatCard
                         title="Membros Activos"
                         value={ativos}
-                        change="8% vs mês passado"
+                        change="Ver membros activos"
                         changeType="up"
                         Icon={Users}
                         gradient="from-yellow-500 to-amber-500"
+                        onClick={() => handleCardClick("ativos")}
                       />
                       <StatCard
                         title="Membros Inactivos"
                         value={inativos}
-                        change="Membros Inactivos"
+                        change="Ver membros inactivos"
                         changeType="neutral"
                         Icon={UserX}
                         gradient="from-amber-600 to-yellow-600"
+                        onClick={() => handleCardClick("inativos")}
                       />
                       <StatCard
                         title="Lideres de Células"
                         value="33"
-                        change="Lideres de Células"
+                        change="Ver líderes"
                         changeType="up"
                         Icon={Headphones}
                         gradient="from-yellow-500 to-amber-600"
+                        onClick={() => handleCardClick("lideres")}
+                      />
+                      {/* <StatCard
+                        title="Membros Batizados"
+                        value={totalBatizados}
+                        change="Ver batizados"
+                        changeType="up"
+                        Icon={BookOpen}
+                        gradient="from-emerald-500 to-teal-500"
+                        onClick={() => handleCardClick("batizados")}
+                      />
+                      <StatCard
+                        title="Escola da Verdade (Concluído)"
+                        value={totalEscolaConcluido}
+                        change="Ver concluídos"
+                        changeType="up"
+                        Icon={Calendar}
+                        gradient="from-sky-500 to-blue-500"
+                        onClick={() => handleCardClick("escola_concluido")}
+                      />
+                      <StatCard
+                        title="Escola da Verdade (Em Curso)"
+                        value={totalEscolaEmCurso}
+                        change="Ver em curso"
+                        changeType="neutral"
+                        Icon={Calendar}
+                        gradient="from-yellow-500 to-amber-500"
+                        onClick={() => handleCardClick("escola_emcurso")}
+                      />
+                      <StatCard
+                        title="Escola da Verdade (Não Frequenta)"
+                        value={totalEscolaNaoFrequenta}
+                        change="Ver não frequentam"
+                        changeType="down"
+                        Icon={Calendar}
+                        gradient="from-red-400 to-rose-500"
+                        onClick={() => handleCardClick("escola_naofrequenta")}
+                      /> */}
+                    </div>
+
+                    <div className="flex flex-wrap gap-5 ">
+                      <DonutBatizados
+                        membros={membros}
+                        onFiltrar={handleCardClick}
+                      />
+                      <BarEscolaDaVerdade
+                        membros={membros}
+                        onFiltrar={handleCardClick}
                       />
                     </div>
                   </div>
                 )}
 
                 {/* ── MEMBROS ── */}
-                {(activeTab === "membros" || activeTab === "lista-membros") && temAcesso("membros", currentUser?.role_id) && (
-                  <Membros />
-                )}
+                {(activeTab === "membros" || activeTab === "lista-membros") &&
+                  temAcesso("membros", currentUser?.role_id) && <Membros />}
 
                 {/* Editar membro */}
                 {(activeTab === "editar-membro" ||
-                  activeTab === "editar-membro") && temAcesso("editar-membro", currentUser?.role_id) && <EditarMembro />}
+                  activeTab === "editar-membro") &&
+                  temAcesso("editar-membro", currentUser?.role_id) && (
+                    <EditarMembro />
+                  )}
                 {/*Restauracoes*/}
-                {activeTab === "restauracoes" && temAcesso("restauracoes", currentUser?.role_id) && <Restauracoes />}
+                {activeTab === "restauracoes" &&
+                  temAcesso("restauracoes", currentUser?.role_id) && (
+                    <Restauracoes />
+                  )}
                 {/* Usuários */}
-                {(activeTab === "usuarios" || activeTab === "usuarios") && temAcesso("usuarios", currentUser?.role_id) && (
-                  <Usuarios />
-                )}
+                {(activeTab === "usuarios" || activeTab === "usuarios") &&
+                  temAcesso("usuarios", currentUser?.role_id) && <Usuarios />}
 
                 {/*Profile Page*/}
                 {(activeTab === "perfil" || activeTab === "perfil") && (
@@ -569,30 +690,37 @@ useEffect(() => {
                 )}
 
                 {/*Novo Membro*/}
-                {(activeTab === "novo-membro" ||
-                  activeTab === "novo-membro") && temAcesso("novo-membro", currentUser?.role_id) && <NovoMembro />}
+                {(activeTab === "novo-membro" || activeTab === "novo-membro") &&
+                  temAcesso("novo-membro", currentUser?.role_id) && (
+                    <NovoMembro />
+                  )}
 
                 {/*Finanças*/}
-                {(activeTab === "financas" || activeTab === "financas") && temAcesso("financas", currentUser?.role_id) && (
-                  <Finances />
-                )}
+                {(activeTab === "financas" || activeTab === "financas") &&
+                  temAcesso("financas", currentUser?.role_id) && <Finances />}
 
                 {/*Call Center*/}
-                {(activeTab === "call-center" ||
-                  activeTab === "call-center") && temAcesso("call-center", currentUser?.role_id) && <CallCenter />}
+                {(activeTab === "call-center" || activeTab === "call-center") &&
+                  temAcesso("call-center", currentUser?.role_id) && (
+                    <CallCenter />
+                  )}
 
                 {/*Sos Socorros*/}
                 {(activeTab === "sos-socorros" ||
-                  activeTab === "sos-socorros") && temAcesso("sos-socorros", currentUser?.role_id) && <SosSocorros />}
+                  activeTab === "sos-socorros") &&
+                  temAcesso("sos-socorros", currentUser?.role_id) && (
+                    <SosSocorros />
+                  )}
 
-                
                 {/*Estatistica*/}
-                {(activeTab === "estatistica" ||
-                  activeTab === "estatistica") && temAcesso("estatistica", currentUser?.role_id) && <Estatistica />}
+                {(activeTab === "estatistica" || activeTab === "estatistica") &&
+                  temAcesso("estatistica", currentUser?.role_id) && (
+                    <Estatistica />
+                  )}
 
                 {/*Cultos*/}
-                {(activeTab === "cultos" ||
-                  activeTab === "cultos") && temAcesso("cultos", currentUser?.role_id) && <Cultos />}
+                {(activeTab === "cultos" || activeTab === "cultos") &&
+                  temAcesso("cultos", currentUser?.role_id) && <Cultos />}
 
                 {/* ── PLACEHOLDER PAGES ── */}
                 {![
