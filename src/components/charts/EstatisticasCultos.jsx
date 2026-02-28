@@ -117,7 +117,7 @@ const EstatisticasCultos = () => {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={porMes} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <LineChart data={porMes} margin={{ top: 10, right: 10, left: -8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
               <XAxis
                 dataKey="mes"
@@ -167,7 +167,7 @@ const EstatisticasCultos = () => {
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={porMes} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} barCategoryGap="30%">
+            <BarChart data={porMes} margin={{ top: 10, right: 10, left: -8, bottom: 0 }} barCategoryGap="30%">
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
               <XAxis
                 dataKey="mes"
@@ -214,7 +214,7 @@ const EstatisticasCultos = () => {
           <ResponsiveContainer width="100%" height={260}>
             <BarChart
               data={porCulto}
-              margin={{ top: 10, right: 10, left: -20, bottom: 30 }}
+              margin={{ top: 10, right: 10, left: -8, bottom: 0 }}
               barCategoryGap="30%"
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />

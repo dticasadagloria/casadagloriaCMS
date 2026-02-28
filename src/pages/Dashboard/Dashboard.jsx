@@ -33,6 +33,7 @@ import Finances from "./Finanças/Finances";
 import CallCenter from "./Call_Center/CallCenter";
 import Estatistica from "./Estatistica/Estatistica";
 import Cultos from "./Estatistica/Cultos";
+import Visitantes from "./Estatistica/Visitantes";
 import DonutBatizados from "@/components/charts/DonutBatizados.jsx";
 import BarEscolaDaVerdade from "@/components/charts/BarEscolaDaVerdade.jsx";
 import LinhaCrescimento from "@/components/charts/LinhaCrescimento.jsx";
@@ -63,6 +64,7 @@ const tabs = [
     children: [
       { key: "estatistica", label: "Dashboard", icon: BarChart3 },
       { key: "cultos", label: "Cultos", icon: UserPlus },
+      { key: "visitantes", label: "Visitas", icon: Users}
     ],
   },
   {
@@ -731,6 +733,10 @@ const Dashboard = () => {
                 {(activeTab === "cultos" || activeTab === "cultos") &&
                   temAcesso("cultos", currentUser?.role_id) && <Cultos />}
 
+                  {/*Visitas*/}
+                  {(activeTab === "visitantes" || activeTab === "visitantes") &&
+                    temAcesso("visitantes", currentUser?.role_id) && <Visitantes />}
+
                 {/* ── PLACEHOLDER PAGES ── */}
                 {![
                   "dashboard",
@@ -745,6 +751,7 @@ const Dashboard = () => {
                   "call-center",
                   "estatistica",
                   "cultos",
+                  "visitantes",
                   "dashboard-socorros",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
