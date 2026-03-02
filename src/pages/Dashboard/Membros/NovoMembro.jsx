@@ -131,7 +131,7 @@ const NovoMembro = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    codigo: "",
+    // codigo: "",
     nome_membro: "",
     genero: "",
     data_nascimento: "",
@@ -221,14 +221,14 @@ const NovoMembro = () => {
         {/* Informações Pessoais */}
         <Section title="Informações Pessoais" icon={User}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
+            {/* <Input
               label="Código do Membro"
               name="codigo"
               placeholder="Ex: M001"
               icon={User}
               form={form}
               onChange={handleChange}
-            />
+            /> */}
             <Input
               label="Nome Completo *"
               name="nome_membro"
@@ -245,8 +245,8 @@ const NovoMembro = () => {
               form={form}
               onChange={handleChange}
               options={[
-                { value: "M", label: "Masculino" },
-                { value: "F", label: "Feminino" },
+                { value: "Masculino", label: "Masculino" },
+                { value: "Feminino", label: "Feminino" },
               ]}
             />
             <Input
@@ -264,8 +264,7 @@ const NovoMembro = () => {
               form={form}
               onChange={handleChange}
               options={[
-                { value: "Adulto", label: "Adulto" },
-                { value: "Jovem", label: "Jovem" },
+                { value: "Jovem: entre 18 e 35", label: "Jovem: entre 18 e 35" },
                 { value: "Criança", label: "Criança" },
                 { value: "Idoso", label: "Idoso" },
               ]}

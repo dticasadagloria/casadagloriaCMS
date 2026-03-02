@@ -62,7 +62,7 @@ const tabs = [
     label: "Estatística",
     icon: BarChart3,
     children: [
-      { key: "estatistica", label: "Dashboard", icon: BarChart3 },
+      { key: "estatistica", label: "Painel de Controle", icon: BarChart3 },
       { key: "cultos", label: "Cultos", icon: UserPlus },
       { key: "visitantes", label: "Visitas", icon: Users}
     ],
@@ -71,6 +71,10 @@ const tabs = [
     key: "financas",
     label: "Finanças",
     icon: Landmark,
+    children: [
+      { key: "dashboard-financas", label: "Painel de Controle", icon: BarChart3 },
+      { key: "requisicoes", label: "Requisições", icon: BarChart3 },
+    ],
   },
   {
     key: "call-center",

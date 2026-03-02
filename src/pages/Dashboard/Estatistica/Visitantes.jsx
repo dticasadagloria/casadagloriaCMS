@@ -308,7 +308,14 @@ const ModalConverter = ({ visitante, branches, onFechar, onConvertido }) => {
             <div className="col-span-2">
               <Field label="Filial">
                 <select value={form.branch_id} onChange={set("branch_id")} className={inputClass}>
-                  <option value="">Selecionar filial</option>
+                   <option value="1">IICGP-ALBAZINE</option>
+              <option value="2">IICGP-MAGOANINE</option>
+              <option value="3">IICGP-Mathemele</option>
+              <option value="4">IICGP-Maxixe</option>
+              <option value="5">IICGP-NAMAACHA</option>
+              <option value="6">IICGP-Nampula</option>
+              <option value="7">IICGP-Xai-Xai</option>
+              <option value="8">IICGP-Zimpeto</option>
                   {branches.map((b) => (
                     <option key={b.id} value={b.id}>{b.nome}</option>
                   ))}
