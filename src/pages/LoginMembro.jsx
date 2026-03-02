@@ -103,7 +103,7 @@ const MemberLogin = () => {
                       setCodigo(e.target.value.toUpperCase());
                       setError("");
                     }}
-                    placeholder="ex: M001"
+                    placeholder="ex: M000001"
                     disabled={loading}
                     className="block w-full pl-10 pr-4 py-3 bg-yellow-200/10 border border-border rounded-xl text-foreground placeholder:text-gray-400 font-body text-sm tracking-widest uppercase transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-primary focus:bg-card disabled:opacity-50"
                   />

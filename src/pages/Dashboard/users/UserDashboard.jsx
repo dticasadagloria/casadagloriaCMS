@@ -48,7 +48,7 @@ const MemberDashboard = () => {
   useEffect(() => {
     const raw = sessionStorage.getItem("membro_logado");
     const parsed = JSON.parse(raw);
-    console.log("✅ membro completo:", parsed);
+    console.log("membro completo:", parsed);
 
     if (!raw || raw === "undefined") {
       navigate("/member-login");
