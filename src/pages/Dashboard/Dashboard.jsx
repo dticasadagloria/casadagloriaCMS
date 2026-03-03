@@ -20,6 +20,8 @@ import {
   HeartHandshake,
   Landmark,
   BarChart3,
+  ShieldHalf,
+  Building2
 } from "lucide-react";
 import Header from "@/components/Header";
 import Membros from "./Membros/Membros";
@@ -38,6 +40,7 @@ import DonutBatizados from "@/components/charts/DonutBatizados.jsx";
 import BarEscolaDaVerdade from "@/components/charts/BarEscolaDaVerdade.jsx";
 import LinhaCrescimento from "@/components/charts/LinhaCrescimento.jsx";
 import DashboardSocorros from "./Socorros/DashboardSocorros";
+import Departamentos from "./Departamentos/Departamentos";
 import api from "@/api/api";
 // ─── TABS CONFIG ─────────────────────────────────────────────────────────────
 const tabs = [
@@ -56,6 +59,11 @@ const tabs = [
       { key: "restauracoes", label: "Restaurações", icon: UserPlus },
       // { key: "editar-membro", label: "Editar Membro", icon: UserPlus },
     ],
+  },
+  {
+      key: "departamentos",
+      label: "Departamentos",
+      icon: Building2,
   },
   {
     key: "estatistica",
@@ -261,6 +269,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [statsDepartamentos, setStatsDepartamentos] = useState(null);
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -332,6 +341,7 @@ const Dashboard = () => {
       ROLES.SOSSOCORROS,
     ],
     // "novo-tab":    [ROLES.ADMIN],  <-- adiciona aqui futuramente
+    departamentos: [ROLES.ADMIN, ROLES.PASTOR],
   };
 
   // ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
@@ -415,6 +425,13 @@ const Dashboard = () => {
   ).length;
   const inativos = total - ativos;
 
+  //fetch departamentos
+  useEffect(() => {
+  api.get("/api/departamentos/stats")
+    .then((res) => setStatsDepartamentos(res.data.stats))
+    .catch(console.error);
+}, []);
+
   //   const handleCardClick = (type) => {
   //   if (type === "batizados") {
   //     setActiveTab("lista-membros");
@@ -428,6 +445,11 @@ const Dashboard = () => {
   //   }
   // };
   const handleCardClick = (type) => {
+
+     if (type === "departamentos") {
+    setActiveTab("departamentos");
+    return;
+  }
     setActiveTab("lista-membros");
     sessionStorage.setItem("filtroMembros", type);
   };
@@ -628,6 +650,15 @@ const Dashboard = () => {
                         gradient="from-yellow-500 to-amber-600"
                         onClick={() => handleCardClick("lideres")}
                       />
+                      <StatCard
+  title="Departamentos"
+  value={statsDepartamentos?.total ?? 0}
+  change={`${statsDepartamentos?.activos ?? 0} activos`}
+  changeType="up"
+  Icon={Building2}
+  gradient="from-violet-500 to-purple-600"
+  onClick={() => handleCardClick("departamentos")}
+/>
                       {/* <StatCard
                         title="Membros Batizados"
                         value={totalBatizados}
@@ -710,6 +741,11 @@ const Dashboard = () => {
                     <NovoMembro />
                   )}
 
+                  {/*Departaemntos*/}
+                  {(activeTab === "deapartamentos" || activeTab === "departamentos") && temAcesso("departamentos", currentUser?.role_id) && (
+                    <Departamentos />
+                  )}
+
                 {/*Finanças*/}
                 {(activeTab === "financas" || activeTab === "financas") &&
                   temAcesso("financas", currentUser?.role_id) && <Finances />}
@@ -757,6 +793,7 @@ const Dashboard = () => {
                   "cultos",
                   "visitantes",
                   "dashboard-socorros",
+                  "departamentos",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
