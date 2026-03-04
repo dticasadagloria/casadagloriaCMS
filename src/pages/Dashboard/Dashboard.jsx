@@ -21,7 +21,8 @@ import {
   Landmark,
   BarChart3,
   ShieldHalf,
-  Building2
+  Building2,
+  HandCoins
 } from "lucide-react";
 import Header from "@/components/Header";
 import Membros from "./Membros/Membros";
@@ -30,8 +31,9 @@ import EditarMembro from "./Membros/EditarMembro";
 import Restauracoes from "./Membros/Restauracoes";
 import Usuarios from "./Configuracoes/Users";
 import ProfilePage from "./Configuracoes/ProfilePage";
-import SosSocorros from "./Socorros/SosSocorros";
 import Finances from "./Finanças/Finances";
+import Ofertas from "./Finanças/Ofertas"
+import Requisicoes from "./Finanças/Requisicoes";
 import CallCenter from "./Call_Center/CallCenter";
 import Estatistica from "./Estatistica/Estatistica";
 import Cultos from "./Estatistica/Cultos";
@@ -81,6 +83,7 @@ const tabs = [
     icon: Landmark,
     children: [
       { key: "dashboard-financas", label: "Painel de Controle", icon: BarChart3 },
+      { key: "ofertas", label: "Ofertas", icon:  HandCoins},
       { key: "requisicoes", label: "Requisições", icon: BarChart3 },
     ],
   },
@@ -342,6 +345,7 @@ const Dashboard = () => {
     ],
     // "novo-tab":    [ROLES.ADMIN],  <-- adiciona aqui futuramente
     departamentos: [ROLES.ADMIN, ROLES.PASTOR],
+    requisicoes: [ROLES.ADMIN,ROLES.PASTOR]
   };
 
   // ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
@@ -750,6 +754,15 @@ const Dashboard = () => {
                 {(activeTab === "financas" || activeTab === "financas") &&
                   temAcesso("financas", currentUser?.role_id) && <Finances />}
 
+                {/* Ofertas */}
+                {(activeTab === "ofertas" || activeTab === "ofertas") &&
+                  temAcesso("ofertas", currentUser?.role_id) && <Ofertas />}
+
+
+                {/*Requisicoes*/}
+                {(activeTab === "requisicoes" || activeTab === "requisicoes") &&
+                  temAcesso("requisicoes", currentUser?.role_id) && <Requisicoes userRole={currentUser?.role_id}/>}
+
                 {/*Call Center*/}
                 {(activeTab === "call-center" || activeTab === "call-center") &&
                   temAcesso("call-center", currentUser?.role_id) && (
@@ -794,6 +807,8 @@ const Dashboard = () => {
                   "visitantes",
                   "dashboard-socorros",
                   "departamentos",
+                  "requisicoes",
+                  "ofertas",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">

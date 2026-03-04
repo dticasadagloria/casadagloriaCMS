@@ -159,7 +159,7 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    api.get("/api/membros/branches").then((res) => {
+    api.get("/api/branches").then((res) => {
       setBranches(res.data.branches || []);
     }).catch(console.error);
   }, []);
@@ -251,14 +251,14 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
             <select value={form.branch_id}
               onChange={(e) => setForm({ ...form, branch_id: e.target.value })}
               className={inputClass}>
-             <option value="1">IICGP-ALBAZINE</option>
+             {/* <option value="1">IICGP-ALBAZINE</option>
               <option value="2">IICGP-MAGOANINE</option>
               <option value="3">IICGP-Mathemele</option>
               <option value="4">IICGP-Maxixe</option>
               <option value="5">IICGP-NAMAACHA</option>
               <option value="6">IICGP-Nampula</option>
               <option value="7">IICGP-Xai-Xai</option>
-              <option value="8">IICGP-Zimpeto</option>
+              <option value="8">IICGP-Zimpeto</option> */}
               {branches.map((b) => (
                 <option key={b.id} value={b.id}>{b.nome}</option>
               ))}
