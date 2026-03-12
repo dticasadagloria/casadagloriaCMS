@@ -6,6 +6,19 @@ import {
   ArrowLeft, Search, Check, X, Calendar,
 } from "lucide-react";
 
+// ─── Componentes auxiliares FORA de tudo ─────────────────────────────────────
+
+const inputClass = "w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all";
+
+const Field = ({ label, children }) => (
+  <div className="space-y-1.5">
+    <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+      {label}
+    </label>
+    {children}
+  </div>
+);
+
 // ═══════════════════════════════════════════════════════════
 // SECÇÃO 1 — LISTA DE CULTOS
 // ═══════════════════════════════════════════════════════════
@@ -46,7 +59,6 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
 
   return (
     <div className="space-y-5">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-slate-800">Cultos Registados</h2>
@@ -60,16 +72,12 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
         </button>
       </div>
 
-      {/* Tabela */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         {cultos.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <BookOpen className="w-10 h-10 text-slate-200" />
             <p className="text-sm text-slate-400 font-medium">Nenhum culto registado</p>
-            <button
-              onClick={onCriar}
-              className="text-xs text-amber-600 font-semibold hover:underline"
-            >
+            <button onClick={onCriar} className="text-xs text-amber-600 font-semibold hover:underline">
               Criar o primeiro culto →
             </button>
           </div>
@@ -97,23 +105,15 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
                         {new Date(c.data).toLocaleDateString("pt-MZ")}
                       </span>
                     </td>
-                    <td className="px-4 py-3.5">
-                      <span className="text-[13px] text-slate-600">{c.tipo}</span>
-                    </td>
+                    <td className="px-4 py-3.5"><span className="text-[13px] text-slate-600">{c.tipo}</span></td>
                     <td className="px-4 py-3.5">
                       <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-100">
                         {c.categoria}
                       </span>
                     </td>
-                    <td className="px-4 py-3.5">
-                      <span className="text-[13px] text-slate-600">{c.pregador ?? "—"}</span>
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span className="text-[13px] text-slate-600">{c.horario ?? "—"}</span>
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span className="text-[13px] text-slate-600">{c.nome_branch ?? "—"}</span>
-                    </td>
+                    <td className="px-4 py-3.5"><span className="text-[13px] text-slate-600">{c.pregador ?? "—"}</span></td>
+                    <td className="px-4 py-3.5"><span className="text-[13px] text-slate-600">{c.horario ?? "—"}</span></td>
+                    <td className="px-4 py-3.5"><span className="text-[13px] text-slate-600">{c.nome_branch ?? "—"}</span></td>
                     <td className="px-4 py-3.5">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
                         <UserCheck size={11} /> {c.total_presentes ?? 0}
@@ -159,10 +159,15 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    api.get("/api/branches").then((res) => {
-      setBranches(res.data.branches || []);
-    }).catch(console.error);
+    api.get("/api/branches")
+      .then((res) => setBranches(res.data.branches || []))
+      .catch(console.error);
   }, []);
+
+  const set = (field) => (e) => {
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    setErro(null);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -178,25 +183,10 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
     }
   };
 
-  const Field = ({ label, children }) => (
-    <div className="space-y-1.5">
-      <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-
-  const inputClass = "w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all";
-
   return (
     <div className="max-w-2xl space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-3">
-        <button
-          onClick={onVoltar}
-          className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors"
-        >
+        <button onClick={onVoltar} className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
           <ArrowLeft size={18} />
         </button>
         <div>
@@ -205,60 +195,62 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
         </div>
       </div>
 
-      {/* Formulário */}
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <Field label="Data *">
-            <input type="date" required value={form.data}
-              onChange={(e) => setForm({ ...form, data: e.target.value })}
-              className={inputClass} />
+            <input
+              type="date"
+              required
+              value={form.data}
+              onChange={set("data")}
+              className={inputClass}
+            />
           </Field>
+
           <Field label="Horário">
-            <input type="time" value={form.horario}
-              onChange={(e) => setForm({ ...form, horario: e.target.value })}
-              className={inputClass} />
+            <input
+              type="time"
+              value={form.horario}
+              onChange={set("horario")}
+              className={inputClass}
+            />
           </Field>
+
           <Field label="Tipo *">
-            <select required value={form.tipo}
-              onChange={(e) => setForm({ ...form, tipo: e.target.value })}
-              className={inputClass}>
+            <select required value={form.tipo} onChange={set("tipo")} className={inputClass}>
               <option value="">Selecionar tipo</option>
               <option>Culto Dominical</option>
               <option>Culto de Quinta-feira</option>
               <option>Escola de Casamento e Família</option>
-              <option>Culto de Domigo 7h</option>
-              <option>Culto de Domigo 10h</option>
+              <option>Culto de Domingo 7h</option>
+              <option>Culto de Domingo 10h</option>
               <option>Culto Especial</option>
               <option>Célula</option>
             </select>
           </Field>
+
           <Field label="Categoria">
-            <select value={form.categoria}
-              onChange={(e) => setForm({ ...form, categoria: e.target.value })}
-              className={inputClass}>
+            <select value={form.categoria} onChange={set("categoria")} className={inputClass}>
               <option>Culto</option>
               <option>Célula</option>
               <option>Evento</option>
               <option>Conferência</option>
             </select>
           </Field>
+
           <Field label="Pregador">
-            <input type="text" placeholder="Nome do pregador" value={form.pregador}
-              onChange={(e) => setForm({ ...form, pregador: e.target.value })}
-              className={inputClass} />
+            <input
+              type="text"
+              placeholder="Nome do pregador"
+              value={form.pregador}
+              onChange={set("pregador")}
+              className={inputClass}
+            />
           </Field>
+
           <Field label="Filial">
-            <select value={form.branch_id}
-              onChange={(e) => setForm({ ...form, branch_id: e.target.value })}
-              className={inputClass}>
-             {/* <option value="1">IICGP-ALBAZINE</option>
-              <option value="2">IICGP-MAGOANINE</option>
-              <option value="3">IICGP-Mathemele</option>
-              <option value="4">IICGP-Maxixe</option>
-              <option value="5">IICGP-NAMAACHA</option>
-              <option value="6">IICGP-Nampula</option>
-              <option value="7">IICGP-Xai-Xai</option>
-              <option value="8">IICGP-Zimpeto</option> */}
+            <select value={form.branch_id} onChange={set("branch_id")} className={inputClass}>
+              <option value="">Selecionar filial</option>
               {branches.map((b) => (
                 <option key={b.id} value={b.id}>{b.nome}</option>
               ))}
@@ -291,15 +283,15 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
 // SECÇÃO 3 — MARCAR PRESENÇAS + RELATÓRIO + IMPORTAR CSV
 // ═══════════════════════════════════════════════════════════
 const MarcarPresencas = ({ culto, onVoltar }) => {
-  const [membros, setMembros]     = useState([]);
-  const [stats, setStats]         = useState({});
-  const [search, setSearch]       = useState("");
-  const [filtro, setFiltro]       = useState("todos"); // todos | presentes | ausentes
-  const [loading, setLoading]     = useState(true);
-  const [saving, setSaving]       = useState(false);
+  const [membros, setMembros]       = useState([]);
+  const [stats, setStats]           = useState({});
+  const [search, setSearch]         = useState("");
+  const [filtro, setFiltro]         = useState("todos");
+  const [loading, setLoading]       = useState(true);
+  const [saving, setSaving]         = useState(false);
   const [importando, setImportando] = useState(false);
-  const [mensagem, setMensagem]   = useState(null);
-  const [vista, setVista]         = useState("presencas"); // presencas | relatorio
+  const [mensagem, setMensagem]     = useState(null);
+  const [vista, setVista]           = useState("presencas");
 
   const fetchPresencas = async () => {
     setLoading(true);
@@ -318,9 +310,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
 
   const togglePresenca = (membro_id) => {
     setMembros((prev) =>
-      prev.map((m) =>
-        m.membro_id === membro_id ? { ...m, presente: !m.presente } : m
-      )
+      prev.map((m) => m.membro_id === membro_id ? { ...m, presente: !m.presente } : m)
     );
   };
 
@@ -341,7 +331,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
       });
       setMensagem({ tipo: "sucesso", texto: "Presenças guardadas com sucesso!" });
       fetchPresencas();
-    } catch (err) {
+    } catch {
       setMensagem({ tipo: "erro", texto: "Erro ao guardar presenças." });
     } finally {
       setSaving(false);
@@ -361,7 +351,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
       });
       setMensagem({ tipo: "sucesso", texto: res.data.message });
       fetchPresencas();
-    } catch (err) {
+    } catch {
       setMensagem({ tipo: "erro", texto: "Erro ao importar CSV." });
     } finally {
       setImportando(false);
@@ -369,7 +359,6 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
     }
   };
 
-  // Filtragem
   const membrosFiltrados = membros
     .filter((m) => {
       if (filtro === "presentes") return m.presente === true;
@@ -384,7 +373,6 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
       );
     });
 
-  // Stats em tempo real
   const presentesAgora = membros.filter((m) => m.presente).length;
   const ausentesAgora  = membros.length - presentesAgora;
   const pctAgora       = membros.length > 0
@@ -402,8 +390,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
     <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <button onClick={onVoltar}
-          className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
+        <button onClick={onVoltar} className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
           <ArrowLeft size={18} />
         </button>
         <div className="flex-1">
@@ -414,8 +401,6 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
             {culto.nome_branch && ` · ${culto.nome_branch}`}
           </p>
         </div>
-
-        {/* Tabs */}
         <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
           {[
             { key: "presencas", label: "Presenças", icon: UserCheck },
@@ -430,13 +415,13 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
         </div>
       </div>
 
-      {/* Stat chips em tempo real */}
+      {/* Stat chips */}
       <div className="flex flex-wrap gap-3">
         {[
-          { label: "Total",     value: membros.length, cor: "slate" },
+          { label: "Total",     value: membros.length, cor: "slate"   },
           { label: "Presentes", value: presentesAgora, cor: "emerald" },
-          { label: "Ausentes",  value: ausentesAgora,  cor: "red" },
-          { label: "Taxa",      value: `${pctAgora}%`, cor: "amber" },
+          { label: "Ausentes",  value: ausentesAgora,  cor: "red"     },
+          { label: "Taxa",      value: `${pctAgora}%`, cor: "amber"   },
         ].map(({ label, value, cor }) => (
           <div key={label} className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-${cor}-100 shadow-sm`}>
             <div>
@@ -447,7 +432,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
         ))}
       </div>
 
-      {/* Mensagem feedback */}
+      {/* Mensagem */}
       {mensagem && (
         <div className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border
           ${mensagem.tipo === "sucesso"
@@ -461,23 +446,23 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
       {/* ── VISTA PRESENÇAS ── */}
       {vista === "presencas" && (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          {/* Toolbar */}
           <div className="px-5 py-4 border-b border-slate-100 space-y-3">
             <div className="flex flex-wrap items-center gap-3">
-              {/* Pesquisa */}
               <div className="relative flex-1 min-w-[200px]">
                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                <input type="text" placeholder="Pesquisar membro..." value={search}
+                <input
+                  type="text"
+                  placeholder="Pesquisar membro..."
+                  value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-8 pr-4 py-2 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all" />
+                  className="w-full pl-8 pr-4 py-2 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all"
+                />
               </div>
-
-              {/* Filtro */}
               <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
                 {[
-                  { key: "todos",     label: "Todos" },
+                  { key: "todos",     label: "Todos"     },
                   { key: "presentes", label: "Presentes" },
-                  { key: "ausentes",  label: "Ausentes" },
+                  { key: "ausentes",  label: "Ausentes"  },
                 ].map(({ key, label }) => (
                   <button key={key} onClick={() => setFiltro(key)}
                     className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all
@@ -486,8 +471,6 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                   </button>
                 ))}
               </div>
-
-              {/* Marcar todos */}
               <div className="flex gap-2">
                 <button onClick={() => marcarTodos(true)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold border border-emerald-100 transition-colors">
@@ -498,21 +481,17 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                   <X size={12} /> Todos ausentes
                 </button>
               </div>
-
-              {/* Importar CSV */}
               <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer ${importando ? "opacity-60 pointer-events-none" : ""}`}>
                 <Upload size={12} />
                 {importando ? "A importar..." : "Importar CSV"}
                 <input type="file" accept=".csv" onChange={importarCSV} className="hidden" />
               </label>
             </div>
-
             <p className="text-[11px] text-slate-400">
               A mostrar <span className="font-semibold text-slate-600">{membrosFiltrados.length}</span> de {membros.length} membros
             </p>
           </div>
 
-          {/* Lista de membros */}
           <div className="divide-y divide-slate-50 max-h-[500px] overflow-y-auto">
             {membrosFiltrados.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 gap-2">
@@ -521,39 +500,28 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
               </div>
             ) : (
               membrosFiltrados.map((m) => (
-                <div key={m.membro_id}
+                <div
+                  key={m.membro_id}
                   onClick={() => togglePresenca(m.membro_id)}
                   className={`flex items-center gap-4 px-5 py-3.5 cursor-pointer transition-colors
-                    ${m.presente ? "hover:bg-emerald-50/40 bg-emerald-50/20" : "hover:bg-red-50/30"}`}>
-                  {/* Checkbox */}
+                    ${m.presente ? "hover:bg-emerald-50/40 bg-emerald-50/20" : "hover:bg-red-50/30"}`}
+                >
                   <div className={`w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 border-2 transition-all
-                    ${m.presente
-                      ? "bg-emerald-500 border-emerald-500"
-                      : "bg-white border-slate-300 hover:border-amber-400"}`}>
+                    ${m.presente ? "bg-emerald-500 border-emerald-500" : "bg-white border-slate-300 hover:border-amber-400"}`}>
                     {m.presente && <Check size={13} className="text-white" strokeWidth={3} />}
                   </div>
-
-                  {/* Avatar */}
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm
-                    ${m.presente
-                      ? "bg-gradient-to-br from-emerald-400 to-emerald-500"
-                      : "bg-gradient-to-br from-slate-300 to-slate-400"}`}>
+                    ${m.presente ? "bg-gradient-to-br from-emerald-400 to-emerald-500" : "bg-gradient-to-br from-slate-300 to-slate-400"}`}>
                     <span className="text-white text-[11px] font-bold">
                       {m.nome_membro?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?"}
                     </span>
                   </div>
-
-                  {/* Info */}
                   <div className="flex-1 min-w-0">
                     <p className="text-[13px] font-semibold text-slate-700 truncate">{m.nome_membro}</p>
                     <p className="text-[11px] text-slate-400">{m.nome_branch ?? "—"} · {m.codigo ?? "—"}</p>
                   </div>
-
-                  {/* Badge */}
                   <span className={`flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border
-                    ${m.presente
-                      ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                      : "bg-red-50 text-red-500 border-red-100"}`}>
+                    ${m.presente ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-red-50 text-red-500 border-red-100"}`}>
                     {m.presente ? <><Check size={10} /> Presente</> : <><X size={10} /> Ausente</>}
                   </span>
                 </div>
@@ -561,7 +529,6 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
             )}
           </div>
 
-          {/* Footer — Salvar */}
           <div className="px-5 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
             <p className="text-xs text-slate-400">
               <span className="font-semibold text-emerald-600">{presentesAgora} presentes</span>
@@ -579,13 +546,12 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
       {/* ── VISTA RELATÓRIO ── */}
       {vista === "relatorio" && (
         <div className="space-y-5">
-          {/* Stats do relatório */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: "Total Membros",  value: stats.total,       cor: "from-slate-500 to-slate-600" },
-              { label: "Presentes",      value: stats.presentes,   cor: "from-emerald-500 to-teal-500" },
-              { label: "Ausentes",       value: stats.ausentes,    cor: "from-red-400 to-rose-500" },
-              { label: "Taxa Presença",  value: `${stats.percentagem}%`, cor: "from-amber-500 to-yellow-500" },
+              { label: "Total Membros", value: stats.total,             cor: "from-slate-500 to-slate-600"   },
+              { label: "Presentes",     value: stats.presentes,         cor: "from-emerald-500 to-teal-500"  },
+              { label: "Ausentes",      value: stats.ausentes,          cor: "from-red-400 to-rose-500"      },
+              { label: "Taxa Presença", value: `${stats.percentagem}%`, cor: "from-amber-500 to-yellow-500"  },
             ].map(({ label, value, cor }) => (
               <div key={label} className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{label}</p>
@@ -596,7 +562,6 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
             ))}
           </div>
 
-          {/* Barra de progresso */}
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-semibold text-slate-700">Taxa de Presença</p>
@@ -614,11 +579,9 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
             </div>
           </div>
 
-          {/* Tabelas lado a lado */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {/* Presentes */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-              <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+              <div className="px-5 py-3.5 border-b border-slate-100">
                 <h3 className="text-sm font-bold text-emerald-700 flex items-center gap-2">
                   <UserCheck size={14} /> Presentes ({stats.presentes})
                 </h3>
@@ -644,9 +607,8 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
               </div>
             </div>
 
-            {/* Ausentes */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-              <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+              <div className="px-5 py-3.5 border-b border-slate-100">
                 <h3 className="text-sm font-bold text-red-600 flex items-center gap-2">
                   <UserX size={14} /> Ausentes ({stats.ausentes})
                 </h3>
@@ -682,12 +644,11 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
 // CONTENTOR PRINCIPAL
 // ═══════════════════════════════════════════════════════════
 const Cultos = () => {
-  const [vista, setVista]       = useState("lista");   // lista | criar | presencas
+  const [vista, setVista]             = useState("lista");
   const [cultoActivo, setCultoActivo] = useState(null);
 
   return (
     <div className="space-y-6">
-      {/* Page header */}
       {vista === "lista" && (
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center">

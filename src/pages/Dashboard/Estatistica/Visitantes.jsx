@@ -409,7 +409,7 @@ const Visitantes = () => {
   };
 
   useEffect(() => {
-    api.get("/api/membros/branches")
+    api.get("/api/branches")
       .then((res) => setBranches(res.data.branches || []))
       .catch(console.error);
   }, []);
