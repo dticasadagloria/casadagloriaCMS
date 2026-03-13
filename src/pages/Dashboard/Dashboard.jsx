@@ -362,8 +362,7 @@ const Dashboard = () => {
       ROLES.FINANCAS,
       ROLES.ESTATISTICA,
       ROLES.CALLCENTER,
-      ROLES.SOSSOCORROS,
-      ROLES.MEMBROSESTATISTICA],
+      ROLES.SOSSOCORROS],
     departamentos: [ROLES.ADMIN, ROLES.PASTOR],
     requisicoes: [ROLES.ADMIN,ROLES.PASTOR]
   };
@@ -820,6 +819,7 @@ const Dashboard = () => {
                   "departamentos",
                   "requisicoes",
                   "ofertas",
+                  "estrutura",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
