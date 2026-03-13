@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode"; 
 import React from 'react'
 import EstatisticasCultos from "@/components/charts/EstatisticasCultos.jsx";
 import RankingsCultos from "@/components/charts/RankingsCultos.jsx";

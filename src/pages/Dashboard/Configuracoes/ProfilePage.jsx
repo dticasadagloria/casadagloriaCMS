@@ -142,6 +142,23 @@ const ROLE_CONFIG = {
       { label: "Configurações globais",  ok: false },
     ],
   },
+  11: {
+    label:   "Membros de Estatistica",
+    icon:    User,
+    avatar:  "from-slate-400 to-slate-500",
+    pill:    "bg-slate-100 text-slate-600 border border-slate-200",
+    banner:  "from-slate-400/10 to-slate-500/5",
+    perms: [
+      { label: "Ver membros",            ok: true  },
+      { label: "Criar membros",          ok: false },
+      { label: "Editar membros",         ok: false },
+      { label: "Eliminar membros",       ok: false },
+      { label: "Criar Cultos",           ok: true  },
+      { label: "Marcar presenças",       ok: true},
+      { label: "Ver utilizadores",       ok: false },
+      { label: "Configurações globais",  ok: false },
+    ],
+  }
 };
 
 const DEFAULT_ROLE = ROLE_CONFIG[4];

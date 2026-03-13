@@ -72,7 +72,7 @@ const tabs = [
     label: "Estatística",
     icon: BarChart3,
     children: [
-      { key: "estatistica", label: "Painel de Controle", icon: BarChart3 },
+      { key: "painel", label: "Painel de Controle", icon: BarChart3 },
       { key: "cultos", label: "Cultos", icon: UserPlus },
       { key: "visitantes", label: "Visitas", icon: Users}
     ],
@@ -300,6 +300,7 @@ const Dashboard = () => {
     ESTATISTICA: 8,
     CALLCENTER: 9,
     SOSSOCORROS: 10,
+    MEMBROSESTATISTICA: 11,
     // NOVO_ROLE: 5,  <-- adiciona aqui futuramente
   };
 
@@ -314,6 +315,7 @@ const Dashboard = () => {
       ROLES.ESTATISTICA,
       ROLES.CALLCENTER,
       ROLES.SOSSOCORROS,
+      ROLES.MEMBROSESTATISTICA
     ],
     "lista-membros": [
       ROLES.ADMIN,
@@ -330,6 +332,11 @@ const Dashboard = () => {
       ROLES.ESTATISTICA,
     ],
     restauracoes: [ROLES.ADMIN, ROLES.PASTOR],
+    departamentos: [ROLES.ADMIN, ROLES.PASTOR],
+    estatistica: [ROLES.ADMIN, ROLES.PASTOR, ROLES.ESTATISTICA, ROLES.CALLCENTER, ROLES.MEMBROSESTATISTICA],
+    "painel": [ROLES.ADMIN, ROLES.PASTOR, ROLES.ESTATISTICA, ROLES.CALLCENTER],
+    "cultos": [ROLES.ADMIN, ROLES.ESTATISTICA,ROLES.MEMBROSESTATISTICA],
+    "visitas": [ROLES.ADMIN, ROLES.ESTATISTICA,ROLES.MEMBROSESTATISTICA],
     financas: [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS],
     "call-center": [ROLES.ADMIN, ROLES.PASTOR, ROLES.CALLCENTER],
     "sos-socorros": [ROLES.ADMIN, ROLES.PASTOR, ROLES.SOSSOCORROS],
@@ -342,6 +349,7 @@ const Dashboard = () => {
       ROLES.ESTATISTICA,
       ROLES.CALLCENTER,
       ROLES.SOSSOCORROS,
+      ROLES.MEMBROSESTATISTICA,
     ],
     // "novo-tab":    [ROLES.ADMIN],  <-- adiciona aqui futuramente
     departamentos: [ROLES.ADMIN, ROLES.PASTOR],
@@ -436,18 +444,7 @@ const Dashboard = () => {
     .catch(console.error);
 }, []);
 
-  //   const handleCardClick = (type) => {
-  //   if (type === "batizados") {
-  //     setActiveTab("lista-membros");
-  //     sessionStorage.setItem("filtroMembros", "batizados");
-  //   } else if (type === "escola_concluido") {
-  //     setActiveTab("lista-membros");
-  //     sessionStorage.setItem("filtroMembros", "escola_concluido");
-  //   } else if (type === "escola_emcurso") {
-  //     setActiveTab("lista-membros");
-  //     sessionStorage.setItem("filtroMembros", "escola_emcurso");
-  //   }
-  // };
+
   const handleCardClick = (type) => {
 
      if (type === "departamentos") {
@@ -777,8 +774,8 @@ const Dashboard = () => {
                   )}
 
                 {/*Estatistica*/}
-                {(activeTab === "estatistica" || activeTab === "estatistica") &&
-                  temAcesso("estatistica", currentUser?.role_id) && (
+                {(activeTab === "painel" || activeTab === "painel") &&
+                  temAcesso("painel", currentUser?.role_id) && (
                     <Estatistica />
                   )}
 
@@ -796,6 +793,7 @@ const Dashboard = () => {
                   "membros",
                   "lista-membros",
                   "usuarios",
+                  "perfil",
                   "novo-membro",
                   "editar-membro",
                   "restauracoes",
