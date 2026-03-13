@@ -20,9 +20,9 @@ import {
   HeartHandshake,
   Landmark,
   BarChart3,
-  ShieldHalf,
   Building2,
-  HandCoins
+  HandCoins,
+  LayoutPanelTop
 } from "lucide-react";
 import Header from "@/components/Header";
 import Membros from "./Membros/Membros";
@@ -63,11 +63,6 @@ const tabs = [
     ],
   },
   {
-      key: "departamentos",
-      label: "Departamentos",
-      icon: Building2,
-  },
-  {
     key: "estatistica",
     label: "Estatística",
     icon: BarChart3,
@@ -99,6 +94,16 @@ const tabs = [
     children: [
       { key: "dashboard-socorros", label: "Painel de Controle", icon: BarChart3 },
     ],
+  },
+  { 
+    key: "estrutura",
+    label: "Estrutura da Igreja",
+    icon: LayoutPanelTop,
+    children: [
+       {key: "departamentos",
+      label: "Departamentos",
+      icon: Building2,}
+    ]
   },
   {
     key: "configuracoes",
@@ -352,6 +357,13 @@ const Dashboard = () => {
       ROLES.MEMBROSESTATISTICA,
     ],
     // "novo-tab":    [ROLES.ADMIN],  <-- adiciona aqui futuramente
+    estrutura:[ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.FINANCAS,
+      ROLES.ESTATISTICA,
+      ROLES.CALLCENTER,
+      ROLES.SOSSOCORROS,
+      ROLES.MEMBROSESTATISTICA],
     departamentos: [ROLES.ADMIN, ROLES.PASTOR],
     requisicoes: [ROLES.ADMIN,ROLES.PASTOR]
   };
@@ -801,6 +813,7 @@ const Dashboard = () => {
                   "financas",
                   "call-center",
                   "estatistica",
+                  "painel",
                   "cultos",
                   "visitantes",
                   "dashboard-socorros",
