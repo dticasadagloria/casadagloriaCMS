@@ -268,7 +268,9 @@ const StatCard = ({
 
 // ─── DASHBOARD ────────────────────────────────────────────────────────────────
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+ const [activeTab, setActiveTab] = useState(() => {
+  return localStorage.getItem("activeTab") || "dashboard";
+});
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [openMenus, setOpenMenus] = useState({});
@@ -278,6 +280,11 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [statsDepartamentos, setStatsDepartamentos] = useState(null);
+
+
+  useEffect(() => {
+  localStorage.setItem("activeTab", activeTab);
+}, [activeTab]);
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
