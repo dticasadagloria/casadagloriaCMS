@@ -10,7 +10,7 @@ import MembroDetalhes from "@/pages/Dashboard/Membros/MembroDetalhes";
 import NovoMembro from "@/pages/Dashboard/Membros/NovoMembro";
 import LoginMembro from "../pages/LoginMembro"
 import UserDashboard from "@/pages/Dashboard/users/UserDashboard";
-import RequisicaoPublica from "@/pages/Publico/RequisicaoPublica.jsx";
+import RequisicaoPublica from "@/pages/publico/RequisicaoPublica";
 
 
 const router = createBrowserRouter([
