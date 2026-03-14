@@ -125,12 +125,12 @@ const CallCenter = () => {
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center flex-shrink-0 shadow-sm">
                         <span className="text-white text-[11px] font-bold">
-                          {m.nome?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?"}
+                          {m.nome_membro?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?"}
                         </span>
                       </div>
                       <div>
                         <p className="text-[13px] font-semibold text-slate-700 group-hover:text-amber-700 transition-colors leading-tight">
-                          {m.nome ?? "—"}
+                          {m.nome_membro ?? "—"}
                         </p>
                         <p className="text-[11px] text-slate-400 mt-0.5">
                           {m.nome_branch ?? "Sem filial"} · {m.codigo ?? "—"}
