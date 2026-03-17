@@ -30,12 +30,13 @@ const MemberLogin = () => {
         data_nascimento: dataNascimento,
       });
 
-      const data = response.data; // ← axios usa response.data, não res.json()
+      const data = response.data; 
+      console.log("Login response:", data); 
 
       sessionStorage.setItem("membro_token", data.token);
       sessionStorage.setItem("membro_logado", JSON.stringify(data.membro));
       setSuccess("Login realizado com sucesso!");
-      setTimeout(() => navigate("/dashboard/users"), 1000);
+      navigate("/dashboard/users");
     } catch (err) {
       const msg =
         err.response?.data?.error ||

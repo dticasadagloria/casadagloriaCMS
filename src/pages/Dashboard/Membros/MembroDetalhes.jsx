@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Header from "../../../components/Header";
 import { gerarFichaPDF } from "@/lib/pdfGenerator";
-import logo from "/Logo1.png"
+import logo from "/Logo1.png";
 import api from "@/api/api";
 import {
   ArrowLeft,
@@ -41,54 +41,57 @@ const MembroDetalhes = () => {
   }, [id]);
 
   //Aqui é para buscar membro
- const fetchMembro = async () => {
-  setLoading(true);
-  try {
-    const res = await api.get(`/api/membros/${id}`);
-    setMembro(res.data.membro || res.data);
-  } catch (err) {
-    setError(err.response?.data?.message || "Membro não encontrado");
-  } finally {
-    setLoading(false);
-  }
-};
+  const fetchMembro = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get(`/api/membros/${id}`);
+      setMembro(res.data.membro || res.data);
+    } catch (err) {
+      setError(err.response?.data?.message || "Membro não encontrado");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-//Aqui é para desactivar membro
-const handleDelete = async () => {
-  if (!confirm("Tem certeza que deseja desactivar este membro?")) return;
-  try {
-    await api.delete(`/api/membros/${id}`);
-    navigate("/dashboard");
-  } catch {
-    alert("Erro ao desactivar membro");
-  }
-};
+  //Aqui é para desactivar membro
+  const handleDelete = async () => {
+    if (!confirm("Tem certeza que deseja desactivar este membro?")) return;
+    try {
+      await api.delete(`/api/membros/${id}`);
+      navigate("/dashboard");
+    } catch {
+      alert("Erro ao desactivar membro");
+    }
+  };
 
-//Aqui é para apagar o membro da base de dados
-const handleHardDelete = async () => {
-  if (!window.confirm("Isto irá apagar permanentemente o membro. Tem certeza?")) return;
-  try {
-    await api.delete(`/api/membros/${id}/hard`);
-    alert("Membro eliminado permanentemente");
-    navigate("/dashboard");
-  } catch (err) {
-    alert(err.response?.data?.message || "Erro ao eliminar membro");
-  }
-};
+  //Aqui é para apagar o membro da base de dados
+  const handleHardDelete = async () => {
+    if (
+      !window.confirm("Isto irá apagar permanentemente o membro. Tem certeza?")
+    )
+      return;
+    try {
+      await api.delete(`/api/membros/${id}/hard`);
+      alert("Membro eliminado permanentemente");
+      navigate("/dashboard");
+    } catch (err) {
+      alert(err.response?.data?.message || "Erro ao eliminar membro");
+    }
+  };
 
-
-//Aqui para reactivar membro para ativo
-const handleReactivate = async () => {
-  if (!window.confirm("Tem certeza que deseja reactivar este membro?")) return;
-  try {
-    const res = await api.patch(`/api/membros/${id}/reactivate`);
-    setMembro(res.data.membro || res.data);
-  } catch (err) {
-    setError(err.response?.data?.message || "Erro ao reactivar membro");
-  } finally {
-    setLoading(false);
-  }
-};
+  //Aqui para reactivar membro para ativo
+  const handleReactivate = async () => {
+    if (!window.confirm("Tem certeza que deseja reactivar este membro?"))
+      return;
+    try {
+      const res = await api.patch(`/api/membros/${id}/reactivate`);
+      setMembro(res.data.membro || res.data);
+    } catch (err) {
+      setError(err.response?.data?.message || "Erro ao reactivar membro");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const Detail = ({ icon: Icon, label, value }) => (
     <div className="flex items-start gap-3 py-3 border-b border-slate-100 last:border-0">
@@ -119,7 +122,6 @@ const handleReactivate = async () => {
     doc.line(14, 25, 196, 25);
 
     // Dados principais
-   
 
     autoTable(doc, {
       startY: 30,
@@ -142,11 +144,9 @@ const handleReactivate = async () => {
     doc.save(`Ficha_${membro.codigo || "membro"}.pdf`);
   };
   const handleGerarPDF = () => {
-      const dados = [
+    const dados = [
       ["Código", membro.codigo || "—"],
       ["Nome", membro.nome || "—"],
-      ["Tipo de Documento", membro.tipo_documento || "—"],
-      ["Número do Documento", membro.numero_documento || "—"],
       ["Gênero", membro.genero || "—"],
       [
         "Data de Nascimento",
@@ -165,18 +165,11 @@ const handleReactivate = async () => {
       ["Ano de Ingresso", membro.ano_ingresso || "—"],
       ["Escola da Verdade", membro.escola_da_verdade || "—"],
       [
-        "Data de Conclusão da Escola da Verdade",
-        membro.data_conclusao_escola
-          ? new Date(membro.data_conclusao_escola).toLocaleDateString("pt-MZ")
-          : "—",
+        "Ano de Conclusão da Escola da Verdade",
+        membro.ano_conclusao_escola ?? "—",
       ],
       ["Batizado", membro.batizado ? "Sim" : "Não"],
-      [
-        "Data do Batismo",
-        membro.data_batismo
-          ? new Date(membro.data_batismo).toLocaleDateString("pt-MZ")
-          : "—",
-      ],
+      ["Ano do Batismo", membro.ano_batismo ?? "—"],
       ["Ativo", membro.ativo ? "Sim" : "Não"],
       [
         "Data de Registro",
@@ -193,7 +186,7 @@ const handleReactivate = async () => {
       mostrarRodape: true,
       logo: logo,
     });
-  }
+  };
 
   if (loading)
     return (
@@ -349,16 +342,16 @@ const handleReactivate = async () => {
                 label="Estado Civil"
                 value={membro?.estado_civil}
               />
-              <Detail
+              {/* <Detail
                 icon={IdCard}
                 label="Documento de Identificação"
                 value={membro?.tipo_documento}
-              />
-              <Detail
+              /> */}
+              {/* <Detail
                 icon={IdCard}
                 label="Número de Identificação"
                 value={membro?.numero_documento}
-              />
+              /> */}
               <Detail
                 icon={Briefcase}
                 label="Ocupação"
@@ -420,19 +413,21 @@ const handleReactivate = async () => {
               <Detail
                 icon={GraduationCap}
                 label="Estado"
-                value={membro?.escola_da_verdade ? "Concluído" : "Em curso"}
+                value={
+                  membro?.escola_da_verdade === "Concluido"
+                    ? "Concluído"
+                    : membro?.escola_da_verdade === "Em curso"
+                      ? "Em curso"
+                      : membro?.escola_da_verdade === "Nao frequenta"
+                        ? "Não frequenta"
+                        : ""
+                }
               />
               {membro?.escola_da_verdade && (
                 <Detail
                   icon={Calendar}
-                  label="Data de Conclusão da Escola da Verdade"
-                  value={
-                    membro?.data_conclusao_escola
-                      ? new Date(
-                          membro.data_conclusao_escola,
-                        ).toLocaleDateString("pt-MZ")
-                      : null
-                  }
+                  label="Ano de Conclusão da Escola da Verdade"
+                  value={membro?.ano_conclusao_escola ?? null}
                 />
               )}
             </div>
@@ -443,12 +438,8 @@ const handleReactivate = async () => {
             />
             <Detail
               icon={Calendar}
-              label="Data de Batismo"
-              value={
-                membro?.data_batismo
-                  ? new Date(membro.data_batismo).toLocaleDateString("pt-MZ")
-                  : null
-              }
+              label="Ano do Batismo"
+              value={membro?.ano_batismo ?? null}
             />
           </div>
         </div>

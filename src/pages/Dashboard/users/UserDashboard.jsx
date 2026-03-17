@@ -46,25 +46,30 @@ const MemberDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const raw = sessionStorage.getItem("membro_logado");
-    const parsed = JSON.parse(raw);
-    console.log("membro completo:", parsed);
+  const raw = sessionStorage.getItem("membro_logado");
 
-    if (!raw || raw === "undefined") {
+  // Verifica PRIMEIRO antes de qualquer parse
+  if (!raw || raw === "undefined" || raw === "null") {
+    setLoading(false);
+    navigate("/member-login");
+    return;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed) {
+      setLoading(false);
       navigate("/member-login");
       return;
     }
-
-    try {
-      const parsed = JSON.parse(raw);
-      if (!parsed) { navigate("/member-login"); return; }
-      setMembro(parsed);
-    } catch {
-      navigate("/member-login");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    setMembro(parsed);
+  } catch {
+    setLoading(false);
+    navigate("/member-login");
+  } finally {
+    setLoading(false);
+  }
+}, [navigate]);
 
   const handleLogout = () => {
     sessionStorage.removeItem("membro_logado");
@@ -76,8 +81,8 @@ const MemberDashboard = () => {
     const dados = [
       ["Código", membro.codigo || "—"],
       ["Nome", membro.nome_membro || "—"],
-      ["Tipo de Documento", membro.tipo_documento || "—"],
-      ["Número do Documento", membro.numero_documento || "—"],
+      // ["Tipo de Documento", membro.tipo_documento || "—"],
+      // ["Número do Documento", membro.numero_documento || "—"],
       ["Género", membro.genero || "—"],
       ["Data de Nascimento", membro.data_nascimento ? new Date(membro.data_nascimento).toLocaleDateString("pt-MZ") : "—"],
       ["Faixa Etária", membro.faixa_etaria || "—"],
@@ -89,9 +94,9 @@ const MemberDashboard = () => {
       ["Célula", membro.nome_celula || "—"],
       ["Ano de Ingresso", membro.ano_ingresso || "—"],
       ["Escola da Verdade", membro.escola_da_verdade || "—"],
-      ["Data de Conclusão da Escola", membro.data_conclusao_escola ? new Date(membro.data_conclusao_escola).toLocaleDateString("pt-MZ") : "—"],
+      ["Ano de Conclusão", membro.ano_conclusao_escola || "—"],
       ["Batizado", membro.batizado ? "Sim" : "Não"],
-      ["Data do Batismo", membro.data_batismo ? new Date(membro.data_batismo).toLocaleDateString("pt-MZ") : "—"],
+      ["Ano do Batismo", membro.ano_batismo || "—"],
       ["Parceiro", membro.parceiro ? "Sim" : "Não"],
       ["Activo", membro.ativo ? "Sim" : "Não"],
       ["Data de Registo", membro.data_registo ? new Date(membro.data_registo).toLocaleDateString("pt-MZ") : "—"],
@@ -206,9 +211,9 @@ const MemberDashboard = () => {
               <Detail icon={Calendar} label="Data de Nascimento" value={membro?.data_nascimento ? new Date(membro.data_nascimento).toLocaleDateString("pt-MZ") : null} />
               <Detail icon={PersonStanding} label="Faixa Etária" value={membro?.faixa_etaria} />
               <Detail icon={Heart} label="Estado Civil" value={membro?.estado_civil} />
-              <Detail icon={IdCard} label="Tipo de Documento" value={membro?.tipo_documento} />
+              {/* <Detail icon={IdCard} label="Tipo de Documento" value={membro?.tipo_documento} />
               <Detail icon={IdCard} label="Número de Identificação" value={membro?.numero_documento} />
-              <Detail icon={Briefcase} label="Ocupação" value={membro?.ocupacao} />
+              <Detail icon={Briefcase} label="Ocupação" value={membro?.ocupacao} /> */}
             </div>
 
             {/* Contacto */}
@@ -238,12 +243,12 @@ const MemberDashboard = () => {
                 <GraduationCap size={14} className="text-amber-600" /> Escola da Verdade
               </h3>
               <Detail icon={GraduationCap} label="Estado" value={membro?.escola_da_verdade || "—"} />
-              {membro?.data_conclusao_escola && (
-                <Detail icon={Calendar} label="Data de Conclusão" value={new Date(membro.data_conclusao_escola).toLocaleDateString("pt-MZ")} />
+              {membro?.ano_conclusao_escola && (
+                <Detail icon={Calendar} label="Ano de Conclusão" value={membro?.ano_conclusao_escola} />
               )}
               <Detail icon={Calendar} label="É batizado?" value={membro?.batizado ? "Sim" : "Não"} />
-              {membro?.data_batismo && (
-                <Detail icon={Calendar} label="Data de Batismo" value={new Date(membro.data_batismo).toLocaleDateString("pt-MZ")} />
+              {membro?.ano_batismo && (
+                <Detail icon={Calendar} label="Data de Batismo" value={membro?.ano_batismo} />
               )}
             </div>
           </div>

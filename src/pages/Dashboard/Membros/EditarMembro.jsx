@@ -217,7 +217,6 @@ const fetchMembro = async () => {
     const membro = res.data.membro || res.data;
 
     setForm({
-      codigo: membro.codigo || "",
       nome: membro.nome || "",
       genero: membro.genero || "",
       data_nascimento: membro.data_nascimento
@@ -227,20 +226,22 @@ const fetchMembro = async () => {
       estado_civil: membro.estado_civil || "",
       faixa_etaria: membro.faixa_etaria || "",
       batizado: !!membro.batizado,
-      data_batismo: membro.data_batismo
-        ? membro.data_batismo.split("T")[0]
-        : null,
+      // data_batismo: membro.data_batismo
+      //   ? membro.data_batismo.split("T")[0]
+      //   : null,
+      ano_batismo: membro.ano_batismo ? String(membro.ano_batismo) : "",
       ocupacao: membro.ocupacao || "",
       branch_id: membro.branch_id ? String(membro.branch_id) : "",
       celula_id: membro.celula_id ? String(membro.celula_id) : "",
       ano_ingresso: membro.ano_ingresso ? String(membro.ano_ingresso) : "",
       escola_da_verdade: membro.escola_da_verdade || "",
-      data_conclusao_escola: membro.data_conclusao_escola
-        ? membro.data_conclusao_escola.split("T")[0]
-        : "",
+      // data_conclusao_escola: membro.data_conclusao_escola
+      //   ? membro.data_conclusao_escola.split("T")[0]
+      //   : "",
+      ano_conclusao_escola: membro.ano_conclusao_escola ? String(membro.ano_conclusao_escola) : "",
       contacto: membro.contacto || "",
-      tipo_documento: membro.tipo_documento || "",
-      numero_documento: membro.numero_documento || "",
+      // tipo_documento: membro.tipo_documento || "",
+      // numero_documento: membro.numero_documento || "",
       parceiro: !!membro.parceiro,
       email: membro.email || "",
     });
@@ -355,14 +356,14 @@ const fetchMembro = async () => {
           {/* Informações Pessoais */}
           <Section title="Informações Pessoais" icon={User}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
+              {/* <Input
                 label="Código do Membro"
                 name="codigo"
                 placeholder="Ex: M001"
                 icon={User}
                 form={form}
                 onChange={handleChange}
-              />
+              /> */}
               <Input
                 label="Nome Completo *"
                 name="nome"
@@ -399,10 +400,9 @@ const fetchMembro = async () => {
                 form={form}
                 onChange={handleChange}
                 options={[
-                  { value: "Adulto", label: "Adulto" },
-                  { value: "Jovem", label: "Jovem" },
-                  { value: "Criança", label: "Criança" },
-                  { value: "Idoso", label: "Idoso" },
+                  { value: "Adolescente: entre 12 e 17 anos", label: "Adolescente: entre 12 e 17 anos" },
+                { value: "Jovem: entre 18 e 35", label: "Jovem: entre 18 e 35" },
+                { value: "Adulto Acima de 35 anos", label: "Adulto Acima de 35 anos" },
                 ]}
               />
               <Select
@@ -417,7 +417,7 @@ const fetchMembro = async () => {
                   { value: "Viúvo", label: "Viúvo(a)" },
                 ]}
               />
-              <Select
+              {/* <Select
                 label="Tipo de Documento"
                 name="tipo_documento"
                 icon={FileText}
@@ -436,7 +436,7 @@ const fetchMembro = async () => {
                 icon={FileText}
                 form={form}
                 onChange={handleChange}
-              />
+              /> */}
               <Input
                 label="Ocupação"
                 name="ocupacao"
@@ -492,12 +492,14 @@ const fetchMembro = async () => {
                 form={form}
                 onChange={handleChange}
                 options={[
-                  { value: "1", label: "IICGP-ALBAZINE" },
-                  { value: "2", label: "IICGP-MAGOANINE" },
+                  { value: "10", label: "IICGP-A.Neto" },
+                  { value: "1", label: "IICGP-Albazine" },
+                  { value: "2", label: "IICGP-Magoanine" },
                   { value: "3", label: "IICGP-Mathemele" },
                   { value: "4", label: "IICGP-Maxixe" },
-                  { value: "5", label: "IICGP-NAMAACHA" },
+                  { value: "5", label: "IICGP-Namaacha" },
                   { value: "6", label: "IICGP-Nampula" },
+                  { value: "9", label: "IICGP-São Dâmaso" },
                   { value: "7", label: "IICGP-Xai-Xai" },
                   { value: "8", label: "IICGP-Zimpeto" },
                 ]}
@@ -585,12 +587,14 @@ const fetchMembro = async () => {
               />
               {form.escola_da_verdade === "Concluido" && (
                 <Input
-                  label="Data de Conclusão"
-                  name="data_conclusao_escola"
-                  type="date"
-                  icon={Calendar}
-                  form={form}
-                  onChange={handleChange}
+                  label="Data de Conclusão da Escola da Verdade"
+                  name="ano_conclusao_escola"
+                  type="number"
+                    icon={Calendar}
+                    form={form}
+                    onChange={handleChange}
+                    min="1900"
+                    max={new Date().getFullYear()}
                 />
               )}
             </div>
@@ -606,11 +610,13 @@ const fetchMembro = async () => {
               {form.batizado && (
                 <Input
                   label="Data de Batismo"
-                  name="data_batismo"
-                  type="date"
+                  name="ano_batismo"
+                   type="number"
                   icon={Calendar}
                   form={form}
                   onChange={handleChange}
+                  min="1900"
+                  max={new Date().getFullYear()}
                 />
               )}
             </div>

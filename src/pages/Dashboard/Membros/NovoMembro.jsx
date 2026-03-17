@@ -139,17 +139,17 @@ const NovoMembro = () => {
     bairro: "",
     estado_civil: "",
     batizado: false,
-    data_batismo: null,
+    // data_batismo: null,
+    ano_batismo: new Date().getFullYear().toString(),
     ocupacao: "",
     branch_id: "",
     ano_ingresso: new Date().getFullYear().toString(),
     escola_da_verdade: "",
-    data_conclusao_escola: null,
+    // data_conclusao_escola: null,
+    ano_conclusao_escola: new Date().getFullYear().toString(),
     parceiro: false,
     contacto: "",
     email: "",
-    tipo_documento: "",
-    numero_documento: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -188,7 +188,7 @@ const NovoMembro = () => {
     try {
       await api.post("/api/membros", form);
       setSuccess(true);
-      setTimeout(() => navigate("/dashboard/membros"), 1500);
+      setTimeout(() => navigate("/dashboard"), 1500);
     } catch (err) {
       setError(err.response?.data?.message || "Erro ao criar membro");
     } finally {
@@ -221,14 +221,6 @@ const NovoMembro = () => {
         {/* Informações Pessoais */}
         <Section title="Informações Pessoais" icon={User}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* <Input
-              label="Código do Membro"
-              name="codigo"
-              placeholder="Ex: M001"
-              icon={User}
-              form={form}
-              onChange={handleChange}
-            /> */}
             <Input
               label="Nome Completo *"
               name="nome_membro"
@@ -264,9 +256,9 @@ const NovoMembro = () => {
               form={form}
               onChange={handleChange}
               options={[
+                { value: "Adolescente: entre 12 e 17 anos", label: "Adolescente: entre 12 e 17 anos" },
                 { value: "Jovem: entre 18 e 35", label: "Jovem: entre 18 e 35" },
-                { value: "Criança", label: "Criança" },
-                { value: "Idoso", label: "Idoso" },
+                { value: "Adulto Acima de 35 anos", label: "Adulto Acima de 35 anos" },
               ]}
             />
             <Select
@@ -291,7 +283,7 @@ const NovoMembro = () => {
             />
 
             {/*Tipo de documento*/}
-            <Select
+            {/* <Select
               label="Tipo de Documento"
               name="tipo_documento"
               icon={User}
@@ -310,7 +302,7 @@ const NovoMembro = () => {
               icon={User}
               form={form}
               onChange={handleChange}
-            />
+            /> */}
           </div>
         </Section>
 
@@ -357,12 +349,14 @@ const NovoMembro = () => {
               form={form}
               onChange={handleChange}
               options={[
-                { value: "1", label: "IICGP-ALBAZINE" },
-                { value: "2", label: "IICGP-MAGOANINE" },
+                { value: "10", label: "IICGP-A.Neto" },
+                { value: "1", label: "IICGP-Albazine" },
+                { value: "2", label: "IICGP-Magoanine" },
                 { value: "3", label: "IICGP-Mathemele" },
                 { value: "4", label: "IICGP-Maxixe" },
-                { value: "5", label: "IICGP-NAMAACHA" },
+                { value: "5", label: "IICGP-Namaacha" },
                 { value: "6", label: "IICGP-Nampula" },
+                { value: "9", label: "IICGP-São Dâmaso" },
                 { value: "7", label: "IICGP-Xai-Xai" },
                 { value: "8", label: "IICGP-Zimpeto" },
               ]}
@@ -415,12 +409,15 @@ const NovoMembro = () => {
             />
             {form.escola_da_verdade === "Concluido" && (
               <Input
-                label="Data de Conclusão"
-                name="data_conclusao_escola"
-                type="date"
-                icon={Calendar}
-                form={form}
-                onChange={handleChange}
+                label="Ano de  Conclusão"
+                name="ano_conclusao_escola"
+                type="number"
+              placeholder={new Date().getFullYear().toString()}
+              icon={Calendar}
+              form={form}
+              onChange={handleChange}
+              min="1900"
+              max={new Date().getFullYear()}
               />
             )}
           </div>
@@ -434,12 +431,15 @@ const NovoMembro = () => {
             />
             {form.batizado && (
               <Input
-                label="Data de Batismo"
-                name="data_batismo"
-                type="date"
-                icon={Calendar}
-                form={form}
-                onChange={handleChange}
+                label="Ano de Batismo"
+                name="ano_batismo"
+               type="number"
+              placeholder={new Date().getFullYear().toString()}
+              icon={Calendar}
+              form={form}
+              onChange={handleChange}
+              min="1900"
+              max={new Date().getFullYear()}
               />
             )}
           </div>
