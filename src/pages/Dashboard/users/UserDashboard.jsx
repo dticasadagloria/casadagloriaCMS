@@ -46,6 +46,9 @@ const MemberDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("4. UserDashboard montou");
+  console.log("5. membro_token:", sessionStorage.getItem("membro_token"));
+  console.log("6. membro_logado:", sessionStorage.getItem("membro_logado"));
   const raw = sessionStorage.getItem("membro_logado");
 
   // Verifica PRIMEIRO antes de qualquer parse
@@ -60,6 +63,9 @@ const MemberDashboard = () => {
     if (!parsed) {
       setLoading(false);
       navigate("/member-login");
+      console.log("1. Token guardado:", sessionStorage.getItem("membro_token"));
+console.log("2. Membro guardado:", sessionStorage.getItem("membro_logado"));
+navigate("/dashboard/users");
       return;
     }
     setMembro(parsed);
@@ -74,6 +80,7 @@ const MemberDashboard = () => {
   const handleLogout = () => {
     sessionStorage.removeItem("membro_logado");
     sessionStorage.removeItem("membro_token");
+    sessionStorage.clear();
     navigate("/member-login");
   };
 

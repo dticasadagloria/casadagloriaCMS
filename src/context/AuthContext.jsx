@@ -7,37 +7,72 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // ── Busca /auth/me com o token que já existe no localStorage ──────────────
-  const fetchMe = useCallback(async () => {
-    const token = localStorage.getItem("token");
+  // const fetchMe = useCallback(async () => {
+  //   const token = localStorage.getItem("token");
 
-    if (!token) {
+  //   if (!token) {
+  //     setUser(null);
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     const res = await fetch("https://iicgp-backend-cms.onrender.com/auth/me", {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+
+  //     if (!res.ok) {
+  //       // Token expirado ou inválido — limpa tudo
+  //       localStorage.removeItem("token");
+  //       setUser(null);
+  //       return;
+  //     }
+
+  //     // Retorna: { id, username, role_id, role_nome, ativo, data_criacao }
+  //     const data = await res.json();
+  //     setUser(data);
+  //   } catch (err) {
+  //     console.error("fetchMe error:", err);
+  //     setUser(null);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
+  const fetchMe = useCallback(async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    setUser(null);
+    setLoading(false);
+    return;
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
+    const res = await fetch("https://iicgp-backend-cms.onrender.com/auth/me", {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
+    if (!res.ok) {
+      localStorage.removeItem("token");
       setUser(null);
-      setLoading(false);
       return;
     }
 
-    try {
-      const res = await fetch("https://iicgp-backend-cms.onrender.com/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) {
-        // Token expirado ou inválido — limpa tudo
-        localStorage.removeItem("token");
-        setUser(null);
-        return;
-      }
-
-      // Retorna: { id, username, role_id, role_nome, ativo, data_criacao }
-      const data = await res.json();
-      setUser(data);
-    } catch (err) {
-      console.error("fetchMe error:", err);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    const data = await res.json();
+    setUser(data);
+  } catch (err) {
+    console.error("fetchMe error:", err);
+    setUser(null);
+  } finally {
+    setLoading(false);
+  }
+}, []);
 
   // Roda ao montar — carrega o user se já há token
   useEffect(() => { fetchMe(); }, [fetchMe]);

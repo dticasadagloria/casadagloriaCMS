@@ -33,6 +33,8 @@ const MemberLogin = () => {
       const data = response.data; 
       console.log("Login response:", data); 
 
+      sessionStorage.clear();
+
       sessionStorage.setItem("membro_token", data.token);
       sessionStorage.setItem("membro_logado", JSON.stringify(data.membro));
       setSuccess("Login realizado com sucesso!");

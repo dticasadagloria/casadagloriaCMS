@@ -193,22 +193,22 @@ const Login = () => {
               <div className="absolute inset-0 flex items-center">
                 {/* <div className="w-full border-t border-border" /> */}
               </div>
-              <div className="relative flex justify-center text-xs">
+              {/* <div className="relative flex justify-center text-xs">
                 <span className="px-3 bg-card text-gray-400 font-body">
                   Novo por aqui?
                 </span>
-              </div>
+              </div> */}
             </div>
 
             {/* Register */}
-            <div className="mt-4 text-center">
+            {/* <div className="mt-4 text-center">
               <Link
                 to="/register"
                 className="text-sm font-medium text-orange-300 hover:text-orange-400 font-body transition-colors"
               >
                 Criar uma conta
               </Link>
-            </div>
+            </div> */}
           </div>
 
           {/* Footer */}
