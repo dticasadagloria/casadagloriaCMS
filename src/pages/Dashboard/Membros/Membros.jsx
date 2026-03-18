@@ -15,15 +15,28 @@ import { useNavigate } from "react-router-dom";
 // ── Função pura de filtro — fora do componente ────────────────────────────────
 const aplicarFiltro = (lista, filtro) => {
   switch (filtro) {
-    case "ativos":              return lista.filter((m) => m.ativo === true);
-    case "inativos":            return lista.filter((m) => !m.ativo);
-    case "batizados":           return lista.filter((m) => m.batizado === true);
-    case "nao_batizados":       return lista.filter((m) => m.batizado === false);
-    case "escola_concluido":    return lista.filter((m) => m.escola_da_verdade === "Concluido");
-    case "escola_emcurso":      return lista.filter((m) => m.escola_da_verdade === "Em curso");
-    case "escola_naofrequenta": return lista.filter((m) => m.escola_da_verdade === "Nao frequenta");
-    case "lideres":             return lista.filter((m) => m.lider_celula === true);
-    default:                    return lista; // "todos" ou null — mostra tudo
+    case "ativos":
+      return lista.filter((m) => m.ativo === true);
+    case "inativos":
+      return lista.filter((m) => !m.ativo);
+    case "batizados":
+      return lista.filter((m) => m.batizado === true);
+    case "nao_batizados":
+      return lista.filter((m) => m.batizado === false);
+    case "escola_concluido":
+      return lista.filter((m) => m.escola_da_verdade === "Concluido");
+    case "escola_emcurso":
+      return lista.filter((m) => m.escola_da_verdade === "Em curso");
+    case "escola_naofrequenta":
+      return lista.filter((m) => m.escola_da_verdade === "Nao frequenta");
+    case "lideres":
+      return lista.filter((m) => m.lider_celula === true);
+    case "parceiros":
+      return lista.filter((m) => m.parceiro === true);
+    case "nao_parceiros":
+      return lista.filter((m) => m.parceiro !== true);
+    default:
+      return lista; // "todos" ou null — mostra tudo
   }
 };
 
@@ -35,96 +48,56 @@ export default function MembrosPage() {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState("nome");
   const [sortDir, setSortDir] = useState("asc");
- const [filtroActivo, setFiltroActivo] = useState(() => {
-  // lê o filtro logo ao inicializar o estado
-  const f = sessionStorage.getItem("filtroMembros");
-  sessionStorage.removeItem("filtroMembros");
-  return f || null;
-});
+  const [filtroActivo, setFiltroActivo] = useState(() => {
+    // lê o filtro logo ao inicializar o estado
+    const f = sessionStorage.getItem("filtroMembros");
+    sessionStorage.removeItem("filtroMembros");
+    return f || null;
+  });
   const navigate = useNavigate();
 
   // ── Fetch ─────────────────────────────────────────────────────────────────
-  // const fetchMembros = async () => {
-  //   setLoading(true);
-  //   setError(null);
-  //   try {
-  //     const res = await api.get("/api/membros");
-  //     const data = res.data;
-  //     const lista = Array.isArray(data)
-  //       ? data
-  //       : Array.isArray(data.membros)
-  //         ? data.membros
-  //         : [];
-
-  //     setMembrosOriginais(lista);
-
-  //     // lê o filtro do sessionStorage e aplica imediatamente
-  //     const filtro = sessionStorage.getItem("filtroMembros");
-  //     sessionStorage.removeItem("filtroMembros"); // limpa logo
-
-  //     const listaFiltrada = aplicarFiltro(lista, filtro);
-  //     setMembros(listaFiltrada);
-
-  //     // guarda label do filtro activo para mostrar ao utilizador
-  //     const labels = {
-  //       ativos: "Activos",
-  //       inativos: "Inactivos",
-  //       batizados: "Batizados",
-  //       escola_concluido: "Escola Concluída",
-  //       escola_emcurso: "Escola Em Curso",
-  //       escola_naofrequenta: "Não Frequentam Escola",
-  //       lideres: "Líderes de Células",
-  //     };
-  //     setFiltroActivo(filtro && filtro !== "todos" ? labels[filtro] || null : null);
-
-  //   } catch (err) {
-  //     console.error("fetchMembros error:", err);
-  //     setError(err.response?.data?.message || "Não foi possível carregar os membros.");
-  //     setMembros([]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const fetchMembros = async (filtro) => {
-  setLoading(true);
-  setError(null);
-  try {
-    const res = await api.get("/api/membros");
-    const data = res.data;
-    const lista = Array.isArray(data)
-      ? data
-      : Array.isArray(data.membros)
-        ? data.membros
-        : [];
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await api.get("/api/membros");
+      const data = res.data;
+      const lista = Array.isArray(data)
+        ? data
+        : Array.isArray(data.membros)
+          ? data.membros
+          : [];
 
-    setMembrosOriginais(lista);
+      setMembrosOriginais(lista);
 
-    // usa o filtro passado como argumento, ou o estado actual
-    const filtroParaUsar = filtro !== undefined ? filtro : filtroActivo;
-    setMembros(aplicarFiltro(lista, filtroParaUsar));
+      // usa o filtro passado como argumento, ou o estado actual
+      const filtroParaUsar = filtro !== undefined ? filtro : filtroActivo;
+      setMembros(aplicarFiltro(lista, filtroParaUsar));
+    } catch (err) {
+      console.error("fetchMembros error:", err);
+      setError(
+        err.response?.data?.message || "Não foi possível carregar os membros.",
+      );
+      setMembros([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  } catch (err) {
-    console.error("fetchMembros error:", err);
-    setError(err.response?.data?.message || "Não foi possível carregar os membros.");
-    setMembros([]);
-  } finally {
-    setLoading(false);
-  }
-};
-
-useEffect(() => {
-  fetchMembros(filtroActivo); // passa o filtro inicial
-}, []);
+  useEffect(() => {
+    fetchMembros(filtroActivo); // passa o filtro inicial
+  }, []);
 
   useEffect(() => {
     fetchMembros();
   }, []);
 
   // ── Limpar filtro e mostrar todos ─────────────────────────────────────────
- const limparFiltro = () => {
-  setFiltroActivo(null);
-  setMembros(membrosOriginais);
-};
+  const limparFiltro = () => {
+    setFiltroActivo(null);
+    setMembros(membrosOriginais);
+  };
 
   // ── Sort ──────────────────────────────────────────────────────────────────
   const handleSort = (key) => {
@@ -235,12 +208,12 @@ useEffect(() => {
           Actualizar
         </button> */}
         <button
-  onClick={() => fetchMembros(filtroActivo)} // ← passa o filtro activo
-  className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
->
-  <RefreshCw size={14} />
-  Actualizar
-</button>
+          onClick={() => fetchMembros(filtroActivo)} // ← passa o filtro activo
+          className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+        >
+          <RefreshCw size={14} />
+          Actualizar
+        </button>
       </div>
 
       {/* ── FILTRO ACTIVO BADGE ── */}

@@ -32,6 +32,7 @@ import Restauracoes from "./Membros/Restauracoes";
 import Usuarios from "./Configuracoes/Users";
 import ProfilePage from "./Configuracoes/ProfilePage";
 import Finances from "./Finanças/Finances";
+import FinancesDashboard from "./Finanças/FinancesDashboard";
 import Ofertas from "./Finanças/Ofertas"
 import Requisicoes from "./Finanças/Requisicoes";
 import CallCenter from "./Call_Center/CallCenter";
@@ -769,6 +770,15 @@ const Dashboard = () => {
                 {(activeTab === "financas" || activeTab === "financas") &&
                   temAcesso("financas", currentUser?.role_id) && <Finances />}
 
+                {/* Finanças Dashboard */}
+                {(activeTab === "dashboard-financas" || activeTab === "dashboard-financas") &&
+                temAcesso("dashboard-financas", currentUser?.role_id) && <FinancesDashboard
+    onNavigate={(tab, filtro) => {
+      if (filtro) sessionStorage.setItem("filtroMembros", filtro);
+      setActiveTab(tab);
+    }}
+  />}
+
                 {/* Ofertas */}
                 {(activeTab === "ofertas" || activeTab === "ofertas") &&
                   temAcesso("ofertas", currentUser?.role_id) && <Ofertas />}
@@ -827,6 +837,7 @@ const Dashboard = () => {
                   "requisicoes",
                   "ofertas",
                   "estrutura",
+                  "dashboard-financas",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
