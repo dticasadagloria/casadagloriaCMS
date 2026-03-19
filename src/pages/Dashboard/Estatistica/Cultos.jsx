@@ -220,21 +220,20 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
             <select required value={form.tipo} onChange={set("tipo")} className={inputClass}>
               <option value="">Selecionar tipo</option>
               <option>Culto Dominical</option>
-              <option>Culto de Quinta-feira</option>
-              <option>Escola de Casamento e Família</option>
+              <option>Culto de Edificação - Quinta-feira</option>
+              <option>Escola de Casamento e Família - Sexta-Feira</option>
               <option>Culto de Domingo 7h</option>
               <option>Culto de Domingo 10h</option>
               <option>Culto Especial</option>
-              <option>Célula</option>
             </select>
           </Field>
 
           <Field label="Categoria">
             <select value={form.categoria} onChange={set("categoria")} className={inputClass}>
               <option>Culto</option>
-              <option>Célula</option>
               <option>Evento</option>
               <option>Conferência</option>
+              <option>Seminário</option>
             </select>
           </Field>
 
