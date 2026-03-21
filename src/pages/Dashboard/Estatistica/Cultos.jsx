@@ -322,7 +322,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
   // Refresh a cada 30 segundos para sincronizar com outros users
   const intervalo = setInterval(() => {
     fetchPresencas();
-  }, 30000);
+  }, 5 * 60 * 1000);
 
   return () => clearInterval(intervalo);
 }, [culto.id]);
