@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import api from "@/api/api.js";
 import { Building2, Search, RefreshCw } from "lucide-react";
 
@@ -63,10 +64,12 @@ const Departamentos = () => {
             <p className="text-sm text-slate-400 mt-0.5">Todos os departamentos da IICGP</p>
           </div>
         </div>
-        <button onClick={fetchTudo}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm">
+        <Button onClick={fetchTudo}
+        variant="hero"
+          // className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm"
+          >
           <RefreshCw size={14} /> Actualizar
-        </button>
+        </Button>
       </div>
 
       {/* KPI chips */}
@@ -150,7 +153,7 @@ const Departamentos = () => {
                     {/* Nome */}
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 shadow-sm">
                           <span className="text-white text-[11px] font-bold">
                             {d.nome?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?"}
                           </span>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import api from "@/api/api.js";
 import {
   FileText, Plus, Search, Upload,
@@ -229,14 +230,18 @@ const ModalCriar = ({ branches, departamentos, membros, onFechar, onCriado }) =>
           )}
 
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onFechar}
-              className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors">
+            <Button type="button" onClick={onFechar}
+            variant="cancel"
+              // className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors"
+              >
               Cancelar
-            </button>
-            <button type="submit" disabled={loading}
-              className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60">
+            </Button>
+            <Button type="submit" disabled={loading}
+            variant="hero"
+              // className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60"
+              >
               {loading ? "A criar..." : "Criar Requisição"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -569,12 +574,13 @@ const Requisicoes = ({ userRole }) => {
             <p className="text-sm text-slate-400 mt-0.5">Gestão e aprovação de requisições financeiras</p>
           </div>
         </div>
-        <button
+        <Button
+        variant="hero"
           onClick={() => setModalCriar(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm"
+          // className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm"
         >
           <Plus size={15} /> Nova Requisição
-        </button>
+        </Button>
       </div>
 
       {/* KPI cards */}
@@ -584,7 +590,7 @@ const Requisicoes = ({ userRole }) => {
           { label: "Em Espera",  value: relatorio?.stats?.em_espera  ?? 0,                    cor: "from-amber-500 to-amber-600"   },
           { label: "Aprovadas",  value: relatorio?.stats?.aprovadas  ?? 0,                    cor: "from-sky-500 to-blue-500"      },
           { label: "Pagas",      value: relatorio?.stats?.pagas      ?? 0,                    cor: "from-emerald-500 to-teal-500"  },
-          { label: "Total Pago", value: formatMt(relatorio?.stats?.total_pago),               cor: "from-purple-500 to-violet-500" },
+          { label: "Total Pago", value: formatMt(relatorio?.stats?.total_pago),               cor: "from-secondary to-primary" },
         ].map(({ label, value, cor }) => (
           <div key={label} className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 hover:shadow-md transition-all">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{label}</p>

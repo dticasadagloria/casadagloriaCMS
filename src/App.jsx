@@ -84,7 +84,7 @@ const Login = () => {
 
           {/* Logo / Brand */}
           <div className="text-center lg:text-left">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-yellow-500 mb-6">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-secondary mb-6">
               <LogIn className="w-6 h-6 text-white" />
             </div>
             <h1 className="font-heading text-3xl font-bold text-foreground">
@@ -170,7 +170,7 @@ const Login = () => {
               <Button
                 type="submit"
                 disabled={isLoading}
-                variant="hero"
+                variant="default"
                 size="lg"
                 className="w-full"
               >

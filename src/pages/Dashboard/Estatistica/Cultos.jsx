@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import api from "@/api/api.js";
 import {
   BookOpen, Plus, Users, UserCheck, UserX,
@@ -59,17 +60,19 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap gap-2 items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-slate-800">Cultos Registados</h2>
           <p className="text-sm text-slate-400 mt-0.5">{cultos.length} cultos no total</p>
         </div>
-        <button
+        <Button
           onClick={onCriar}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm"
+          variant="hero"
+          size="sm"
+          // className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm"
         >
           <Plus size={15} /> Novo Culto
-        </button>
+        </Button>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -186,7 +189,7 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
   return (
     <div className="max-w-2xl space-y-6">
       <div className="flex items-center gap-3">
-        <button onClick={onVoltar} className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
+        <button onClick={onVoltar} className="p-2 rounded-xl hover:bg-primary text-quaternary transition-colors">
           <ArrowLeft size={18} />
         </button>
         <div>
@@ -263,15 +266,23 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
           </div>
         )}
 
-        <div className="flex gap-3 pt-2">
-          <button type="button" onClick={onVoltar}
-            className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors">
+        <div className="flex flex-wrap gap-3 pt-2 items-center justify-center">
+          <Button
+          variant="cancel"
+          size="md"
+           type="button" onClick={onVoltar}
+            // className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors"
+            >
             Cancelar
-          </button>
-          <button type="submit" disabled={loading}
-            className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60">
+          </Button>
+          <Button
+          variant="hero"
+          size="md"
+           type="submit" disabled={loading}
+            // className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60"
+            >
             {loading ? "A criar..." : "Criar Culto"}
-          </button>
+          </Button>
         </div>
       </form>
     </div>
@@ -305,7 +316,16 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
     }
   };
 
-  useEffect(() => { fetchPresencas(); }, [culto.id]);
+ useEffect(() => {
+  fetchPresencas();
+
+  // Refresh a cada 30 segundos para sincronizar com outros users
+  const intervalo = setInterval(() => {
+    fetchPresencas();
+  }, 30000);
+
+  return () => clearInterval(intervalo);
+}, [culto.id]);
 
   const togglePresenca = (membro_id) => {
     setMembros((prev) =>
@@ -534,10 +554,13 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
               {" · "}
               <span className="font-semibold text-red-500">{ausentesAgora} ausentes</span>
             </p>
-            <button onClick={salvar} disabled={saving}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60">
+            <Button onClick={salvar} disabled={saving}
+            variant="hero"
+            size="sm"
+              // className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60"
+              >
               {saving ? "A guardar..." : "Guardar Presenças"}
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -650,8 +673,8 @@ const Cultos = () => {
     <div className="space-y-6">
       {vista === "lista" && (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center">
-            <BookOpen className="w-5 h-5 text-amber-600" />
+          <div className="w-10 h-10 rounded-xl bg-secondary border border-primary flex items-center justify-center">
+            <BookOpen className="w-5 h-5 text-inside" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Controlo de Presenças</h1>

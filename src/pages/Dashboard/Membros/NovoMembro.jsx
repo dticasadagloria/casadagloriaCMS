@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../../components/Header";
+import { Button } from "@/components/ui/button";
 import api from "@/api/api.js";
 import {
   Save,
@@ -464,10 +465,11 @@ const NovoMembro = () => {
 
         {/* Botões */}
         <div className="flex items-center gap-3 pt-2">
-          <button
+          <Button
+            variant="hero"
+          size="sm"
             type="submit"
             disabled={loading}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
           >
             {loading ? (
               <>
@@ -480,16 +482,17 @@ const NovoMembro = () => {
                 Guardar Membro
               </>
             )}
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
             onClick={() => navigate("/dashboard/membros")}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-all"
+            variant="secondary"
+            size="sm"
           >
             <X size={15} />
             Cancelar
-          </button>
+          </Button>
         </div>
       </form>
     </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import {
   User,
@@ -22,7 +23,7 @@ const ROLE_CONFIG = {
   1: {
     label:   "Super Admin",
     icon:    Crown,
-    avatar:  "from-amber-400 to-amber-500",
+    avatar:  "from-secondary to-primary",
     pill:    "bg-amber-50 text-amber-700 border border-amber-200",
     banner:  "from-amber-500/10 to-amber-600/5",
     perms: [
@@ -145,7 +146,7 @@ const ROLE_CONFIG = {
   11: {
     label:   "Membros de Estatistica",
     icon:    User,
-    avatar:  "from-slate-400 to-slate-500",
+    avatar:  "from-red-400 to-primary",
     pill:    "bg-slate-100 text-slate-600 border border-slate-200",
     banner:  "from-slate-400/10 to-slate-500/5",
     perms: [
@@ -496,10 +497,12 @@ const ProfilePage = () => {
           )}
 
           {/* Submit */}
-          <button
+          <Button
             type="submit"
             disabled={pwLoading}
-            className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+            variant="hero"
+            size="md"
+            // className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
           >
             {pwLoading ? (
               <>
@@ -512,7 +515,7 @@ const ProfilePage = () => {
                 Guardar Nova Senha
               </>
             )}
-          </button>
+          </Button>
         </form>
       </SectionCard>
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import api from "@/api/api.js";
 import {
   Users, Plus, Trash2, Search,
@@ -29,14 +30,12 @@ const Toggle = ({ label, sublabel, value, onChange, cor = "amber" }) => (
     <button
       type="button"
       onClick={onChange}
-      className={`w-11 h-6 rounded-full transition-all duration-200 relative ${
-        value ? `bg-${cor}-500` : "bg-slate-200"
-      }`}
+      className={`w-11 h-6 rounded-full transition-all duration-200 relative ${value ? `bg-${cor}-500` : "bg-slate-200"
+        }`}
     >
       <span
-        className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-200 ${
-          value ? "left-5" : "left-0.5"
-        }`}
+        className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-200 ${value ? "left-5" : "left-0.5"
+          }`}
       />
     </button>
   </div>
@@ -157,14 +156,7 @@ const ModalRegistar = ({ cultos, branches, onFechar, onGuardado }) => {
             <div className="col-span-2">
               <Field label="Filial">
                 <select value={form.branch_id} onChange={set("branch_id")} className={inputClass}>
-                 <option value="1">IICGP-ALBAZINE</option>
-              <option value="2">IICGP-MAGOANINE</option>
-              <option value="3">IICGP-Mathemele</option>
-              <option value="4">IICGP-Maxixe</option>
-              <option value="5">IICGP-NAMAACHA</option>
-              <option value="6">IICGP-Nampula</option>
-              <option value="7">IICGP-Xai-Xai</option>
-              <option value="8">IICGP-Zimpeto</option>
+
                   {branches.map((b) => (
                     <option key={b.id} value={b.id}>{b.nome}</option>
                   ))}
@@ -214,20 +206,22 @@ const ModalRegistar = ({ cultos, branches, onFechar, onGuardado }) => {
           )}
 
           <div className="flex gap-3 pt-2">
-            <button
+            <Button
+              variant="cancel"
               type="button"
               onClick={onFechar}
-              className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors"
+            // className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="hero"
               type="submit"
               disabled={loading}
-              className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60"
+            // className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60"
             >
               {loading ? "A registar..." : "Registar"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -308,14 +302,7 @@ const ModalConverter = ({ visitante, branches, onFechar, onConvertido }) => {
             <div className="col-span-2">
               <Field label="Filial">
                 <select value={form.branch_id} onChange={set("branch_id")} className={inputClass}>
-                   <option value="1">IICGP-ALBAZINE</option>
-              <option value="2">IICGP-MAGOANINE</option>
-              <option value="3">IICGP-Mathemele</option>
-              <option value="4">IICGP-Maxixe</option>
-              <option value="5">IICGP-NAMAACHA</option>
-              <option value="6">IICGP-Nampula</option>
-              <option value="7">IICGP-Xai-Xai</option>
-              <option value="8">IICGP-Zimpeto</option>
+
                   {branches.map((b) => (
                     <option key={b.id} value={b.id}>{b.nome}</option>
                   ))}
@@ -379,16 +366,17 @@ const ModalConverter = ({ visitante, branches, onFechar, onConvertido }) => {
 // COMPONENTE PRINCIPAL
 // ═══════════════════════════════════════════════════════════
 const Visitantes = () => {
-  const [vista, setVista]                   = useState("lista");
-  const [visitantes, setVisitantes]         = useState([]);
-  const [cultos, setCultos]                 = useState([]);
-  const [branches, setBranches]             = useState([]);
-  const [relatorio, setRelatorio]           = useState(null);
-  const [loading, setLoading]               = useState(true);
-  const [search, setSearch]                 = useState("");
-  const [filtroCulto, setFiltroCulto]       = useState("");
-  const [modalRegistar, setModalRegistar]   = useState(false);
+  const [vista, setVista] = useState("lista");
+  const [visitantes, setVisitantes] = useState([]);
+  const [cultos, setCultos] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [relatorio, setRelatorio] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [filtroCulto, setFiltroCulto] = useState("");
+  const [modalRegistar, setModalRegistar] = useState(false);
   const [modalConverter, setModalConverter] = useState(null);
+  const [filtroTipo, setFiltroTipo] = useState("todos");
 
   const fetchTudo = async () => {
     setLoading(true);
@@ -428,6 +416,12 @@ const Visitantes = () => {
 
   const visitantesFiltrados = visitantes
     .filter((v) => !filtroCulto || v.culto_id === parseInt(filtroCulto))
+    .filter((v) => {
+      if (filtroTipo === "externos") return v.externo === true;
+      if (filtroTipo === "internos") return v.externo === false;
+      if (filtroTipo === "convertidos") return v.membro_id !== null;
+      return true;
+    })
     .filter((v) => {
       const q = search.toLowerCase();
       return (
@@ -476,35 +470,56 @@ const Visitantes = () => {
             <p className="text-sm text-slate-400 mt-0.5">Controlo de visitas por culto</p>
           </div>
         </div>
-        <button
+        <Button
+          variant="hero"
+          size=""
           onClick={() => setModalRegistar(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm"
+        // className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm"
         >
           <Plus size={15} /> Registar Visitante
-        </button>
+        </Button>
       </div>
 
-      {/* KPI chips */}
+      {/* KPI chips clicáveis */}
       <div className="flex flex-wrap gap-3">
         {[
-          { label: "Total Visitantes", value: relatorio?.stats?.total ?? 0,       cor: "slate" },
-          { label: "Externos",         value: relatorio?.stats?.externos ?? 0,    cor: "amber" },
-          { label: "Internos",         value: relatorio?.stats?.internos ?? 0,    cor: "sky" },
-          { label: "Convertidos",      value: relatorio?.stats?.convertidos ?? 0, cor: "emerald" },
-        ].map(({ label, value, cor }) => (
-          <div key={label} className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-${cor}-100 shadow-sm`}>
+          { label: "Total Visitantes", value: relatorio?.stats?.total ?? 0, cor: "slate", filtro: "todos" },
+          { label: "Externos", value: relatorio?.stats?.externos ?? 0, cor: "amber", filtro: "externos" },
+          { label: "Internos", value: relatorio?.stats?.internos ?? 0, cor: "sky", filtro: "internos" },
+          { label: "Convertidos", value: relatorio?.stats?.convertidos ?? 0, cor: "emerald", filtro: "convertidos" },
+        ].map(({ label, value, cor, filtro }) => (
+          <button
+            key={label}
+            onClick={() => setFiltroTipo(filtro === filtroTipo ? "todos" : filtro)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-white border shadow-sm transition-all
+        ${filtroTipo === filtro
+                ? `border-${cor}-400 ring-2 ring-${cor}-200`
+                : `border-${cor}-100 hover:border-${cor}-300`}`}
+          >
             <div>
               <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide leading-none">{label}</p>
               <p className={`text-lg font-bold text-${cor}-600 leading-tight`}>{value}</p>
             </div>
-          </div>
+          </button>
         ))}
       </div>
+
+      {filtroTipo !== "todos" && (
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-500">A filtrar por:</span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold">
+            {filtroTipo.charAt(0).toUpperCase() + filtroTipo.slice(1)}
+            <button onClick={() => setFiltroTipo("todos")} className="hover:text-amber-900">
+              <X size={11} />
+            </button>
+          </span>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit">
         {[
-          { key: "lista",     label: "Lista",     icon: Eye },
+          { key: "lista", label: "Lista", icon: Eye },
           { key: "relatorio", label: "Relatório", icon: BarChart3 },
         ].map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => setVista(key)}

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useOfertas } from '../lib/useOfertas';
 import api from '@/api/api.js';
+import { Button } from "@/components/ui/button";
 
 const LABEL = {
   Dizimo:   'Dízimos',
@@ -79,7 +80,7 @@ function CodigoInput({ codigo, nome, onResolved, tipo, rowId, onUpdate }) {
             }`}
         />
         {loading && (
-          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-amber-400 animate-pulse">...</span>
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-primary animate-pulse">...</span>
         )}
       </div>
 
@@ -179,9 +180,9 @@ function SubtotalBar({ subtotais, tipo, CANAIS }) {
   const canaisComValor = CANAIS.filter((c) => subtotais[c] > 0);
   const total = CANAIS.reduce((s, c) => s + subtotais[c], 0);
   return (
-    <div className="flex flex-wrap gap-3 mt-3 px-4 py-3 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-100 rounded-xl text-xs">
+    <div className="flex flex-wrap gap-3 mt-3 px-4 py-3 bg-gradient-to-r from-primary/10 to-secondary/30 border-amber-100 rounded-xl text-xs">
       {canaisComValor.length === 0 ? (
-        <span className="text-amber-400 italic">Sem valores registados</span>
+        <span className="text-secondary italic">Sem valores registados</span>
       ) : (
         <>
           {canaisComValor.map((c) => (
@@ -213,7 +214,7 @@ function ResumoCulto({ resumo, totalPorCanal, totalGeral, CANAIS, TIPOS_MEMBRO }
   };
   return (
     <div className="bg-white border border-amber-100 rounded-2xl overflow-hidden shadow-sm">
-      <div className="px-5 py-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-amber-100 flex items-center gap-2">
+      <div className="px-5 py-4 bg-gradient-to-r from-primary/10 to-secondary/5 border-b border-amber-100 flex items-center gap-2">
         <LayoutGrid size={15} className="text-amber-600" />
         <p className="text-sm font-bold text-amber-800">Resumo do culto</p>
       </div>
@@ -233,7 +234,7 @@ function ResumoCulto({ resumo, totalPorCanal, totalGeral, CANAIS, TIPOS_MEMBRO }
               </div>
             );
           })}
-          <div className="bg-gradient-to-br from-amber-500 to-yellow-500 rounded-xl p-3 shadow-sm">
+          <div className="bg-gradient-to-br from-secondary to-primary/50 rounded-xl p-3 shadow-sm">
             <div className="flex items-center gap-1.5 mb-2">
               <TrendingUp size={13} className="text-amber-100" />
               <p className="text-[11px] font-semibold text-amber-100">Total geral</p>
@@ -366,26 +367,26 @@ export default function FichaOfertas({ culto, onSaved }) {
 
       {/* Cabeçalho */}
       <div className="mb-6 bg-white rounded-2xl border border-amber-100 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-amber-100 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center shadow-sm">
+        <div className="px-6 py-4 bg-gradient-to-r from-primary/10 to-secondary/5 border-b border-amber-100 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-sm">
             <Coins size={18} className="text-white" />
           </div>
           <div>
             <h2 className="text-base font-bold text-slate-800">Ficha de ofertas</h2>
-            <p className="text-xs text-amber-600">Registo diário de entradas financeiras</p>
+            <p className="text-xs text-secondary">Registo diário de entradas financeiras</p>
           </div>
         </div>
         <div className="px-6 py-3 flex flex-wrap gap-4">
           <div className="flex items-center gap-1.5 text-xs text-slate-600">
-            <Calendar size={12} className="text-amber-500" />
+            <Calendar size={12} className="text-secondary" />
             <span>{culto.data}</span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-slate-600">
-            <Hash size={12} className="text-amber-500" />
+            <Hash size={12} className="text-secondary" />
             <span>{culto.tipo}</span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-slate-600">
-            <Building2 size={12} className="text-amber-500" />
+            <Building2 size={12} className="text-secondary" />
             <span>{culto.filial}</span>
           </div>
         </div>
@@ -403,7 +404,7 @@ export default function FichaOfertas({ culto, onSaved }) {
               onClick={() => setActiveTab(t)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-all
                 ${isActive
-                  ? 'bg-amber-500 text-white border-amber-500 shadow-sm shadow-amber-200'
+                  ? 'bg-primary text-white border-secondary shadow-sm shadow-amber-200'
                   : 'bg-white text-slate-500 border-slate-200 hover:border-amber-300 hover:text-amber-600'
                 }`}
             >
@@ -422,7 +423,7 @@ export default function FichaOfertas({ culto, onSaved }) {
 
       {/* Painel de entrada */}
       <div className="bg-white rounded-2xl border border-amber-100 shadow-sm mb-5 overflow-hidden">
-        <div className="px-5 py-3.5 bg-amber-50/60 border-b border-amber-100 flex items-center justify-between">
+        <div className="px-5 py-3.5 bg-gradient-to-r from-primary/10 to-secondary/5 border-b border-amber-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             {(() => { const Icon = TAB_ICON[activeTab]; return <Icon size={14} className="text-amber-600" />; })()}
             <span className="text-sm font-bold text-amber-800">{LABEL[activeTab]}</span>
@@ -515,14 +516,15 @@ export default function FichaOfertas({ culto, onSaved }) {
             </div>
           )}
         </div>
-        <button
+        <Button
+        variant="hero"
           onClick={handleGuardar}
           disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-xl shadow-sm shadow-amber-200 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+          // className="flex items-center gap-2 px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-xl shadow-sm shadow-amber-200 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
         >
           <Save size={15} />
           {saving ? 'A guardar...' : 'Guardar registo'}
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -2,18 +2,23 @@
 
 @theme {
   /* Cores personalizadas - Gold */
-  --color-gold: #daa520;
+  --color-gold: #b6852e;
   --color-gold-dark: #b8860b;
   --color-gold-light: #ffd700;
+
+  
   
   /* Cores personalizadas - Navy */
   --color-navy: #1e3a5f;
   --color-navy-light: #2c5282;
   
   /* Cores do sistema */
-  --color-primary: #1e293b;
+  --color-primary: #b6852e;
   --color-primary-foreground: #f8fafc;
-  --color-secondary:#0F0F24;
+  --color-secondary: #d69c0c;
+  --color-tertiary: #ce0300;
+  --color-quaternary: #898780;
+  --color-inside: #f4e1bd;
   --color-secondary-foreground: #1e293b;
   --color-destructive: #ef4444;
   --color-destructive-foreground: #f8fafc;

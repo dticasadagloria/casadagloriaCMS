@@ -4,10 +4,11 @@ import { Link } from "react-router-dom";
 
 // ─── ROLE STYLES ─────────────────────────────────────────────────────────────
 const ROLE_STYLE = {
-  1: { dot: "bg-amber-400", pill: "bg-amber-50 text-amber-600 border border-amber-200", avatar: "from-amber-400 to-amber-500" },
+  1: { dot: "bg-primary", pill: "bg-amber-50 text-amber-600 border border-amber-200", avatar: "from-primary to-secondary" },
   2: { dot: "bg-indigo-500", pill: "bg-indigo-50 text-indigo-600 border border-indigo-200", avatar: "from-indigo-500 to-indigo-600" },
   3: { dot: "bg-emerald-500", pill: "bg-emerald-50 text-emerald-600 border border-emerald-200",avatar: "from-emerald-500 to-emerald-600" },
   4: { dot: "bg-slate-400",   pill: "bg-slate-50   text-slate-500   border border-slate-200",  avatar: "from-slate-400   to-slate-500"   },
+  11: { dot: "bg-red-500",   pill: "bg-slate-50   text-slate-500   border border-slate-200",  avatar: "from-red-400   to-slate-500"   },
 };
 const DEFAULT_STYLE = ROLE_STYLE[4];
 
@@ -159,183 +160,180 @@ const Header = ({ setActiveTab }) => {
         .badge-pulse { animation: pulseBadge 2.2s  infinite; }
       `}</style>
 
-      <header className={`gdm-header sticky top-0 z-50 h-16 bg-white/95 backdrop-blur-xl border-b border-slate-100 transition-shadow duration-300 ${scrolled ? "shadow-[0_2px_20px_rgba(15,23,42,0.08)]" : ""}`}>
-        <div className="max-w-screen-2xl mx-auto h-full px-6 flex items-center justify-between gap-4">
+     <header className={`gdm-header sticky top-0 z-50 h-16 bg-white/95 backdrop-blur-xl border-b border-slate-100 transition-shadow duration-300 ${scrolled ? "shadow-[0_2px_20px_rgba(15,23,42,0.08)]" : ""}`}>
+  <div className="max-w-screen-2xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between gap-3">
 
-          {/* ── LOGO ─────────────────────────────────────────── */}
-          <Link to="/dashboard" className="flex items-center gap-3 no-underline flex-shrink-0 group">
+    {/* ── LOGO ─────────────────────────────────────────── */}
+    <Link to="/dashboard" className="flex items-center gap-2 no-underline flex-shrink-0 group">
+      <div className="w-24 h-9 sm:w-32 sm:h-12">
+        <img src="/Logo1.png" alt="" className="w-full h-full object-cover"/>
+      </div>
+      <div className="hidden sm:flex flex-col leading-none">
+        <span className="text-[15px] font-bold text-slate-900 tracking-tight">IICGP</span>
+        <span className="gdm-mono text-[10px] text-slate-400 tracking-wider uppercase mt-0.5">
+          Gestão de Membros
+        </span>
+      </div>
+    </Link>
 
-            <div className="w-32 h-12">
-                <img src="/Logo1.png" alt="" className="w-full h-full object-cover"/>
-            </div>
+    {/* ── CLOCK — esconde em mobile ─────────────────────── */}
+    <div className="hidden md:flex flex-1 justify-center">
+      <LiveClock />
+    </div>
 
-            <div className="flex flex-col leading-none">
-              <span className="text-[15px] font-bold text-slate-900 tracking-tight">IICGP</span>
-              <span className="gdm-mono text-[10px] text-slate-400 tracking-wider uppercase mt-0.5">
-                Gestão de Membros
-              </span>
-            </div>
-          </Link>
+    {/* ── RIGHT ────────────────────────────────────────── */}
+    <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
 
-          {/* ── CLOCK ────────────────────────────────────────── */}
-          <div className="flex-1 flex justify-center">
-            <LiveClock />
-          </div>
+      {/* BELL */}
+      <div ref={notifRef} className="relative">
+        <button
+          onClick={() => { setNotifOpen(o => !o); setProfileOpen(false); }}
+          title="Notificações"
+          className={`relative w-9 h-9 rounded-xl border flex items-center justify-center cursor-pointer transition-all duration-150
+            ${notifOpen
+              ? "bg-slate-100 border-slate-300 text-slate-700"
+              : "bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-700"}`}
+        >
+          <BellIcon />
+          {unread > 0 && (
+            <span className="badge-pulse absolute top-1.5 right-1.5 min-w-[16px] h-4 bg-red-500 text-white text-[9px] font-bold rounded-full border-2 border-white flex items-center justify-center px-0.5 leading-none">
+              {unread}
+            </span>
+          )}
+        </button>
 
-          {/* ── RIGHT ────────────────────────────────────────── */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-
-            {/* BELL ──────── */}
-            <div ref={notifRef} className="relative">
-              <button
-                onClick={() => { setNotifOpen(o => !o); setProfileOpen(false); }}
-                title="Notificações"
-                className={`relative w-9 h-9 rounded-xl border flex items-center justify-center cursor-pointer transition-all duration-150
-                  ${notifOpen
-                    ? "bg-slate-100 border-slate-300 text-slate-700"
-                    : "bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100 hover:border-slate-300 hover:text-slate-700"}`}
-              >
-                <BellIcon />
+        {notifOpen && (
+          <div className="drop-anim absolute top-[calc(100%+10px)] right-0 w-72 sm:w-80 bg-white rounded-2xl border border-slate-100 shadow-[0_8px_40px_rgba(15,23,42,0.13)] overflow-hidden z-50">
+            <div className="px-4 py-3.5 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-[13.5px] font-bold text-slate-900">Notificações</span>
                 {unread > 0 && (
-                  <span className="badge-pulse absolute top-1.5 right-1.5 min-w-[16px] h-4 bg-red-500 text-white text-[9px] font-bold rounded-full border-2 border-white flex items-center justify-center px-0.5 leading-none">
-                    {unread}
-                  </span>
+                  <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">{unread}</span>
                 )}
-              </button>
-
-              {notifOpen && (
-                <div className="drop-anim absolute top-[calc(100%+10px)] right-0 w-80 bg-white rounded-2xl border border-slate-100 shadow-[0_8px_40px_rgba(15,23,42,0.13)] overflow-hidden z-50">
-                  <div className="px-4 py-3.5 border-b border-slate-100 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[13.5px] font-bold text-slate-900">Notificações</span>
-                      {unread > 0 && (
-                        <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">{unread}</span>
-                      )}
-                    </div>
-                    {unread > 0 && (
-                      <button onClick={markAllRead} className="text-[11px] font-semibold text-[#1e3a5f] hover:text-[#2d6eaa] transition-colors bg-transparent border-none cursor-pointer">
-                        Marcar lidas
-                      </button>
-                    )}
-                  </div>
-
-                  {notifs.map((n) => (
-                    <div key={n.id} className="px-4 py-3 flex gap-3 cursor-pointer hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0">
-                      <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.unread ? n.dot : "bg-transparent border border-slate-300"}`} />
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-[13px] leading-snug ${n.unread ? "font-semibold text-slate-900" : "font-medium text-slate-500"}`}>{n.title}</p>
-                        <p className="text-[11.5px] text-slate-400 mt-0.5 leading-snug">{n.desc}</p>
-                        <div className="flex items-center gap-1 mt-1.5 text-slate-400">
-                          <ClockSmIcon />
-                          <span className="gdm-mono text-[10px]">{n.time} atrás</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-
-                  <div className="px-4 py-2.5 text-center border-t border-slate-100">
-                    <span className="text-[12px] font-semibold text-[#1e3a5f] cursor-pointer hover:text-[#2d6eaa] transition-colors">
-                      Ver todas as notificações →
-                    </span>
-                  </div>
-                </div>
+              </div>
+              {unread > 0 && (
+                <button onClick={markAllRead} className="text-[11px] font-semibold text-[#1e3a5f] hover:text-[#2d6eaa] transition-colors bg-transparent border-none cursor-pointer">
+                  Marcar lidas
+                </button>
               )}
             </div>
 
-            {/* DIVIDER */}
-            <div className="w-px h-7 bg-slate-200 mx-1" />
-
-            {/* PROFILE ────── */}
-            {loading ? <ProfileSkeleton /> : (
-              <div ref={profileRef} className="relative">
-                <button
-                  onClick={() => { setProfileOpen(o => !o); setNotifOpen(false); }}
-                  className={`flex items-center gap-2.5 py-1.5 pl-1.5 pr-3 rounded-xl border cursor-pointer transition-all duration-150
-                    ${profileOpen
-                      ? "bg-slate-100 border-slate-300"
-                      : "bg-slate-50 border-slate-200 hover:bg-slate-100 hover:border-slate-300"}`}
-                >
-                  {/* Avatar */}
-                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${roleStyle.avatar} flex items-center justify-center text-white text-[12px] font-bold tracking-wide flex-shrink-0`}>
-                    {initials}
+            {notifs.map((n) => (
+              <div key={n.id} className="px-4 py-3 flex gap-3 cursor-pointer hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0">
+                <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.unread ? n.dot : "bg-transparent border border-slate-300"}`} />
+                <div className="flex-1 min-w-0">
+                  <p className={`text-[13px] leading-snug ${n.unread ? "font-semibold text-slate-900" : "font-medium text-slate-500"}`}>{n.title}</p>
+                  <p className="text-[11.5px] text-slate-400 mt-0.5 leading-snug">{n.desc}</p>
+                  <div className="flex items-center gap-1 mt-1.5 text-slate-400">
+                    <ClockSmIcon />
+                    <span className="gdm-mono text-[10px]">{n.time} atrás</span>
                   </div>
+                </div>
+              </div>
+            ))}
 
-                  {/* Nome + role_nome da API */}
-                  <div className="hidden sm:flex flex-col leading-none text-left">
-                    <span className="text-[13px] font-semibold text-slate-900 whitespace-nowrap">
-                      {user?.username ?? "—"}
-                    </span>
-                    <span className={`inline-flex items-center gap-1 mt-1 text-[10.5px] font-semibold px-1.5 py-0.5 rounded ${roleStyle.pill}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${roleStyle.dot}`} />
-                      {roleLabel}    {/* ← role_nome do JOIN com tabela roles */}
-                    </span>
-                  </div>
+            <div className="px-4 py-2.5 text-center border-t border-slate-100">
+              <span className="text-[12px] font-semibold text-[#1e3a5f] cursor-pointer hover:text-[#2d6eaa] transition-colors">
+                Ver todas →
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
 
-                  <span className="hidden sm:block text-slate-400">
-                    <ChevronIcon open={profileOpen} />
+      {/* DIVIDER — esconde em mobile */}
+      <div className="hidden sm:block w-px h-7 bg-slate-200 mx-0.5" />
+
+      {/* PROFILE */}
+      {loading ? <ProfileSkeleton /> : (
+        <div ref={profileRef} className="relative">
+          <button
+            onClick={() => { setProfileOpen(o => !o); setNotifOpen(false); }}
+            className={`flex items-center gap-2 py-1.5 pl-1.5 pr-2 sm:pr-3 rounded-xl border cursor-pointer transition-all duration-150
+              ${profileOpen
+                ? "bg-slate-100 border-slate-300"
+                : "bg-slate-50 border-slate-200 hover:bg-slate-100 hover:border-slate-300"}`}
+          >
+            {/* Avatar */}
+            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${roleStyle.avatar} flex items-center justify-center text-white text-[12px] font-bold tracking-wide flex-shrink-0`}>
+              {initials}
+            </div>
+
+            {/* Nome + role — esconde em mobile */}
+            <div className="hidden sm:flex flex-col leading-none text-left">
+              <span className="text-[13px] font-semibold text-slate-900 whitespace-nowrap">
+                {user?.username ?? "—"}
+              </span>
+              <span className={`inline-flex items-center gap-1 mt-1 text-[10.5px] font-semibold px-1.5 py-0.5 rounded ${roleStyle.pill}`}>
+                <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${roleStyle.dot}`} />
+                {roleLabel}
+              </span>
+            </div>
+
+            <span className="hidden sm:block text-slate-400">
+              <ChevronIcon open={profileOpen} />
+            </span>
+          </button>
+
+          {/* Dropdown */}
+          {profileOpen && (
+            <div className="drop-anim absolute top-[calc(100%+10px)] right-0 w-56 bg-white rounded-2xl border border-slate-100 shadow-[0_8px_40px_rgba(15,23,42,0.13)] overflow-hidden z-50">
+
+              {/* User card */}
+              <div className="px-4 py-3.5 border-b border-slate-100 flex items-center gap-3">
+                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${roleStyle.avatar} flex items-center justify-center text-white text-[15px] font-bold flex-shrink-0`}>
+                  {initials}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[14px] font-bold text-slate-900 truncate">{user?.username}</p>
+                  <span className={`inline-flex items-center gap-1 mt-1.5 text-[10.5px] font-semibold px-1.5 py-0.5 rounded ${roleStyle.pill}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${roleStyle.dot}`} />
+                    {roleLabel}
                   </span>
+                </div>
+              </div>
+
+              {/* Menu */}
+              <div className="py-1.5">
+                <button
+                  onClick={() => { setProfileOpen(false); setActiveTab("perfil"); }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors text-left"
+                >
+                  <UserIcon /> Meu Perfil
                 </button>
 
-                {/* Dropdown */}
-                {profileOpen && (
-                  <div className="drop-anim absolute top-[calc(100%+10px)] right-0 w-56 bg-white rounded-2xl border border-slate-100 shadow-[0_8px_40px_rgba(15,23,42,0.13)] overflow-hidden z-50">
+                <button
+                  onClick={() => { setProfileOpen(false); setActiveTab("configuracoes"); }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors text-left"
+                >
+                  <SettingsIcon /> Configurações
+                </button>
 
-                    {/* User card */}
-                    <div className="px-4 py-3.5 border-b border-slate-100 flex items-center gap-3">
-                      <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${roleStyle.avatar} flex items-center justify-center text-white text-[15px] font-bold flex-shrink-0`}>
-                        {initials}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[14px] font-bold text-slate-900 truncate">{user?.username}</p>
-                        <span className={`inline-flex items-center gap-1 mt-1.5 text-[10.5px] font-semibold px-1.5 py-0.5 rounded ${roleStyle.pill}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${roleStyle.dot}`} />
-                          {roleLabel}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Menu */}
-                    <div className="py-1.5">
-                      <button
-                        onClick={() => { setProfileOpen(false); setActiveTab("perfil"); }}
-                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors text-left"
-                      >
-                        <UserIcon /> Meu Perfil
-                      </button>
-
-                      <button
-                        onClick={() => { setProfileOpen(false); setActiveTab("configuracoes"); }}
-                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors text-left"
-                      >
-                        <SettingsIcon /> Configurações
-                      </button>
-
-                      {/* Só Admin vê gestão de utilizadores */}
-                      {roleId === 1 && (
-                        <button
-                          onClick={() => { setProfileOpen(false); setActiveTab("usuarios"); }}
-                          className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors text-left"
-                        >
-                          <UserIcon /> Gestão de Utilizadores
-                        </button>
-                      )}
-
-                      <div className="my-1 h-px bg-slate-100" />
-
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-semibold text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors text-left"
-                      >
-                        <LogoutIcon /> Terminar Sessão
-                      </button>
-                    </div>
-                  </div>
+                {roleId === 1 && (
+                  <button
+                    onClick={() => { setProfileOpen(false); setActiveTab("usuarios"); }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors text-left"
+                  >
+                    <UserIcon /> Gestão de Utilizadores
+                  </button>
                 )}
+
+                <div className="my-1 h-px bg-slate-100" />
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13.5px] font-semibold text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors text-left"
+                >
+                  <LogoutIcon /> Terminar Sessão
+                </button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-      </header>
+      )}
+    </div>
+  </div>
+</header>
     </>
   );
 };

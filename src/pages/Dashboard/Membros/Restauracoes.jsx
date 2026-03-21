@@ -1,5 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import api from "@/api/api.js";
 import {
   Plus,
@@ -101,7 +102,7 @@ const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-amber-50/50 to-transparent">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
-              <Plus size={14} className="text-amber-600" />
+              <Plus size={14} className="text-primary" />
             </div>
             <h2 className="text-[14px] font-bold text-slate-800">
               Nova Restauração
@@ -109,7 +110,7 @@ const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all"
+            className="w-7 h-7 rounded-lg hover:bg-secondary flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all"
           >
             <X size={14} />
           </button>
@@ -205,10 +206,12 @@ const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
 
           {/* Botões */}
           <div className="flex gap-3 pt-1">
-            <button
+            <Button
+            variant="hero"
+            size="md"
               type="submit"
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all shadow-sm"
+              // className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all shadow-sm"
             >
               {loading ? (
                 <>
@@ -221,7 +224,7 @@ const NovaRestauracaoModal = ({ membros, onClose, onSuccess }) => {
                   Registar
                 </>
               )}
-            </button>
+            </Button>
             <button
               type="button"
               onClick={onClose}
@@ -369,7 +372,7 @@ export default function RestauracoesList() {
   return (
     <div className="space-y-5 max-w-6xl">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
             Restaurações
@@ -378,17 +381,19 @@ export default function RestauracoesList() {
             Gestão de restaurações de membros
           </p>
         </div>
-        <button
+        <Button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+          variant="hero"
+          size="md"
+          // className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
         >
           <Plus size={15} />
           Nova Restauração
-        </button>
+        </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
           {
             label: "Total",

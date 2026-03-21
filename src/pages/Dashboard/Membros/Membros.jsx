@@ -11,6 +11,7 @@ import {
   ChevronsUpDown,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../../../components/ui/button";
 
 // ── Função pura de filtro — fora do componente ────────────────────────────────
 const aplicarFiltro = (lista, filtro) => {
@@ -207,13 +208,15 @@ export default function MembrosPage() {
           <RefreshCw size={14} />
           Actualizar
         </button> */}
-        <button
+        <Button
+        variant="hero"
+        size="sm"
           onClick={() => fetchMembros(filtroActivo)} // ← passa o filtro activo
-          className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+         
         >
           <RefreshCw size={14} />
           Actualizar
-        </button>
+        </Button>
       </div>
 
       {/* ── FILTRO ACTIVO BADGE ── */}
@@ -358,7 +361,7 @@ export default function MembrosPage() {
                     {/* Nome */}
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 shadow-sm">
                           <span className="text-white text-[11px] font-bold">
                             {m.nome_membro
                               ?.split(" ")

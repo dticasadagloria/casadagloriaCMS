@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import api from "@/api/api"
 import {
   Users,
@@ -23,7 +24,7 @@ const ROLE_CONFIG = {
   1: {
     label:   "Super Admin",
     icon:    Crown,
-    avatar:  "from-amber-400 to-amber-500",
+    avatar:  "from-primary to-secondary",
     pill:    "bg-amber-50 text-amber-700 border border-amber-200",
     dot:     "bg-amber-400",
     card:    "border-amber-200/60 hover:border-amber-300",
@@ -32,7 +33,7 @@ const ROLE_CONFIG = {
   2: {
     label:   "Pastor",
     icon:    BookOpen,
-    avatar:  "from-indigo-400 to-indigo-600",
+    avatar:  "from-secondary to-indigo-600",
     pill:    "bg-indigo-50 text-indigo-700 border border-indigo-200",
     dot:     "bg-indigo-500",
     card:    "border-indigo-200/60 hover:border-indigo-300",
@@ -83,6 +84,15 @@ const ROLE_CONFIG = {
     card:    "border-green-200/60 hover:border-green-300",
     glow:    "shadow-green-100",
   },
+  11: {
+     label:   "Estatística",
+    icon:    BarChart3,  
+    avatar:  "",
+    pill:    "bg-green-50 text-green-700 border border-green-200",
+    dot:     "bg-green-500",
+    card:    "border-green-200/60 hover:border-green-300",
+    glow:    "shadow-green-100",
+  }
 };
 
 const DEFAULT_ROLE = ROLE_CONFIG[4];
@@ -264,18 +274,19 @@ const UsersPage = () => {
             Gerir todos os utilizadores e as suas permissões
           </p>
         </div>
-        <button
+        <Button
+        variant="hero"
           onClick={fetchUsers}
-          className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+          // className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
         >
           <RefreshCw size={14} /> Actualizar
-        </button>
+        </Button>
       </div>
 
       {/* ── STATS ROW ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Total",       value: total,      icon: Users,     color: "text-slate-700",   bg: "bg-slate-100"    },
+          { label: "Total",       value: total,      icon: Users,     color: "text-primary",   bg: "bg-slate-100"    },
           { label: "Activos",     value: ativos,     icon: UserCheck, color: "text-emerald-700", bg: "bg-emerald-100"  },
           { label: "Admins",      value: byRole(1),  icon: Crown,     color: "text-amber-700",   bg: "bg-amber-100"    },
           { label: "Pastores",    value: byRole(2),  icon: Shield,    color: "text-indigo-700",  bg: "bg-indigo-100"   },
@@ -315,7 +326,7 @@ const UsersPage = () => {
               onClick={() => setRoleFilter(f.key)}
               className={`px-3 py-1.5 rounded-full text-[12px] font-semibold border transition-all duration-150
                 ${roleFilter === f.key
-                  ? "bg-amber-500 text-white border-amber-500 shadow-sm"
+                  ? "bg-secondary text-white border-amber-500 shadow-sm"
                   : "bg-white text-slate-500 border-slate-200 hover:border-amber-300 hover:text-amber-600"
                 }`}
             >
