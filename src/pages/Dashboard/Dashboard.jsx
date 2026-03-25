@@ -22,7 +22,7 @@ import {
   BarChart3,
   Building2,
   HandCoins,
-  LayoutPanelTop
+  LayoutPanelTop,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Membros from "./Membros/Membros";
@@ -33,7 +33,7 @@ import Usuarios from "./Configuracoes/Users";
 import ProfilePage from "./Configuracoes/ProfilePage";
 import Finances from "./Finanças/Finances";
 import FinancesDashboard from "./Finanças/FinancesDashboard";
-import Ofertas from "./Finanças/Ofertas"
+import Ofertas from "./Finanças/Ofertas";
 import Requisicoes from "./Finanças/Requisicoes";
 import CallCenter from "./Call_Center/CallCenter";
 import Estatistica from "./Estatistica/Estatistica";
@@ -70,7 +70,7 @@ const tabs = [
     children: [
       { key: "painel", label: "Painel de Controle", icon: BarChart3 },
       { key: "cultos", label: "Cultos", icon: UserPlus },
-      { key: "visitantes", label: "Visitas", icon: Users}
+      { key: "visitantes", label: "Visitas", icon: Users },
     ],
   },
   {
@@ -78,8 +78,12 @@ const tabs = [
     label: "Finanças",
     icon: Landmark,
     children: [
-      { key: "dashboard-financas", label: "Painel de Controle", icon: BarChart3 },
-      { key: "ofertas", label: "Ofertas", icon:  HandCoins},
+      {
+        key: "dashboard-financas",
+        label: "Painel de Controle",
+        icon: BarChart3,
+      },
+      { key: "ofertas", label: "Ofertas", icon: HandCoins },
       { key: "requisicoes", label: "Requisições", icon: BarChart3 },
     ],
   },
@@ -93,18 +97,20 @@ const tabs = [
     label: "SOS Socorros",
     icon: HeartHandshake,
     children: [
-      { key: "dashboard-socorros", label: "Painel de Controle", icon: BarChart3 },
+      {
+        key: "dashboard-socorros",
+        label: "Painel de Controle",
+        icon: BarChart3,
+      },
     ],
   },
-  { 
+  {
     key: "estrutura",
     label: "Estrutura da Igreja",
     icon: LayoutPanelTop,
     children: [
-       {key: "departamentos",
-      label: "Departamentos",
-      icon: Building2,}
-    ]
+      { key: "departamentos", label: "Departamentos", icon: Building2 },
+    ],
   },
   {
     key: "configuracoes",
@@ -269,9 +275,9 @@ const StatCard = ({
 
 // ─── DASHBOARD ────────────────────────────────────────────────────────────────
 const Dashboard = () => {
- const [activeTab, setActiveTab] = useState(() => {
-  return localStorage.getItem("activeTab") || "dashboard";
-});
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem("activeTab") || "dashboard";
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [openMenus, setOpenMenus] = useState({});
@@ -282,10 +288,9 @@ const Dashboard = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [statsDepartamentos, setStatsDepartamentos] = useState(null);
 
-
   useEffect(() => {
-  localStorage.setItem("activeTab", activeTab);
-}, [activeTab]);
+    localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -314,6 +319,7 @@ const Dashboard = () => {
     CALLCENTER: 9,
     SOSSOCORROS: 10,
     MEMBROSESTATISTICA: 11,
+    IICGPMAXIXE: 12,
     // NOVO_ROLE: 5,  <-- adiciona aqui futuramente
   };
 
@@ -328,7 +334,8 @@ const Dashboard = () => {
       ROLES.ESTATISTICA,
       ROLES.CALLCENTER,
       ROLES.SOSSOCORROS,
-      ROLES.MEMBROSESTATISTICA
+      ROLES.MEMBROSESTATISTICA,
+      ROLES.IICGPMAXIXE
     ],
     "lista-membros": [
       ROLES.ADMIN,
@@ -337,23 +344,32 @@ const Dashboard = () => {
       ROLES.ESTATISTICA,
       ROLES.CALLCENTER,
       ROLES.SOSSOCORROS,
+      ROLES.IICGPMAXIXE,
     ],
     "novo-membro": [
       ROLES.ADMIN,
       ROLES.PASTOR,
       ROLES.SECRETARIO,
       ROLES.ESTATISTICA,
+      ROLES.IICGPMAXIXE
     ],
-    restauracoes: [ROLES.ADMIN, ROLES.PASTOR],
-    departamentos: [ROLES.ADMIN, ROLES.PASTOR],
-    estatistica: [ROLES.ADMIN, ROLES.PASTOR, ROLES.ESTATISTICA, ROLES.CALLCENTER, ROLES.MEMBROSESTATISTICA],
-    "painel": [ROLES.ADMIN, ROLES.PASTOR, ROLES.ESTATISTICA, ROLES.CALLCENTER],
-    "cultos": [ROLES.ADMIN, ROLES.ESTATISTICA,ROLES.MEMBROSESTATISTICA],
-    "visitas": [ROLES.ADMIN, ROLES.ESTATISTICA,ROLES.MEMBROSESTATISTICA],
-    financas: [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS],
-    "call-center": [ROLES.ADMIN, ROLES.PASTOR, ROLES.CALLCENTER],
-    "sos-socorros": [ROLES.ADMIN, ROLES.PASTOR, ROLES.SOSSOCORROS],
-    usuarios: [ROLES.ADMIN],
+    restauracoes: [ROLES.ADMIN, ROLES.PASTOR,ROLES.IICGPMAXIXE],
+    departamentos: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE],
+    estatistica: [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.ESTATISTICA,
+      ROLES.CALLCENTER,
+      ROLES.MEMBROSESTATISTICA,
+      ROLES.IICGPMAXIXE,
+    ],
+    painel: [ROLES.ADMIN, ROLES.PASTOR, ROLES.ESTATISTICA, ROLES.CALLCENTER, ROLES.IICGPMAXIXE],
+    cultos: [ROLES.ADMIN, ROLES.ESTATISTICA, ROLES.MEMBROSESTATISTICA, ROLES.IICGPMAXIXE],
+    visitas: [ROLES.ADMIN, ROLES.ESTATISTICA, ROLES.MEMBROSESTATISTICA, ROLES.IICGPMAXIXE],
+    financas: [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.IICGPMAXIXE],
+    "call-center": [ROLES.ADMIN, ROLES.PASTOR, ROLES.CALLCENTER, ROLES.IICGPMAXIXE],
+    "sos-socorros": [ROLES.ADMIN, ROLES.PASTOR, ROLES.SOSSOCORROS, ROLES.IICGPMAXIXE],
+    usuarios: [ROLES.ADMIN, ROLES.IICGPMAXIXE],
     perfil: null,
     permissoes: [
       ROLES.ADMIN,
@@ -363,16 +379,20 @@ const Dashboard = () => {
       ROLES.CALLCENTER,
       ROLES.SOSSOCORROS,
       ROLES.MEMBROSESTATISTICA,
+      ROLES.IICGPMAXIXE
     ],
     // "novo-tab":    [ROLES.ADMIN],  <-- adiciona aqui futuramente
-    estrutura:[ROLES.ADMIN,
+    estrutura: [
+      ROLES.ADMIN,
       ROLES.PASTOR,
       ROLES.FINANCAS,
       ROLES.ESTATISTICA,
       ROLES.CALLCENTER,
-      ROLES.SOSSOCORROS],
-    departamentos: [ROLES.ADMIN, ROLES.PASTOR],
-    requisicoes: [ROLES.ADMIN,ROLES.PASTOR]
+      ROLES.SOSSOCORROS,
+      ROLES.IICGPMAXIXE
+    ],
+    departamentos: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE],
+    requisicoes: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE],
   };
 
   // ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
@@ -458,18 +478,17 @@ const Dashboard = () => {
 
   //fetch departamentos
   useEffect(() => {
-  api.get("/api/departamentos/stats")
-    .then((res) => setStatsDepartamentos(res.data.stats))
-    .catch(console.error);
-}, []);
-
+    api
+      .get("/api/departamentos/stats")
+      .then((res) => setStatsDepartamentos(res.data.stats))
+      .catch(console.error);
+  }, []);
 
   const handleCardClick = (type) => {
-
-     if (type === "departamentos") {
-    setActiveTab("departamentos");
-    return;
-  }
+    if (type === "departamentos") {
+      setActiveTab("departamentos");
+      return;
+    }
     setActiveTab("lista-membros");
     sessionStorage.setItem("filtroMembros", type);
   };
@@ -671,14 +690,14 @@ const Dashboard = () => {
                         onClick={() => handleCardClick("lideres")}
                       />
                       <StatCard
-  title="Departamentos"
-  value={statsDepartamentos?.total ?? 0}
-  change={`${statsDepartamentos?.activos ?? 0} activos`}
-  changeType="up"
-  Icon={Building2}
-  gradient="from-violet-500 to-purple-600"
-  onClick={() => handleCardClick("departamentos")}
-/>
+                        title="Departamentos"
+                        value={statsDepartamentos?.total ?? 0}
+                        change={`${statsDepartamentos?.activos ?? 0} activos`}
+                        changeType="up"
+                        Icon={Building2}
+                        gradient="from-violet-500 to-purple-600"
+                        onClick={() => handleCardClick("departamentos")}
+                      />
                       {/* <StatCard
                         title="Membros Batizados"
                         value={totalBatizados}
@@ -761,8 +780,10 @@ const Dashboard = () => {
                     <NovoMembro />
                   )}
 
-                  {/*Departaemntos*/}
-                  {(activeTab === "deapartamentos" || activeTab === "departamentos") && temAcesso("departamentos", currentUser?.role_id) && (
+                {/*Departaemntos*/}
+                {(activeTab === "deapartamentos" ||
+                  activeTab === "departamentos") &&
+                  temAcesso("departamentos", currentUser?.role_id) && (
                     <Departamentos />
                   )}
 
@@ -771,22 +792,27 @@ const Dashboard = () => {
                   temAcesso("financas", currentUser?.role_id) && <Finances />}
 
                 {/* Finanças Dashboard */}
-                {(activeTab === "dashboard-financas" || activeTab === "dashboard-financas") &&
-                temAcesso("dashboard-financas", currentUser?.role_id) && <FinancesDashboard
-    onNavigate={(tab, filtro) => {
-      if (filtro) sessionStorage.setItem("filtroMembros", filtro);
-      setActiveTab(tab);
-    }}
-  />}
+                {(activeTab === "dashboard-financas" ||
+                  activeTab === "dashboard-financas") &&
+                  temAcesso("dashboard-financas", currentUser?.role_id) && (
+                    <FinancesDashboard
+                      onNavigate={(tab, filtro) => {
+                        if (filtro)
+                          sessionStorage.setItem("filtroMembros", filtro);
+                        setActiveTab(tab);
+                      }}
+                    />
+                  )}
 
                 {/* Ofertas */}
                 {(activeTab === "ofertas" || activeTab === "ofertas") &&
                   temAcesso("ofertas", currentUser?.role_id) && <Ofertas />}
 
-
                 {/*Requisicoes*/}
                 {(activeTab === "requisicoes" || activeTab === "requisicoes") &&
-                  temAcesso("requisicoes", currentUser?.role_id) && <Requisicoes userRole={currentUser?.role_id}/>}
+                  temAcesso("requisicoes", currentUser?.role_id) && (
+                    <Requisicoes userRole={currentUser?.role_id} />
+                  )}
 
                 {/*Call Center*/}
                 {(activeTab === "call-center" || activeTab === "call-center") &&
@@ -803,17 +829,17 @@ const Dashboard = () => {
 
                 {/*Estatistica*/}
                 {(activeTab === "painel" || activeTab === "painel") &&
-                  temAcesso("painel", currentUser?.role_id) && (
-                    <Estatistica />
-                  )}
+                  temAcesso("painel", currentUser?.role_id) && <Estatistica />}
 
                 {/*Cultos*/}
                 {(activeTab === "cultos" || activeTab === "cultos") &&
                   temAcesso("cultos", currentUser?.role_id) && <Cultos />}
 
-                  {/*Visitas*/}
-                  {(activeTab === "visitantes" || activeTab === "visitantes") &&
-                    temAcesso("visitantes", currentUser?.role_id) && <Visitantes />}
+                {/*Visitas*/}
+                {(activeTab === "visitantes" || activeTab === "visitantes") &&
+                  temAcesso("visitantes", currentUser?.role_id) && (
+                    <Visitantes />
+                  )}
 
                 {/* ── PLACEHOLDER PAGES ── */}
                 {![
