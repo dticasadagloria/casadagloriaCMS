@@ -765,11 +765,11 @@ const Visitantes = () => {
                         )}
                       </td>
                       <td className="px-4 py-3.5">
-                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-2  group-hover:opacity-100 transition-opacity">
                           {!v.membro_id && (
                             <button
                               onClick={() => setModalConverter(v)}
-                              className="flex items-center gap-1 text-[11px] text-emerald-600 font-semibold hover:text-emerald-700 px-2 py-1 rounded-lg hover:bg-emerald-50 transition-colors"
+                              className="flex items-center gap-1 text-[11px] opacity-0 text-emerald-600 font-semibold hover:text-emerald-700 px-2 py-1 rounded-lg hover:bg-emerald-50 transition-colors"
                             >
                               <UserPlus size={12} /> Converter
                             </button>

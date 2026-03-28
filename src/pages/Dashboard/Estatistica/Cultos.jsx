@@ -123,7 +123,7 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
                       </span>
                     </td>
                     <td className="px-4 py-3.5">
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-2  group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => onSelecionar(c)}
                           className="flex items-center gap-1 text-[11px] text-amber-600 font-semibold hover:text-amber-700"

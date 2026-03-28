@@ -23,6 +23,8 @@ import {
   Building2,
   HandCoins,
   LayoutPanelTop,
+  Proportions,
+  Church 
 } from "lucide-react";
 import Header from "@/components/Header";
 import Membros from "./Membros/Membros";
@@ -37,6 +39,8 @@ import Ofertas from "./Finanças/Ofertas";
 import Requisicoes from "./Finanças/Requisicoes";
 import CallCenter from "./Call_Center/CallCenter";
 import Estatistica from "./Estatistica/Estatistica";
+import Convertidos from "./Estatistica/Convertidos";
+import ExportarRelatorio from "../../components/ExportarRelatorio";
 import Cultos from "./Estatistica/Cultos";
 import Visitantes from "./Estatistica/Visitantes";
 import DonutBatizados from "@/components/charts/DonutBatizados.jsx";
@@ -69,8 +73,11 @@ const tabs = [
     icon: BarChart3,
     children: [
       { key: "painel", label: "Painel de Controle", icon: BarChart3 },
-      { key: "cultos", label: "Cultos", icon: UserPlus },
+      { key: "cultos", label: "Cultos", icon: Church  },
       { key: "visitantes", label: "Visitas", icon: Users },
+      { key: "convertidos", label: "Novos Convertidos", icon: UserPlus},
+      { key: "relatorio", label: "Relátorios", icon: Proportions},
+
     ],
   },
   {
@@ -857,6 +864,19 @@ const Dashboard = () => {
                     <Visitantes />
                   )}
 
+                {/*Novos Convertidos */}
+                {(activeTab === "convertidos" || activeTab === "convertidos") &&
+                  temAcesso("convertidos", currentUser?.role_id) && (
+                    <Convertidos />
+                  )}
+
+                  {/*Relátorios pdf e csv */}
+                {(activeTab === "relatorio" || activeTab === "relatorio") &&
+                  temAcesso("relatorio", currentUser?.role_id) && (
+                    <ExportarRelatorio />
+                  )}
+
+
                 {/* ── PLACEHOLDER PAGES ── */}
                 {![
                   "dashboard",
@@ -880,6 +900,8 @@ const Dashboard = () => {
                   "ofertas",
                   "estrutura",
                   "dashboard-financas",
+                  "convertidos",
+                  "relatorio",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
