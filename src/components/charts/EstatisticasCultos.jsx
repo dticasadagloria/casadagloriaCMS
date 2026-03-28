@@ -38,7 +38,7 @@ const EstatisticasCultos = () => {
         ]);
         setGerais(resGerais.data.stats);
         setPorMes(resMes.data.dados);
-        setPorCulto(resCulto.data.dados.reverse()); // mais antigo primeiro
+        setPorCulto(resCulto.data.dados.reverse()); 
       } catch (err) {
         console.error("Erro ao carregar estatísticas:", err);
       } finally {

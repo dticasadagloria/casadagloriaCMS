@@ -251,14 +251,19 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
             />
           </Field>
 
-          <Field label="Filial">
-            <select value={form.branch_id} onChange={set("branch_id")} className={inputClass}>
-              <option value="">Selecionar filial</option>
-              {branches.map((b) => (
-                <option key={b.id} value={b.id}>{b.nome}</option>
-              ))}
-            </select>
-          </Field>
+         <Field label="Filial *">
+  <select 
+    required  
+    value={form.branch_id} 
+    onChange={set("branch_id")} 
+    className={inputClass}
+  >
+    <option value="">Selecionar filial</option>
+    {branches.map((b) => (
+      <option key={b.id} value={b.id}>{b.nome}</option>
+    ))}
+  </select>
+</Field>
         </div>
 
         {erro && (
