@@ -160,57 +160,13 @@ const EditarMembro = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [celulas, setCelulas] = useState([]);
 
   useEffect(() => {
     fetchMembro();
   }, [id]);
 
-  // const fetchMembro = async () => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}`, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
 
-  //     if (!res.ok) throw new Error("Membro não encontrado");
-
-  //     const data = await res.json();
-  //     const membro = data.membro || data;
-
-  //     setForm({
-  //       codigo: membro.codigo || "",
-  //       nome: membro.nome || "",
-  //       genero: membro.genero || "",
-  //       data_nascimento: membro.data_nascimento
-  //         ? membro.data_nascimento.split("T")[0]
-  //         : "",
-  //       bairro: membro.bairro || "",
-  //       estado_civil: membro.estado_civil || "",
-  //       faixa_etaria: membro.faixa_etaria || "",
-  //       batizado: !!membro.batizado,
-  //       data_batismo: membro.data_batismo
-  //         ? membro.data_batismo.split("T")[0]
-  //         : null, // null se não existir
-  //       ocupacao: membro.ocupacao || "",
-  //       branch_id: membro.branch_id ? String(membro.branch_id) : "",
-  //       celula_id: membro.celula_id ? String(membro.celula_id) : "",
-  //       ano_ingresso: membro.ano_ingresso ? String(membro.ano_ingresso) : "",
-  //       escola_da_verdade: membro.escola_da_verdade || "",
-  //       data_conclusao_escola: membro.data_conclusao_escola
-  //         ? membro.data_conclusao_escola.split("T")[0]
-  //         : "",
-  //       contacto: membro.contacto || "",
-  //       tipo_documento: membro.tipo_documento || "",
-  //       numero_documento: membro.numero_documento || "",
-  //       parceiro: !!membro.parceiro,
-  //       email: membro.email || "",
-  //     });
-  //   } catch (err) {
-  //     setError(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const fetchMembro = async () => {
     try {
       const res = await api.get(`/api/membros/${id}`);
@@ -320,6 +276,12 @@ const EditarMembro = () => {
       setSaving(false);
     }
   };
+
+  useEffect(() => {
+  api.get("/api/celulas")
+    .then((res) => setCelulas(res.data.celulas || []))
+    .catch(console.error);
+}, []);
 
   if (loading)
     return (
@@ -515,49 +477,16 @@ const EditarMembro = () => {
                 max={new Date().getFullYear()}
               />
               <Select
-                label="Nome da Célula que frequenta"
-                name="celula_id"
-                icon={Building}
-                form={form}
-                onChange={handleChange}
-                options={[
-                  { value: "2", label: "Candelabro de Ouro" },
-                  { value: "3", label: "Capela dos Vencedores-Malí" },
-                  { value: "4", label: "Célula Ponto da Graça-Zona Verde" },
-                  { value: "5", label: "Células das Meninas" },
-                  // { value: "6", label: "IICGP-NAMAACHA" },
-                  // { value: "7", label: "Ebenezer-Zimpeto" },
-                  // { value: "8", label: "Ebenezer-Mafalala" },
-                  // { value: "9", label: "Ebenezer-Mafalala" },
-                  // { value: "10", label: "Ebenezer-Xipamanine" },
-                  // { value: "11", label: "EDA El Emunah" },
-                  // { value: "12", label: "EDA Luís Cabral 1" },
-                  // { value: "13", label: "EDA Luís Cabral 2" },
-                  // { value: "14", label: "El Emunah–Online" },
-                  // { value: "15", label: "Embaixada de Amor-15 de Agosto" },
-                  // {
-                  //   value: "16",
-                  //   label: "Embaixada do Amor-Benfica rua da Mesquita",
-                  // },
-                  // { value: "16", label: "Embaixada do Amor-Zimpeto" },
-                  // { value: "18", label: "Embaixada do Amor-Infule Manduca" },
-                  // { value: "19", label: "Koinonia Luís Cabral" },
-                  // { value: "20", label: "Koinonia-Magoanine" },
-                  // { value: "21", label: "Koinonia-Malhazine" },
-                  // { value: "22", label: "Koinonia-Benfica" },
-                  // { value: "23", label: "Koinonia-Bagamoio" },
-                  // { value: "24", label: "Koinonia-Coqueiros" },
-                  // { value: "25", label: "Koinonia-Bairro Jorge Dimitrov" },
-                  // { value: "26", label: "Koinonia-Costa do Sol" },
-                  // { value: "27", label: "Koinonia-Khongolote" },
-                  // { value: "28", label: "Koinonia-Kumbeza" },
-                  // { value: "29", label: "Wisdom-Khongolote" },
-                  // {
-                  //   value: "30",
-                  //   label: "Embaixada do Amor-Benfica rua da Mesquita",
-                  // },
-                ]}
-              />
+  label="Nome da Célula que frequenta"
+  name="celula_id"
+  icon={Building}
+  form={form}
+  onChange={handleChange}
+  options={celulas.map((c) => ({
+    value: String(c.id),
+    label: c.nome,
+  }))}
+/>
             </div>
 
             <div className="mt-4">

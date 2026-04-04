@@ -452,6 +452,14 @@ const Visitantes = () => {
   const [modalRegistar, setModalRegistar] = useState(false);
   const [modalConverter, setModalConverter] = useState(null);
   const [filtroTipo, setFiltroTipo] = useState("todos");
+  const [pagina, setPagina]         = useState(1);
+  const ITENS_POR_PAGINA            = 20;
+
+
+ 
+
+// Reset para página 1 quando o filtro muda
+useEffect(() => { setPagina(1); }, [search, filtroCulto, filtroTipo]);
 
   const fetchTudo = async () => {
     setLoading(true);
@@ -509,6 +517,13 @@ const Visitantes = () => {
         v.igreja_origem?.toLowerCase().includes(q)
       );
     });
+
+
+     const totalPaginas = Math.ceil(visitantesFiltrados.length / ITENS_POR_PAGINA);
+  const visitantesPagina = visitantesFiltrados.slice(
+  (pagina - 1) * ITENS_POR_PAGINA,
+  pagina * ITENS_POR_PAGINA
+);
 
   if (loading)
     return (
@@ -688,6 +703,7 @@ const Visitantes = () => {
                     "Bairro",
                     "Culto",
                     "Tipo",
+                    "Igreja Origem",
                     "Convertido",
                     "",
                   ].map((h) => (
@@ -713,7 +729,7 @@ const Visitantes = () => {
                     </td>
                   </tr>
                 ) : (
-                  visitantesFiltrados.map((v, i) => (
+                 visitantesPagina.map((v, i) => (
                     <tr
                       key={v.id ?? i}
                       className="hover:bg-amber-50/30 transition-colors group"
@@ -753,6 +769,9 @@ const Visitantes = () => {
                           {v.tipo_culto ?? "—"}
                         </span>
                       </td>
+                        <td className="px-4 py-3.5 text-[13px] text-slate-600">
+                        {v.igreja_origem ?? "—"}
+                      </td>
                       <td className="px-4 py-3.5">
                         {v.membro_id ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
@@ -789,17 +808,67 @@ const Visitantes = () => {
             </table>
           </div>
 
+          
           {visitantesFiltrados.length > 0 && (
-            <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50">
-              <p className="text-[11px] text-slate-400">
-                A mostrar{" "}
-                <span className="font-semibold text-slate-600">
-                  {visitantesFiltrados.length}
-                </span>{" "}
-                visitante{visitantesFiltrados.length !== 1 ? "s" : ""}
-              </p>
-            </div>
+  <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between flex-wrap gap-3">
+    <p className="text-[11px] text-slate-400">
+      A mostrar{" "}
+      <span className="font-semibold text-slate-600">
+        {(pagina - 1) * ITENS_POR_PAGINA + 1}–{Math.min(pagina * ITENS_POR_PAGINA, visitantesFiltrados.length)}
+      </span>{" "}
+      de{" "}
+      <span className="font-semibold text-slate-600">{visitantesFiltrados.length}</span>{" "}
+      visitantes
+    </p>
+
+    {totalPaginas > 1 && (
+      <div className="flex items-center gap-1">
+        {/* Anterior */}
+        <button
+          onClick={() => setPagina((p) => Math.max(1, p - 1))}
+          disabled={pagina === 1}
+          className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          ←
+        </button>
+
+        {/* Números */}
+        {Array.from({ length: totalPaginas }, (_, i) => i + 1)
+          .filter((p) => p === 1 || p === totalPaginas || Math.abs(p - pagina) <= 1)
+          .reduce((acc, p, idx, arr) => {
+            if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
+            acc.push(p);
+            return acc;
+          }, [])
+          .map((p, i) =>
+            p === "..." ? (
+              <span key={`dots-${i}`} className="px-2 text-slate-400 text-xs">…</span>
+            ) : (
+              <button
+                key={p}
+                onClick={() => setPagina(p)}
+                className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all
+                  ${pagina === p
+                    ? "bg-primary text-white shadow-sm"
+                    : "border border-slate-200 text-slate-600 hover:bg-slate-50"}`}
+              >
+                {p}
+              </button>
+            )
           )}
+
+        {/* Próximo */}
+        <button
+          onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
+          disabled={pagina === totalPaginas}
+          className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          →
+        </button>
+      </div>
+    )}
+  </div>
+)}
         </div>
       )}
 

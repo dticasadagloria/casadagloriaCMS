@@ -50,12 +50,14 @@ export default function MembrosPage() {
   const [sortKey, setSortKey] = useState("nome");
   const [sortDir, setSortDir] = useState("asc");
   const [filtroActivo, setFiltroActivo] = useState(() => {
-    // lê o filtro logo ao inicializar o estado
+  
     const f = sessionStorage.getItem("filtroMembros");
     sessionStorage.removeItem("filtroMembros");
     return f || null;
   });
   const navigate = useNavigate();
+  const [pagina, setPagina]         = useState(1);
+  const ITENS_POR_PAGINA            = 20;
 
   // ── Fetch ─────────────────────────────────────────────────────────────────
   const fetchMembros = async (filtro) => {
@@ -128,6 +130,14 @@ export default function MembrosPage() {
   const total = membros.length;
   const ativos = membros.filter((m) => m.ativo).length;
   const inativos = total - ativos;
+
+  const totalPaginas    = Math.ceil(filtered.length / ITENS_POR_PAGINA);
+const filteredPagina  = filtered.slice(
+  (pagina - 1) * ITENS_POR_PAGINA,
+  pagina * ITENS_POR_PAGINA
+);
+
+useEffect(() => { setPagina(1); }, [search, filtroActivo]);
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   const SortIcon = ({ col }) => {
@@ -345,7 +355,7 @@ export default function MembrosPage() {
                   </td>
                 </tr>
               ) : (
-                filtered.map((m, i) => (
+                filteredPagina.map((m, i) => (
                   <tr
                     key={m.id ?? i}
                     onClick={() => navigate(`/dashboard/membros/${m.id}`)}
@@ -461,16 +471,62 @@ export default function MembrosPage() {
 
         {/* Table footer */}
         {filtered.length > 0 && (
-          <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50">
-            <p className="text-[11px] text-slate-400">
-              A mostrar{" "}
-              <span className="font-semibold text-slate-600">
-                {filtered.length}
-              </span>{" "}
-              resultado{filtered.length !== 1 ? "s" : ""}
-            </p>
-          </div>
-        )}
+  <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between flex-wrap gap-3">
+    <p className="text-[11px] text-slate-400">
+      A mostrar{" "}
+      <span className="font-semibold text-slate-600">
+        {(pagina - 1) * ITENS_POR_PAGINA + 1}–{Math.min(pagina * ITENS_POR_PAGINA, filtered.length)}
+      </span>{" "}
+      de{" "}
+      <span className="font-semibold text-slate-600">{filtered.length}</span>{" "}
+      resultado{filtered.length !== 1 ? "s" : ""}
+    </p>
+
+    {totalPaginas > 1 && (
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => setPagina((p) => Math.max(1, p - 1))}
+          disabled={pagina === 1}
+          className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          ←
+        </button>
+
+        {Array.from({ length: totalPaginas }, (_, i) => i + 1)
+          .filter((p) => p === 1 || p === totalPaginas || Math.abs(p - pagina) <= 1)
+          .reduce((acc, p, idx, arr) => {
+            if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
+            acc.push(p);
+            return acc;
+          }, [])
+          .map((p, i) =>
+            p === "..." ? (
+              <span key={`dots-${i}`} className="px-2 text-slate-400 text-xs">…</span>
+            ) : (
+              <button
+                key={p}
+                onClick={() => setPagina(p)}
+                className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all
+                  ${pagina === p
+                    ? "bg-primary text-white shadow-sm"
+                    : "border border-slate-200 text-slate-600 hover:bg-slate-50"}`}
+              >
+                {p}
+              </button>
+            )
+          )}
+
+        <button
+          onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
+          disabled={pagina === totalPaginas}
+          className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          →
+        </button>
+      </div>
+    )}
+  </div>
+)}
       </div>
     </div>
   );

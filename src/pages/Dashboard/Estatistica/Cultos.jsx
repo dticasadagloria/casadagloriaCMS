@@ -2,14 +2,27 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import api from "@/api/api.js";
 import {
-  BookOpen, Plus, Users, UserCheck, UserX,
-  ChevronRight, Trash2, BarChart3, Upload,
-  ArrowLeft, Search, Check, X, Calendar,
+  BookOpen,
+  Plus,
+  Users,
+  UserCheck,
+  UserX,
+  ChevronRight,
+  Trash2,
+  BarChart3,
+  Upload,
+  ArrowLeft,
+  Search,
+  Check,
+  X,
+  Calendar,
+  Pencil
 } from "lucide-react";
 
 // ─── Componentes auxiliares FORA de tudo ─────────────────────────────────────
 
-const inputClass = "w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all";
+const inputClass =
+  "w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all";
 
 const Field = ({ label, children }) => (
   <div className="space-y-1.5">
@@ -23,7 +36,7 @@ const Field = ({ label, children }) => (
 // ═══════════════════════════════════════════════════════════
 // SECÇÃO 1 — LISTA DE CULTOS
 // ═══════════════════════════════════════════════════════════
-const ListaCultos = ({ onSelecionar, onCriar }) => {
+const ListaCultos = ({ onSelecionar, onEditar, onCriar }) => {
   const [cultos, setCultos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -38,7 +51,9 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
     }
   };
 
-  useEffect(() => { fetchCultos(); }, []);
+  useEffect(() => {
+    fetchCultos();
+  }, []);
 
   const apagarCulto = async (id, e) => {
     e.stopPropagation();
@@ -62,8 +77,12 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
     <div className="space-y-5">
       <div className="flex flex-wrap gap-2 items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-800">Cultos Registados</h2>
-          <p className="text-sm text-slate-400 mt-0.5">{cultos.length} cultos no total</p>
+          <h2 className="text-xl font-bold text-slate-800">
+            Cultos Registados
+          </h2>
+          <p className="text-sm text-slate-400 mt-0.5">
+            {cultos.length} cultos no total
+          </p>
         </div>
         <Button
           onClick={onCriar}
@@ -79,8 +98,13 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
         {cultos.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <BookOpen className="w-10 h-10 text-slate-200" />
-            <p className="text-sm text-slate-400 font-medium">Nenhum culto registado</p>
-            <button onClick={onCriar} className="text-xs text-amber-600 font-semibold hover:underline">
+            <p className="text-sm text-slate-400 font-medium">
+              Nenhum culto registado
+            </p>
+            <button
+              onClick={onCriar}
+              className="text-xs text-amber-600 font-semibold hover:underline"
+            >
               Criar o primeiro culto →
             </button>
           </div>
@@ -89,8 +113,21 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
             <table className="min-w-full">
               <thead className="bg-amber-50/60 border-b border-amber-100/60">
                 <tr>
-                  {["Data", "Tipo", "Categoria", "Pregador", "Horário", "Filial", "Presentes", ""].map((h) => (
-                    <th key={h} className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-amber-700/70">
+                  {[
+                    "Data",
+                    "Tipo",
+                    "Categoria",
+                    "Pregador",
+                    "Horário",
+                    "Filial",
+                    "Inter Filial",
+                    "Presentes",
+                    "",
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-amber-700/70"
+                    >
                       {h}
                     </th>
                   ))}
@@ -108,15 +145,44 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
                         {new Date(c.data).toLocaleDateString("pt-MZ")}
                       </span>
                     </td>
-                    <td className="px-4 py-3.5"><span className="text-[13px] text-slate-600">{c.tipo}</span></td>
+                    <td className="px-4 py-3.5">
+                      <span className="text-[13px] text-slate-600">
+                        {c.tipo}
+                      </span>
+                    </td>
                     <td className="px-4 py-3.5">
                       <span className="inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-100">
                         {c.categoria}
                       </span>
                     </td>
-                    <td className="px-4 py-3.5"><span className="text-[13px] text-slate-600">{c.pregador ?? "—"}</span></td>
-                    <td className="px-4 py-3.5"><span className="text-[13px] text-slate-600">{c.horario ?? "—"}</span></td>
-                    <td className="px-4 py-3.5"><span className="text-[13px] text-slate-600">{c.nome_branch ?? "—"}</span></td>
+                    <td className="px-4 py-3.5">
+                      <span className="text-[13px] text-slate-600">
+                        {c.pregador ?? "—"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <span className="text-[13px] text-slate-600">
+                        {c.horario ?? "—"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <span className="text-[13px] text-slate-600">
+                        {c.nome_branch ?? "—"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3.5">
+                      {c.inter_filial ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-purple-50 text-purple-700 border border-purple-100">
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-500 flex-shrink-0" />
+                          Sim
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-50 text-slate-500 border border-slate-200">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0" />
+                          Não
+                        </span>
+                      )}
+                    </td>
                     <td className="px-4 py-3.5">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
                         <UserCheck size={11} /> {c.total_presentes ?? 0}
@@ -130,6 +196,11 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
                         >
                           Presenças <ChevronRight size={12} />
                         </button>
+
+                        <button onClick={(e) => { e.stopPropagation(); onEditar(c); }}
+      className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-500 hover:text-amber-700 transition-colors">
+      <Pencil size={13} />  
+    </button>
                         <button
                           onClick={(e) => apagarCulto(c.id, e)}
                           className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 hover:text-red-600 transition-colors"
@@ -154,15 +225,21 @@ const ListaCultos = ({ onSelecionar, onCriar }) => {
 // ═══════════════════════════════════════════════════════════
 const CriarCulto = ({ onVoltar, onCriado }) => {
   const [form, setForm] = useState({
-    data: "", tipo: "", categoria: "Culto",
-    pregador: "", horario: "", branch_id: "",
+    data: "",
+    tipo: "",
+    categoria: "Culto",
+    pregador: "",
+    horario: "",
+    branch_id: "",
+    inter_filial: false,
   });
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    api.get("/api/branches")
+    api
+      .get("/api/branches")
       .then((res) => setBranches(res.data.branches || []))
       .catch(console.error);
   }, []);
@@ -189,7 +266,10 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
   return (
     <div className="max-w-2xl space-y-6">
       <div className="flex items-center gap-3">
-        <button onClick={onVoltar} className="p-2 rounded-xl hover:bg-primary text-quaternary transition-colors">
+        <button
+          onClick={onVoltar}
+          className="p-2 rounded-xl hover:bg-primary text-quaternary transition-colors"
+        >
           <ArrowLeft size={18} />
         </button>
         <div>
@@ -198,7 +278,10 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5"
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <Field label="Data *">
             <input
@@ -220,21 +303,30 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
           </Field>
 
           <Field label="Tipo *">
-            <select required value={form.tipo} onChange={set("tipo")} className={inputClass}>
+            <select
+              required
+              value={form.tipo}
+              onChange={set("tipo")}
+              className={inputClass}
+            >
               <option value="">Selecionar tipo</option>
-              <option>Culto Dominical</option>
-              <option>Culto de Edificação - Quinta-feira</option>
-              <option>Escola de Casamento e Família - Sexta-Feira</option>
+              <option>Culto de Edificação</option>
+              <option>Escola de Casamento e Família</option>
               <option>Culto de Páscoa</option>
-              <option>Culto de Domingo 7h</option>
-              <option>Culto de Domingo 10h</option>
+              <option>Culto de Domingo - 7h</option>
+              <option>Culto de Domingo - 10h</option>
               <option>Daughters of Love</option>
-              <option>Culto Especial</option>
+              <option>Nova Aliança</option>
+              <option>Vigilía</option>
             </select>
           </Field>
 
           <Field label="Categoria">
-            <select value={form.categoria} onChange={set("categoria")} className={inputClass}>
+            <select
+              value={form.categoria}
+              onChange={set("categoria")}
+              className={inputClass}
+            >
               <option>Culto</option>
               <option>Evento</option>
               <option>Conferência</option>
@@ -252,19 +344,21 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
             />
           </Field>
 
-         <Field label="Filial *">
-  <select 
-    required  
-    value={form.branch_id} 
-    onChange={set("branch_id")} 
-    className={inputClass}
-  >
-    <option value="">Selecionar filial</option>
-    {branches.map((b) => (
-      <option key={b.id} value={b.id}>{b.nome}</option>
-    ))}
-  </select>
-</Field>
+          <Field label="Filial *">
+            <select
+              required
+              value={form.branch_id}
+              onChange={set("branch_id")}
+              className={inputClass}
+            >
+              <option value="">Selecionar filial</option>
+              {branches.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.nome}
+                </option>
+              ))}
+            </select>
+          </Field>
         </div>
 
         {erro && (
@@ -273,21 +367,48 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
           </div>
         )}
 
+        {/* Toggle inter-filial */}
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-slate-50 border border-slate-200">
+          <div>
+            <p className="text-sm font-semibold text-slate-700">
+              Culto Inter-Filial
+            </p>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Permite marcar presença de membros de outras filiais
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() =>
+              setForm((prev) => ({ ...prev, inter_filial: !prev.inter_filial }))
+            }
+            className={`w-11 h-6 rounded-full transition-all duration-200 relative
+          ${form.inter_filial ? "bg-amber-500" : "bg-slate-200"}`}
+          >
+            <span
+              className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-200
+          ${form.inter_filial ? "left-5" : "left-0.5"}`}
+            />
+          </button>
+        </div>
+
         <div className="flex flex-wrap gap-3 pt-2 items-center justify-center">
           <Button
-          variant="cancel"
-          size="md"
-           type="button" onClick={onVoltar}
+            variant="cancel"
+            size="md"
+            type="button"
+            onClick={onVoltar}
             // className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors"
-            >
+          >
             Cancelar
           </Button>
           <Button
-          variant="hero"
-          size="md"
-           type="submit" disabled={loading}
+            variant="hero"
+            size="md"
+            type="submit"
+            disabled={loading}
             // className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60"
-            >
+          >
             {loading ? "A criar..." : "Criar Culto"}
           </Button>
         </div>
@@ -300,15 +421,16 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
 // SECÇÃO 3 — MARCAR PRESENÇAS + RELATÓRIO + IMPORTAR CSV
 // ═══════════════════════════════════════════════════════════
 const MarcarPresencas = ({ culto, onVoltar }) => {
-  const [membros, setMembros]       = useState([]);
-  const [stats, setStats]           = useState({});
-  const [search, setSearch]         = useState("");
-  const [filtro, setFiltro]         = useState("todos");
-  const [loading, setLoading]       = useState(true);
-  const [saving, setSaving]         = useState(false);
+  const [membros, setMembros] = useState([]);
+  const [stats, setStats] = useState({});
+  const [search, setSearch] = useState("");
+  const [filtro, setFiltro] = useState("todos");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [importando, setImportando] = useState(false);
-  const [mensagem, setMensagem]     = useState(null);
-  const [vista, setVista]           = useState("presencas");
+  const [mensagem, setMensagem] = useState(null);
+  const [vista, setVista] = useState("presencas");
+  const [interFilial, setInterFilial] = useState(false);
 
   const fetchPresencas = async () => {
     setLoading(true);
@@ -316,6 +438,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
       const res = await api.get(`/api/cultos/${culto.id}/presencas`);
       setMembros(res.data.membros || []);
       setStats(res.data.stats || {});
+      setInterFilial(res.data.inter_filial || false);
     } catch (err) {
       console.error(err);
     } finally {
@@ -323,20 +446,25 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
     }
   };
 
- useEffect(() => {
-  fetchPresencas();
-
-  // Refresh a cada 30 segundos para sincronizar com outros users
-  const intervalo = setInterval(() => {
+  useEffect(() => {
     fetchPresencas();
-  }, 5 * 60 * 1000);
 
-  return () => clearInterval(intervalo);
-}, [culto.id]);
+    // Refresh a cada 30 segundos para sincronizar com outros users
+    const intervalo = setInterval(
+      () => {
+        fetchPresencas();
+      },
+      5 * 60 * 1000,
+    );
+
+    return () => clearInterval(intervalo);
+  }, [culto.id]);
 
   const togglePresenca = (membro_id) => {
     setMembros((prev) =>
-      prev.map((m) => m.membro_id === membro_id ? { ...m, presente: !m.presente } : m)
+      prev.map((m) =>
+        m.membro_id === membro_id ? { ...m, presente: !m.presente } : m,
+      ),
     );
   };
 
@@ -355,7 +483,10 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
           observacao: m.observacao || null,
         })),
       });
-      setMensagem({ tipo: "sucesso", texto: "Presenças guardadas com sucesso!" });
+      setMensagem({
+        tipo: "sucesso",
+        texto: "Presenças guardadas com sucesso!",
+      });
       fetchPresencas();
     } catch {
       setMensagem({ tipo: "erro", texto: "Erro ao guardar presenças." });
@@ -388,7 +519,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
   const membrosFiltrados = membros
     .filter((m) => {
       if (filtro === "presentes") return m.presente === true;
-      if (filtro === "ausentes")  return m.presente === false;
+      if (filtro === "ausentes") return m.presente === false;
       return true;
     })
     .filter((m) => {
@@ -400,10 +531,11 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
     });
 
   const presentesAgora = membros.filter((m) => m.presente).length;
-  const ausentesAgora  = membros.length - presentesAgora;
-  const pctAgora       = membros.length > 0
-    ? ((presentesAgora / membros.length) * 100).toFixed(1)
-    : 0;
+  const ausentesAgora = membros.length - presentesAgora;
+  const pctAgora =
+    membros.length > 0
+      ? ((presentesAgora / membros.length) * 100).toFixed(1)
+      : 0;
 
   if (loading)
     return (
@@ -416,7 +548,10 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
     <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <button onClick={onVoltar} className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
+        <button
+          onClick={onVoltar}
+          className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors"
+        >
           <ArrowLeft size={18} />
         </button>
         <div className="flex-1">
@@ -430,29 +565,46 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
         <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
           {[
             { key: "presencas", label: "Presenças", icon: UserCheck },
-            { key: "relatorio", label: "Relatório",  icon: BarChart3 },
+            { key: "relatorio", label: "Relatório", icon: BarChart3 },
           ].map(({ key, label, icon: Icon }) => (
-            <button key={key} onClick={() => setVista(key)}
+            <button
+              key={key}
+              onClick={() => setVista(key)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all
-                ${vista === key ? "bg-white text-amber-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+                ${vista === key ? "bg-white text-amber-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+            >
               <Icon size={13} /> {label}
             </button>
           ))}
         </div>
+        {/* Badge inter-filial */}
+        {interFilial && (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-purple-50 border border-purple-100 text-purple-700">
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-500 flex-shrink-0" />
+            Culto Inter-Filial — todos os membros visíveis
+          </span>
+        )}
       </div>
 
       {/* Stat chips */}
       <div className="flex flex-wrap gap-3">
         {[
-          { label: "Total",     value: membros.length, cor: "slate"   },
+          { label: "Total", value: membros.length, cor: "slate" },
           { label: "Presentes", value: presentesAgora, cor: "emerald" },
-          { label: "Ausentes",  value: ausentesAgora,  cor: "red"     },
-          { label: "Taxa",      value: `${pctAgora}%`, cor: "amber"   },
+          { label: "Ausentes", value: ausentesAgora, cor: "red" },
+          { label: "Taxa", value: `${pctAgora}%`, cor: "amber" },
         ].map(({ label, value, cor }) => (
-          <div key={label} className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-${cor}-100 shadow-sm`}>
+          <div
+            key={label}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-${cor}-100 shadow-sm`}
+          >
             <div>
-              <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide leading-none">{label}</p>
-              <p className={`text-lg font-bold text-${cor}-600 leading-tight`}>{value}</p>
+              <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide leading-none">
+                {label}
+              </p>
+              <p className={`text-lg font-bold text-${cor}-600 leading-tight`}>
+                {value}
+              </p>
             </div>
           </div>
         ))}
@@ -460,10 +612,14 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
 
       {/* Mensagem */}
       {mensagem && (
-        <div className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border
-          ${mensagem.tipo === "sucesso"
-            ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-            : "bg-red-50 text-red-600 border-red-100"}`}>
+        <div
+          className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border
+          ${
+            mensagem.tipo === "sucesso"
+              ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+              : "bg-red-50 text-red-600 border-red-100"
+          }`}
+        >
           {mensagem.tipo === "sucesso" ? <Check size={15} /> : <X size={15} />}
           {mensagem.texto}
         </div>
@@ -475,7 +631,10 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
           <div className="px-5 py-4 border-b border-slate-100 space-y-3">
             <div className="flex flex-wrap items-center gap-3">
               <div className="relative flex-1 min-w-[200px]">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <Search
+                  size={14}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                />
                 <input
                   type="text"
                   placeholder="Pesquisar membro..."
@@ -486,35 +645,53 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
               </div>
               <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
                 {[
-                  { key: "todos",     label: "Todos"     },
+                  { key: "todos", label: "Todos" },
                   { key: "presentes", label: "Presentes" },
-                  { key: "ausentes",  label: "Ausentes"  },
+                  { key: "ausentes", label: "Ausentes" },
                 ].map(({ key, label }) => (
-                  <button key={key} onClick={() => setFiltro(key)}
+                  <button
+                    key={key}
+                    onClick={() => setFiltro(key)}
                     className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all
-                      ${filtro === key ? "bg-white text-amber-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+                      ${filtro === key ? "bg-white text-amber-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                  >
                     {label}
                   </button>
                 ))}
               </div>
               <div className="flex gap-2">
-                <button onClick={() => marcarTodos(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold border border-emerald-100 transition-colors">
+                <button
+                  onClick={() => marcarTodos(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold border border-emerald-100 transition-colors"
+                >
                   <Check size={12} /> Todos presentes
                 </button>
-                <button onClick={() => marcarTodos(false)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold border border-red-100 transition-colors">
+                <button
+                  onClick={() => marcarTodos(false)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold border border-red-100 transition-colors"
+                >
                   <X size={12} /> Todos ausentes
                 </button>
               </div>
-              <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer ${importando ? "opacity-60 pointer-events-none" : ""}`}>
+              <label
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer ${importando ? "opacity-60 pointer-events-none" : ""}`}
+              >
                 <Upload size={12} />
                 {importando ? "A importar..." : "Importar CSV"}
-                <input type="file" accept=".csv" onChange={importarCSV} className="hidden" />
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={importarCSV}
+                  className="hidden"
+                />
               </label>
             </div>
             <p className="text-[11px] text-slate-400">
-              A mostrar <span className="font-semibold text-slate-600">{membrosFiltrados.length}</span> de {membros.length} membros
+              A mostrar{" "}
+              <span className="font-semibold text-slate-600">
+                {membrosFiltrados.length}
+              </span>{" "}
+              de {membros.length} membros
             </p>
           </div>
 
@@ -522,7 +699,9 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
             {membrosFiltrados.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 gap-2">
                 <Users className="w-8 h-8 text-slate-200" />
-                <p className="text-sm text-slate-400">Nenhum membro encontrado</p>
+                <p className="text-sm text-slate-400">
+                  Nenhum membro encontrado
+                </p>
               </div>
             ) : (
               membrosFiltrados.map((m) => (
@@ -532,23 +711,48 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                   className={`flex items-center gap-4 px-5 py-3.5 cursor-pointer transition-colors
                     ${m.presente ? "hover:bg-emerald-50/40 bg-emerald-50/20" : "hover:bg-red-50/30"}`}
                 >
-                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 border-2 transition-all
-                    ${m.presente ? "bg-emerald-500 border-emerald-500" : "bg-white border-slate-300 hover:border-amber-400"}`}>
-                    {m.presente && <Check size={13} className="text-white" strokeWidth={3} />}
+                  <div
+                    className={`w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 border-2 transition-all
+                    ${m.presente ? "bg-emerald-500 border-emerald-500" : "bg-white border-slate-300 hover:border-amber-400"}`}
+                  >
+                    {m.presente && (
+                      <Check size={13} className="text-white" strokeWidth={3} />
+                    )}
                   </div>
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm
-                    ${m.presente ? "bg-gradient-to-br from-emerald-400 to-emerald-500" : "bg-gradient-to-br from-slate-300 to-slate-400"}`}>
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm
+                    ${m.presente ? "bg-gradient-to-br from-emerald-400 to-emerald-500" : "bg-gradient-to-br from-slate-300 to-slate-400"}`}
+                  >
                     <span className="text-white text-[11px] font-bold">
-                      {m.nome_membro?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?"}
+                      {m.nome_membro
+                        ?.split(" ")
+                        .slice(0, 2)
+                        .map((w) => w[0])
+                        .join("")
+                        .toUpperCase() || "?"}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold text-slate-700 truncate">{m.nome_membro}</p>
-                    <p className="text-[11px] text-slate-400">{m.nome_branch ?? "—"} · {m.codigo ?? "—"}</p>
+                    <p className="text-[13px] font-semibold text-slate-700 truncate">
+                      {m.nome_membro}
+                    </p>
+                    <p className="text-[11px] text-slate-400">
+                      {m.nome_branch ?? "—"} · {m.codigo ?? "—"}
+                    </p>
                   </div>
-                  <span className={`flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border
-                    ${m.presente ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-red-50 text-red-500 border-red-100"}`}>
-                    {m.presente ? <><Check size={10} /> Presente</> : <><X size={10} /> Ausente</>}
+                  <span
+                    className={`flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border
+                    ${m.presente ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-red-50 text-red-500 border-red-100"}`}
+                  >
+                    {m.presente ? (
+                      <>
+                        <Check size={10} /> Presente
+                      </>
+                    ) : (
+                      <>
+                        <X size={10} /> Ausente
+                      </>
+                    )}
                   </span>
                 </div>
               ))
@@ -557,15 +761,21 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
 
           <div className="px-5 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
             <p className="text-xs text-slate-400">
-              <span className="font-semibold text-emerald-600">{presentesAgora} presentes</span>
+              <span className="font-semibold text-emerald-600">
+                {presentesAgora} presentes
+              </span>
               {" · "}
-              <span className="font-semibold text-red-500">{ausentesAgora} ausentes</span>
+              <span className="font-semibold text-red-500">
+                {ausentesAgora} ausentes
+              </span>
             </p>
-            <Button onClick={salvar} disabled={saving}
-            variant="hero"
-            size="sm"
+            <Button
+              onClick={salvar}
+              disabled={saving}
+              variant="hero"
+              size="sm"
               // className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60"
-              >
+            >
               {saving ? "A guardar..." : "Guardar Presenças"}
             </Button>
           </div>
@@ -577,14 +787,37 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
         <div className="space-y-5">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: "Total Membros", value: stats.total,             cor: "from-slate-500 to-slate-600"   },
-              { label: "Presentes",     value: stats.presentes,         cor: "from-emerald-500 to-teal-500"  },
-              { label: "Ausentes",      value: stats.ausentes,          cor: "from-red-400 to-rose-500"      },
-              { label: "Taxa Presença", value: `${stats.percentagem}%`, cor: "from-amber-500 to-yellow-500"  },
+              {
+                label: "Total Membros",
+                value: stats.total,
+                cor: "from-slate-500 to-slate-600",
+              },
+              {
+                label: "Presentes",
+                value: stats.presentes,
+                cor: "from-emerald-500 to-teal-500",
+              },
+              {
+                label: "Ausentes",
+                value: stats.ausentes,
+                cor: "from-red-400 to-rose-500",
+              },
+              {
+                label: "Taxa Presença",
+                value: `${stats.percentagem}%`,
+                cor: "from-amber-500 to-yellow-500",
+              },
             ].map(({ label, value, cor }) => (
-              <div key={label} className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{label}</p>
-                <p className={`text-3xl font-bold mt-1 bg-gradient-to-r ${cor} bg-clip-text text-transparent`}>
+              <div
+                key={label}
+                className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100"
+              >
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  {label}
+                </p>
+                <p
+                  className={`text-3xl font-bold mt-1 bg-gradient-to-r ${cor} bg-clip-text text-transparent`}
+                >
                   {value ?? "—"}
                 </p>
               </div>
@@ -593,8 +826,12 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
 
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-semibold text-slate-700">Taxa de Presença</p>
-              <p className="text-sm font-bold text-amber-600">{stats.percentagem}%</p>
+              <p className="text-sm font-semibold text-slate-700">
+                Taxa de Presença
+              </p>
+              <p className="text-sm font-bold text-amber-600">
+                {stats.percentagem}%
+              </p>
             </div>
             <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
               <div
@@ -617,21 +854,37 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
               </div>
               <div className="divide-y divide-slate-50 max-h-72 overflow-y-auto">
                 {membros.filter((m) => m.presente).length === 0 ? (
-                  <p className="text-sm text-slate-400 text-center py-8">Nenhum presente</p>
+                  <p className="text-sm text-slate-400 text-center py-8">
+                    Nenhum presente
+                  </p>
                 ) : (
-                  membros.filter((m) => m.presente).map((m) => (
-                    <div key={m.membro_id} className="flex items-center gap-3 px-5 py-3">
-                      <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center flex-shrink-0">
-                        <span className="text-white text-[10px] font-bold">
-                          {m.nome_membro?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase()}
-                        </span>
+                  membros
+                    .filter((m) => m.presente)
+                    .map((m) => (
+                      <div
+                        key={m.membro_id}
+                        className="flex items-center gap-3 px-5 py-3"
+                      >
+                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center flex-shrink-0">
+                          <span className="text-white text-[10px] font-bold">
+                            {m.nome_membro
+                              ?.split(" ")
+                              .slice(0, 2)
+                              .map((w) => w[0])
+                              .join("")
+                              .toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-semibold text-slate-700 truncate">
+                            {m.nome_membro}
+                          </p>
+                          <p className="text-[11px] text-slate-400">
+                            {m.nome_branch ?? "—"}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-slate-700 truncate">{m.nome_membro}</p>
-                        <p className="text-[11px] text-slate-400">{m.nome_branch ?? "—"}</p>
-                      </div>
-                    </div>
-                  ))
+                    ))
                 )}
               </div>
             </div>
@@ -644,21 +897,37 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
               </div>
               <div className="divide-y divide-slate-50 max-h-72 overflow-y-auto">
                 {membros.filter((m) => !m.presente).length === 0 ? (
-                  <p className="text-sm text-slate-400 text-center py-8">Nenhum ausente</p>
+                  <p className="text-sm text-slate-400 text-center py-8">
+                    Nenhum ausente
+                  </p>
                 ) : (
-                  membros.filter((m) => !m.presente).map((m) => (
-                    <div key={m.membro_id} className="flex items-center gap-3 px-5 py-3">
-                      <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center flex-shrink-0">
-                        <span className="text-white text-[10px] font-bold">
-                          {m.nome_membro?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase()}
-                        </span>
+                  membros
+                    .filter((m) => !m.presente)
+                    .map((m) => (
+                      <div
+                        key={m.membro_id}
+                        className="flex items-center gap-3 px-5 py-3"
+                      >
+                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center flex-shrink-0">
+                          <span className="text-white text-[10px] font-bold">
+                            {m.nome_membro
+                              ?.split(" ")
+                              .slice(0, 2)
+                              .map((w) => w[0])
+                              .join("")
+                              .toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-semibold text-slate-700 truncate">
+                            {m.nome_membro}
+                          </p>
+                          <p className="text-[11px] text-slate-400">
+                            {m.nome_branch ?? "—"}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-slate-700 truncate">{m.nome_membro}</p>
-                        <p className="text-[11px] text-slate-400">{m.nome_branch ?? "—"}</p>
-                      </div>
-                    </div>
-                  ))
+                    ))
                 )}
               </div>
             </div>
@@ -669,11 +938,154 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
   );
 };
 
+// Secçao 4 - Editor de Culto
+const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
+  const [form, setForm] = useState({
+    data:         culto.data?.slice(0, 10) || "",
+    tipo:         culto.tipo || "",
+    categoria:    culto.categoria || "Culto",
+    pregador:     culto.pregador || "",
+    horario:      culto.horario || "",
+    branch_id:    culto.branch_id || "",
+    inter_filial: culto.inter_filial || false,
+  });
+  const [branches, setBranches] = useState([]);
+  const [loading, setLoading]   = useState(false);
+  const [erro, setErro]         = useState(null);
+
+  useEffect(() => {
+    api.get("/api/branches")
+      .then((res) => setBranches(res.data.branches || []))
+      .catch(console.error);
+  }, []);
+
+  const set = (field) => (e) => {
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    setErro(null);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErro(null);
+    try {
+      await api.put(`/api/cultos/${culto.id}`, form);
+      onGuardado();
+    } catch (err) {
+      setErro(err.response?.data?.error || "Erro ao actualizar culto");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-2xl space-y-6">
+      <div className="flex items-center gap-3">
+        <button onClick={onVoltar}
+          className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
+          <ArrowLeft size={18} />
+        </button>
+        <div>
+          <h2 className="text-xl font-bold text-slate-800">Editar Culto</h2>
+          <p className="text-sm text-slate-400">Actualiza os dados do culto</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <Field label="Data *">
+            <input type="date" required value={form.data}
+              onChange={set("data")} className={inputClass} />
+          </Field>
+          <Field label="Horário">
+            <input type="time" value={form.horario}
+              onChange={set("horario")} className={inputClass} />
+          </Field>
+          <Field label="Tipo *">
+            <select required value={form.tipo} onChange={set("tipo")} className={inputClass}>
+              <option value="">Selecionar tipo</option>
+              <option>Culto de Edificação</option>
+              <option>Escola de Casamento e Família</option>
+              <option>Culto de Páscoa</option>
+              <option>Culto de Domingo - 7h</option>
+              <option>Culto de Domingo - 10h</option>
+              <option>Daughters of Love</option>
+              <option>Nova Aliança</option>
+              <option>Vigilía</option>
+            </select>
+          </Field>
+          <Field label="Categoria">
+            <select value={form.categoria} onChange={set("categoria")} className={inputClass}>
+              <option>Culto</option>
+              <option>Evento</option>
+              <option>Conferência</option>
+              <option>Seminário</option>
+            </select>
+          </Field>
+          <Field label="Pregador">
+            <input type="text" placeholder="Nome do pregador"
+              value={form.pregador} onChange={set("pregador")} className={inputClass} />
+          </Field>
+          <Field label="Filial">
+            <select required value={form.branch_id} onChange={set("branch_id")} className={inputClass}>
+              <option value="">Selecionar filial</option>
+              {branches.map((b) => (
+                <option key={b.id} value={b.id}>{b.nome}</option>
+              ))}
+            </select>
+          </Field>
+        </div>
+
+        {/* Toggle inter-filial */}
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-slate-50 border border-slate-200">
+          <div>
+            <p className="text-sm font-semibold text-slate-700">Culto Inter-Filial</p>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Permite marcar presença de membros de outras filiais
+            </p>
+          </div>
+          <button type="button"
+            onClick={() => setForm((prev) => ({ ...prev, inter_filial: !prev.inter_filial }))}
+            className={`w-11 h-6 rounded-full transition-all duration-200 relative
+              ${form.inter_filial ? "bg-amber-500" : "bg-slate-200"}`}>
+            <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-200
+              ${form.inter_filial ? "left-5" : "left-0.5"}`} />
+          </button>
+        </div>
+
+        {erro && (
+          <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">
+            {erro}
+          </div>
+        )}
+
+        <div className="flex gap-3 pt-2">
+          <Button
+           type="button" onClick={onVoltar}
+            variant="cancel"
+            size="md"
+            >
+            Cancelar
+          </Button>
+          <Button
+           type="submit" 
+           disabled={loading}
+           variant="hero"
+           size="md"
+           >
+            {loading ? "A guardar..." : "Guardar Alterações"}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
 // ═══════════════════════════════════════════════════════════
 // CONTENTOR PRINCIPAL
 // ═══════════════════════════════════════════════════════════
 const Cultos = () => {
-  const [vista, setVista]             = useState("lista");
+  const [vista, setVista] = useState("lista");
   const [cultoActivo, setCultoActivo] = useState(null);
 
   return (
@@ -684,18 +1096,29 @@ const Cultos = () => {
             <BookOpen className="w-5 h-5 text-inside" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Controlo de Presenças</h1>
-            <p className="text-sm text-slate-400 mt-0.5">Gestão de cultos e registo de frequências</p>
+            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+              Controlo de Presenças
+            </h1>
+            <p className="text-sm text-slate-400 mt-0.5">
+              Gestão de cultos e registo de frequências
+            </p>
           </div>
         </div>
       )}
 
       {vista === "lista" && (
-        <ListaCultos
-          onSelecionar={(culto) => { setCultoActivo(culto); setVista("presencas"); }}
-          onCriar={() => setVista("criar")}
-        />
-      )}
+  <ListaCultos
+    onSelecionar={(culto) => {
+      setCultoActivo(culto);
+      setVista("presencas");
+    }}
+    onEditar={(culto) => {       
+      setCultoActivo(culto);
+      setVista("editar");
+    }}
+    onCriar={() => setVista("criar")}
+  />
+)}
 
       {vista === "criar" && (
         <CriarCulto
@@ -704,10 +1127,21 @@ const Cultos = () => {
         />
       )}
 
+      {vista === "editar" && cultoActivo && (
+        <EditarCulto
+          culto={cultoActivo}
+          onVoltar={() => { setCultoActivo(null); setVista("lista"); }}
+          onGuardado={() => { setCultoActivo(null); setVista("lista"); }}
+        />
+      )}
+
       {vista === "presencas" && cultoActivo && (
         <MarcarPresencas
           culto={cultoActivo}
-          onVoltar={() => { setCultoActivo(null); setVista("lista"); }}
+          onVoltar={() => {
+            setCultoActivo(null);
+            setVista("lista");
+          }}
         />
       )}
     </div>
