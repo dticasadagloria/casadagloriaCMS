@@ -431,6 +431,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
   const [mensagem, setMensagem] = useState(null);
   const [vista, setVista] = useState("presencas");
   const [interFilial, setInterFilial] = useState(false);
+  const [modificados, setModificados] = useState(new Set());
 
   const fetchPresencas = async () => {
     setLoading(true);
@@ -461,40 +462,49 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
   }, [culto.id]);
 
   const togglePresenca = (membro_id) => {
-    setMembros((prev) =>
-      prev.map((m) =>
-        m.membro_id === membro_id ? { ...m, presente: !m.presente } : m,
-      ),
-    );
-  };
+  setModificados((prev) => new Set([...prev, membro_id])); 
+  setMembros((prev) =>
+    prev.map((m) =>
+      m.membro_id === membro_id ? { ...m, presente: !m.presente } : m
+    )
+  );
+};
 
   const marcarTodos = (valor) => {
-    setMembros((prev) => prev.map((m) => ({ ...m, presente: valor })));
-  };
+  setModificados(new Set(membros.map((m) => m.membro_id))); 
+  setMembros((prev) => prev.map((m) => ({ ...m, presente: valor })));
+};
 
-  const salvar = async () => {
-    setSaving(true);
-    setMensagem(null);
-    try {
-      await api.post(`/api/cultos/${culto.id}/presencas`, {
-        presencas: membros.map((m) => ({
-          membro_id: m.membro_id,
-          presente: m.presente,
-          observacao: m.observacao || null,
-        })),
-      });
-      setMensagem({
-        tipo: "sucesso",
-        texto: "Presenças guardadas com sucesso!",
-      });
-      fetchPresencas();
-    } catch {
-      setMensagem({ tipo: "erro", texto: "Erro ao guardar presenças." });
-    } finally {
-      setSaving(false);
-    }
-  };
+ const salvar = async () => {
+  setSaving(true);
+  setMensagem(null);
 
+  const aEnviar = membros.filter((m) => modificados.has(m.membro_id));
+
+  if (aEnviar.length === 0) {
+    setMensagem({ tipo: "sucesso", texto: "Nenhuma alteração para guardar." });
+    setSaving(false);
+    return;
+  }
+
+  try {
+    await api.post(`/api/cultos/${culto.id}/presencas`, {
+      presencas: aEnviar.map((m) => ({
+        membro_id:  m.membro_id,
+        presente:   m.presente,
+        observacao: m.observacao || null,
+      })),
+    });
+
+    setModificados(new Set()); 
+    setMensagem({ tipo: "sucesso", texto: `${aEnviar.length} presenças guardadas!` });
+    fetchPresencas();
+  } catch {
+    setMensagem({ tipo: "erro", texto: "Erro ao guardar presenças." });
+  } finally {
+    setSaving(false);
+  }
+};
   const importarCSV = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
