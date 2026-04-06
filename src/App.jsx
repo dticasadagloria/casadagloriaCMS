@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff, Lock, User, LogIn, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./components/ui/button";
@@ -56,6 +56,13 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+  const isOldBrowser = !window.CSS || !CSS.supports("display", "grid");
+  if (isOldBrowser) {
+    alert("Para melhor experiência, usa o Google Chrome actualizado.");
+  }
+}, []);
 
   return (
     <div className="flex min-h-screen bg-background">
