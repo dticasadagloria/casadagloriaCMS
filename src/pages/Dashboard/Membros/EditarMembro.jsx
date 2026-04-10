@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Button } from "../../../components/ui/button";
 import Header from "../../../components/Header";
 import api from "@/api/api.js";
 import {
@@ -573,10 +574,12 @@ const EditarMembro = () => {
 
           {/* Botões */}
           <div className="flex items-center gap-3 pt-2">
-            <button
+            <Button 
               type="submit"
               disabled={saving}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+              // className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+              variant="hero"
+              size="md"
             >
               {saving ? (
                 <>
@@ -589,7 +592,7 @@ const EditarMembro = () => {
                   Guardar Alterações
                 </>
               )}
-            </button>
+            </Button>
 
             <button
               type="button"
