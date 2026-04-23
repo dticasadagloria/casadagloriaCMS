@@ -1,13 +1,32 @@
 import { useEffect, useState } from "react";
 import api from "@/api/api.js";
 import DonutCelulas from "@/components/charts/DonutCelulas.jsx";
-import { Headphones, Search, Phone } from "lucide-react";
+import { Headphones, Search, Phone, FileText } from "lucide-react";
 
 const CallCenter = () => {
   const [semCelula, setSemCelula] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [exporting, setExporting] = useState(false);
+
+  const exportarPDF = async () => {
+    setExporting(true);
+    try {
+      const token = localStorage.getItem("token");
+      const url = `${import.meta.env.VITE_API_URL}/api/membros/exportar/call-center/pdf`;
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      const html = await res.text();
+      const win = window.open("", "_blank");
+      win.document.write(html);
+      win.document.close();
+      setTimeout(() => win.print(), 500);
+    } catch (err) {
+      console.error("Erro ao exportar PDF:", err);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchDados = async () => {
@@ -92,9 +111,18 @@ const CallCenter = () => {
                   {stats?.semCelula ?? 0} membro{stats?.semCelula !== 1 ? "s" : ""} para contactar
                 </p>
               </div>
-              <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-red-50 border border-red-100 text-red-500 font-bold text-sm">
-                {stats?.semCelula ?? 0}
-              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={exportarPDF}
+                  disabled={exporting}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-100 text-red-600 text-xs font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                  <FileText size={12} />
+                  {exporting ? "A gerar..." : "Exportar PDF"}
+                </button>
+                <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-red-50 border border-red-100 text-red-500 font-bold text-sm">
+                  {stats?.semCelula ?? 0}
+                </span>
+              </div>
             </div>
 
             {/* Pesquisa */}
