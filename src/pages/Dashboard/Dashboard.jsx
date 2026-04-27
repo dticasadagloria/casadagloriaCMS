@@ -48,7 +48,9 @@ import BarEscolaDaVerdade from "@/components/charts/BarEscolaDaVerdade.jsx";
 import LinhaCrescimento from "@/components/charts/LinhaCrescimento.jsx";
 import DashboardSocorros from "./Socorros/DashboardSocorros";
 import Departamentos from "./Departamentos/Departamentos";
+import Atividades from "./Configuracoes/Atividades";
 import api from "@/api/api";
+import { Activity } from "lucide-react";
 // ─── TABS CONFIG ─────────────────────────────────────────────────────────────
 const tabs = [
   {
@@ -127,6 +129,7 @@ const tabs = [
       { key: "usuarios", label: "Usuários", icon: User },
       { key: "perfil", label: "Perfil", icon: User },
       { key: "permissoes", label: "Permissões", icon: Shield },
+      { key: "atividades", label: "Actividades", icon: Activity },
     ],
   },
 ];
@@ -386,7 +389,8 @@ const Dashboard = () => {
     financas: [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
     "call-center": [ROLES.ADMIN, ROLES.PASTOR, ROLES.CALLCENTER, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
     "sos-socorros": [ROLES.ADMIN, ROLES.PASTOR, ROLES.SOSSOCORROS, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
-    usuarios: [ROLES.ADMIN, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE ],
+    usuarios:    [ROLES.ADMIN, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
+    atividades:  [ROLES.ADMIN],
     perfil: null,
     permissoes: [
       ROLES.ADMIN,
@@ -870,10 +874,16 @@ const Dashboard = () => {
                     <Convertidos />
                   )}
 
-                  {/*Relátorios pdf e csv */}
-                {(activeTab === "relatorio" || activeTab === "relatorio") &&
+                {/*Relátorios pdf e csv */}
+                {activeTab === "relatorio" &&
                   temAcesso("relatorio", currentUser?.role_id) && (
                     <ExportarRelatorio />
+                  )}
+
+                {/* Actividades / Logs */}
+                {activeTab === "atividades" &&
+                  temAcesso("atividades", currentUser?.role_id) && (
+                    <Atividades />
                   )}
 
 
@@ -902,6 +912,7 @@ const Dashboard = () => {
                   "dashboard-financas",
                   "convertidos",
                   "relatorio",
+                  "atividades",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
