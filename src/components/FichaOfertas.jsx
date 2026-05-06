@@ -3,6 +3,7 @@ import {
   Coins, Users, Wallet, TrendingUp, Plus, Trash2,
   Save, CheckCircle, AlertCircle,
   Hash, Building2, Calendar, LayoutGrid,
+  FileText, FileSpreadsheet,
 } from 'lucide-react';
 import { useOfertas } from '../lib/useOfertas';
 import api from '@/api/api.js';
@@ -192,7 +193,7 @@ function SubtotalBar({ subtotais, tipo, CANAIS }) {
               <span className="font-bold text-slate-700 font-mono">{fmt(subtotais[c])}</span>
             </div>
           ))}
-          <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-amber-500 rounded-lg shadow-sm">
+          <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-gold-dark rounded-lg shadow-sm">
             <span className="text-amber-100 text-[11px]">Subtotal</span>
             <span className="font-bold text-white font-mono text-[13px]">{fmt(total)}</span>
           </div>
@@ -340,6 +341,29 @@ export default function FichaOfertas({ culto, onSaved }) {
       })
       .catch((err) => console.error('Erro ao carregar ofertas:', err));
   }, [culto?.id]);
+
+  async function handleExportarPDF() {
+    const token = localStorage.getItem('token');
+    const url   = `${import.meta.env.VITE_API_URL}/api/relatorios/ofertas/pdf/${culto.id}`;
+    try {
+      const res  = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      const html = await res.text();
+      const win  = window.open('', '_blank');
+      win.document.write(html);
+      win.document.close();
+      setTimeout(() => win.print(), 500);
+    } catch (err) {
+      console.error('Erro ao exportar PDF:', err);
+    }
+  }
+
+  function handleExportarCSV() {
+    const token = localStorage.getItem('token');
+    window.open(
+      `${import.meta.env.VITE_API_URL}/api/relatorios/ofertas/csv/${culto.id}?token=${token}`,
+      '_blank',
+    );
+  }
 
   async function handleGuardar() {
     setSaving(true);
@@ -516,15 +540,32 @@ export default function FichaOfertas({ culto, onSaved }) {
             </div>
           )}
         </div>
-        <Button
-        variant="hero"
-          onClick={handleGuardar}
-          disabled={saving}
-          // className="flex items-center gap-2 px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-xl shadow-sm shadow-amber-200 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
-        >
-          <Save size={15} />
-          {saving ? 'A guardar...' : 'Guardar registo'}
-        </Button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportarCSV}
+            title="Exportar Excel (CSV)"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 text-sm font-semibold hover:bg-emerald-100 hover:border-emerald-300 transition-all"
+          >
+            <FileSpreadsheet size={14} />
+            Excel
+          </button>
+          <button
+            onClick={handleExportarPDF}
+            title="Exportar PDF"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold hover:bg-blue-100 hover:border-blue-300 transition-all"
+          >
+            <FileText size={14} />
+            PDF
+          </button>
+          <Button
+            variant="hero"
+            onClick={handleGuardar}
+            disabled={saving}
+          >
+            <Save size={15} />
+            {saving ? 'A guardar...' : 'Guardar registo'}
+          </Button>
+        </div>
       </div>
     </div>
   );

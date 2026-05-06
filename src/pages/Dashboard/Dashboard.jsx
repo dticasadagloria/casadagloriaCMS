@@ -37,6 +37,7 @@ import Finances from "./Finanças/Finances";
 import FinancesDashboard from "./Finanças/FinancesDashboard";
 import Ofertas from "./Finanças/Ofertas";
 import Requisicoes from "./Finanças/Requisicoes";
+import RelatoriosFinancas from "./Finanças/RelatoriosFinancas";
 import CallCenter from "./Call_Center/CallCenter";
 import Estatistica from "./Estatistica/Estatistica";
 import Convertidos from "./Estatistica/Convertidos";
@@ -94,6 +95,7 @@ const tabs = [
       },
       { key: "ofertas", label: "Ofertas", icon: HandCoins },
       { key: "requisicoes", label: "Requisições", icon: BarChart3 },
+      { key: "relatorios-financas", label: "Relatórios", icon: Proportions },
     ],
   },
   {
@@ -420,6 +422,7 @@ const Dashboard = () => {
     ],
     departamentos: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE, ROLES.CALLCENTER],
     requisicoes: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
+    "relatorios-financas": [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
   };
 
   // ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
@@ -886,6 +889,12 @@ const Dashboard = () => {
                     <Atividades />
                   )}
 
+                {/* Relatórios de Finanças */}
+                {activeTab === "relatorios-financas" &&
+                  temAcesso("relatorios-financas", currentUser?.role_id) && (
+                    <RelatoriosFinancas />
+                  )}
+
 
                 {/* ── PLACEHOLDER PAGES ── */}
                 {![
@@ -913,6 +922,7 @@ const Dashboard = () => {
                   "convertidos",
                   "relatorio",
                   "atividades",
+                  "relatorios-financas",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
