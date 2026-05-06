@@ -311,6 +311,7 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
             >
               <option value="">Selecionar tipo</option>
               <option>Culto de Edificação</option>
+              <option>Cruzada</option>
               <option>Escola de Casamento e Família</option>
               <option>Culto de Páscoa</option>
               <option>Culto de Domingo - 7h</option>
