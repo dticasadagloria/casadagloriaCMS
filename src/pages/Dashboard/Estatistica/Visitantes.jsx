@@ -11,6 +11,7 @@ import {
   Eye,
   X,
   Check,
+  Pencil,
 } from "lucide-react";
 import {
   BarChart,
@@ -60,9 +61,158 @@ const Toggle = ({ label, sublabel, value, onChange, cor = "amber" }) => (
 );
 
 // ═══════════════════════════════════════════════════════════
+// MODAL — Criar Culto Rápido (Cruzada/Conferência)
+// ═══════════════════════════════════════════════════════════
+const ModalCultoRapido = ({ branches, onFechar, onCriado }) => {
+  const [form, setForm] = useState({
+    data: new Date().toISOString().slice(0, 10),
+    tipo: "Cruzada",
+    categoria: "Evento",
+    pregador: "",
+    horario: "",
+    branch_id: "",
+    inter_filial: true,
+    tipo_registo: "visitantes",
+  });
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await api.post("/api/cultos", form);
+      onCriado(res.data.culto);
+    } catch (err) {
+      setErro(err.response?.data?.error || "Erro ao criar culto");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <div>
+            <h3 className="text-base font-bold text-slate-800">
+              Novo Culto Especial
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Cruzada, Conferência ou Evento
+            </p>
+          </div>
+          <button
+            onClick={onFechar}
+            className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-2">
+              <Field label="Tipo *">
+                <select
+                  required
+                  value={form.tipo}
+                  onChange={(e) => setForm({ ...form, tipo: e.target.value })}
+                  className={inputClass}
+                >
+                  <option>Cruzada</option>
+                  <option>Conferência</option>
+                  <option>Culto Especial</option>
+                  <option>Evento Evangelístico</option>
+                </select>
+              </Field>
+            </div>
+            <Field label="Data *">
+              <input
+                type="date"
+                required
+                value={form.data}
+                onChange={(e) => setForm({ ...form, data: e.target.value })}
+                className={inputClass}
+              />
+            </Field>
+            <Field label="Horário">
+              <input
+                type="time"
+                value={form.horario}
+                onChange={(e) => setForm({ ...form, horario: e.target.value })}
+                className={inputClass}
+              />
+            </Field>
+            <Field label="Pregador">
+              <input
+                type="text"
+                placeholder="Nome do pregador"
+                value={form.pregador}
+                onChange={(e) => setForm({ ...form, pregador: e.target.value })}
+                className={inputClass}
+              />
+            </Field>
+            <Field label="Filial">
+              <select
+                value={form.branch_id}
+                onChange={(e) =>
+                  setForm({ ...form, branch_id: e.target.value })
+                }
+                className={inputClass}
+              >
+                <option value="">Selecionar filial</option>
+                {branches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.nome}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </div>
+          <div className="px-4 py-3 rounded-xl bg-sky-50 border border-sky-100">
+            <p className="text-xs font-semibold text-sky-700">
+              Este culto será criado como <strong>Cruzada/Conferência</strong> —
+              foco em visitantes, sem marcação de presenças de membros.
+            </p>
+          </div>
+          {erro && (
+            <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">
+              {erro}
+            </div>
+          )}
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onFechar}
+              className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60"
+            >
+              {loading ? "A criar..." : "Criar Culto"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════
 // MODAL — Registar Visitante
 // ═══════════════════════════════════════════════════════════
-const ModalRegistar = ({ cultos, branches, onFechar, onGuardado }) => {
+const ModalRegistar = ({
+  cultos: cultosIniciais,
+  branches,
+  onFechar,
+  onGuardado,
+}) => {
+  const [cultosLocal, setCultosLocal] = useState(cultosIniciais);
+  const [modalCultoRapido, setModalCultoRapido] = useState(false);
   const [form, setForm] = useState({
     nome: "",
     genero: "",
@@ -183,24 +333,50 @@ const ModalRegistar = ({ cultos, branches, onFechar, onGuardado }) => {
 
             <div className="col-span-2">
               <Field label="Culto *">
-                <select
-                  required
-                  value={form.culto_id}
-                  onChange={set("culto_id")}
-                  className={inputClass}
-                >
-                  <option value="">Selecionar culto</option>
-                  {cultos.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.tipo} — {new Date(c.data).toLocaleDateString("pt-MZ")}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex gap-2">
+                  <select
+                    required
+                    value={form.culto_id}
+                    onChange={set("culto_id")}
+                    className={`${inputClass} flex-1`}
+                  >
+                    <option value="">Selecionar culto</option>
+                    {cultosLocal.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.tipo_registo === "visitantes" ? "🌟 " : ""}
+                        {c.tipo} —{" "}
+                        {new Date(c.data).toLocaleDateString("pt-MZ")}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setModalCultoRapido(true)}
+                    className="px-3 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-semibold border border-amber-200 transition-colors whitespace-nowrap flex-shrink-0"
+                  >
+                    + Culto Especial
+                  </button>
+                </div>
               </Field>
             </div>
 
+            {modalCultoRapido && (
+              <ModalCultoRapido
+                branches={branches}
+                onFechar={() => setModalCultoRapido(false)}
+                onCriado={(novoCulto) => {
+                  setCultosLocal((prev) => [novoCulto, ...prev]);
+                  setForm((prev) => ({
+                    ...prev,
+                    culto_id: String(novoCulto.id),
+                  }));
+                  setModalCultoRapido(false);
+                }}
+              />
+            )}
+
             <div className="col-span-2">
-              <Field label="Filial">
+              <Field label="Local do Culto - Filial">
                 <select
                   value={form.branch_id}
                   onChange={set("branch_id")}
@@ -215,7 +391,7 @@ const ModalRegistar = ({ cultos, branches, onFechar, onGuardado }) => {
               </Field>
             </div>
 
-            <Toggle
+            {/* <Toggle
               label="Visitante Externo"
               sublabel="Vem de outra igreja"
               value={form.externo}
@@ -237,7 +413,82 @@ const ModalRegistar = ({ cultos, branches, onFechar, onGuardado }) => {
                   />
                 </Field>
               </div>
-            )}
+            )} */}
+            <Toggle
+  label="Visitante Externo"
+  sublabel="Vem de outra igreja"
+  value={form.externo}
+  onChange={() =>
+    setForm((prev) => ({ ...prev, externo: !prev.externo, igreja_origem: '', branch_id: '' }))
+  }
+  cor="amber"
+/>
+
+{/* Visitante INTERNO → escolher filial */}
+{/* Visitante INTERNO → escolher filial */}
+{!form.externo && (
+  <div className="col-span-2">
+    <Field label="Filial de Origem">
+      <select
+        value={form.branch_id}
+        onChange={(e) => {
+          const selectedBranch = branches.find(b => String(b.id) === e.target.value);
+          setForm((prev) => ({
+            ...prev,
+            branch_id: e.target.value,
+            igreja_origem: selectedBranch?.nome || '', // ← guarda o nome aqui
+          }));
+        }}
+        className={inputClass}
+      >
+        <option value="">Selecionar filial</option>
+        {branches.map((b) => (
+          <option key={b.id} value={b.id}>
+            {b.nome}
+          </option>
+        ))}
+      </select>
+    </Field>
+  </div>
+)}
+{/* Visitante EXTERNO → escolher igreja */}
+{form.externo && (
+  <div className="col-span-2">
+    <Field label="Igreja de Origem">
+      <select
+        value={form.igreja_origem}
+        onChange={set("igreja_origem")}
+        className={inputClass}
+      >
+        <option value="">Selecionar igreja</option>
+        {[
+          'Igreja International Casa Da Glória da Palavra',
+          'MEA',
+          'AGC Living Water',
+          'Ministério Âncora da Graça',
+          'IMANA',
+          'Ministério Sangue do Cordeiro',
+          'Movimento A Cruz Que Salva',
+          'Ilha de Patmos',
+          'Ministério Buscando Almas para Cristo (BAC)',
+          'Igreja Evangélica Assembleia de Deus',
+          'Living Jesus Embassy',
+          'Igreja Universal do Reino de Deus',
+          'Igreja Católica',
+          'Igreja Apostólica',
+          'Igreja Zione',
+          'Igreja Presbiteriana',
+          'Igreja Metodista Unida',
+          'Igreja/Ministério Explosão da Benção (EBD)',
+        ].map((igreja) => (
+          <option key={igreja} value={igreja}>
+            {igreja}
+          </option>
+        ))}
+      </select>
+    </Field>
+  </div>
+)}
 
             <div className="col-span-2">
               <Field label="Observações">
@@ -275,6 +526,151 @@ const ModalRegistar = ({ cultos, branches, onFechar, onGuardado }) => {
             >
               {loading ? "A registar..." : "Registar"}
             </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════
+// MODAL — Editar Visitante
+// ═══════════════════════════════════════════════════════════
+const ModalEditar = ({ visitante, cultos, branches, onFechar, onGuardado }) => {
+  const [form, setForm] = useState({
+    nome:          visitante.nome || "",
+    genero:        visitante.genero || "",
+    faixa_etaria:  visitante.faixa_etaria || "",
+    contacto:      visitante.contacto || "",
+    bairro:        visitante.bairro || "",
+    culto_id:      visitante.culto_id ? String(visitante.culto_id) : "",
+    externo:       visitante.externo ?? true,
+    igreja_origem: visitante.igreja_origem || "",
+    observacoes:   visitante.observacoes || "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro]       = useState(null);
+
+  const set = (field) => (e) => {
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    setErro(null);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErro(null);
+    try {
+      await api.put(`/api/visitantes/${visitante.id}`, form);
+      onGuardado();
+      onFechar();
+    } catch (err) {
+      setErro(err.response?.data?.error || "Erro ao actualizar visitante");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <div>
+            <h3 className="text-base font-bold text-slate-800">Editar Visitante</h3>
+            <p className="text-xs text-slate-400 mt-0.5">{visitante.nome}</p>
+          </div>
+          <button onClick={onFechar} className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
+            <X size={18} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-2">
+              <Field label="Nome *">
+                <input type="text" required placeholder="Nome completo" value={form.nome}
+                  onChange={set("nome")} className={inputClass} />
+              </Field>
+            </div>
+
+            <Field label="Género">
+              <select value={form.genero} onChange={set("genero")} className={inputClass}>
+                <option value="">Selecionar</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Feminino">Feminino</option>
+              </select>
+            </Field>
+
+            <Field label="Faixa Etária">
+              <select value={form.faixa_etaria} onChange={set("faixa_etaria")} className={inputClass}>
+                <option value="">Selecionar</option>
+                <option value="Adolescente">Adolescente: entre 12 e 17 anos</option>
+                <option value="Jovem">Jovem: entre 18 e 35 anos</option>
+                <option value="Adulto">Adulto: acima de 35 anos</option>
+              </select>
+            </Field>
+
+            <Field label="Contacto">
+              <input type="text" placeholder="Ex: 84 000 0000" value={form.contacto}
+                onChange={set("contacto")} className={inputClass} />
+            </Field>
+
+            <Field label="Bairro">
+              <input type="text" placeholder="Bairro" value={form.bairro}
+                onChange={set("bairro")} className={inputClass} />
+            </Field>
+
+            <div className="col-span-2">
+              <Field label="Culto">
+                <select value={form.culto_id} onChange={set("culto_id")} className={inputClass}>
+                  <option value="">Selecionar culto</option>
+                  {cultos.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.tipo} — {new Date(c.data).toLocaleDateString("pt-MZ")}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+
+            <Toggle
+              label="Visitante Externo"
+              sublabel="Vem de outra igreja"
+              value={form.externo}
+              onChange={() => setForm((prev) => ({ ...prev, externo: !prev.externo, igreja_origem: "" }))}
+              cor="amber"
+            />
+
+            {form.externo && (
+              <div className="col-span-2">
+                <Field label="Igreja de Origem">
+                  <input type="text" placeholder="Nome da igreja" value={form.igreja_origem}
+                    onChange={set("igreja_origem")} className={inputClass} />
+                </Field>
+              </div>
+            )}
+
+            <div className="col-span-2">
+              <Field label="Observações">
+                <textarea placeholder="Notas adicionais..." value={form.observacoes}
+                  onChange={set("observacoes")} rows={2} className={`${inputClass} resize-none`} />
+              </Field>
+            </div>
+          </div>
+
+          {erro && (
+            <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">{erro}</div>
+          )}
+
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onFechar}
+              className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors">
+              Cancelar
+            </button>
+            <button type="submit" disabled={loading}
+              className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60">
+              {loading ? "A guardar..." : "Guardar Alterações"}
+            </button>
           </div>
         </form>
       </div>
@@ -450,16 +846,16 @@ const Visitantes = () => {
   const [search, setSearch] = useState("");
   const [filtroCulto, setFiltroCulto] = useState("");
   const [modalRegistar, setModalRegistar] = useState(false);
+  const [modalEditar, setModalEditar]     = useState(null);
   const [modalConverter, setModalConverter] = useState(null);
   const [filtroTipo, setFiltroTipo] = useState("todos");
-  const [pagina, setPagina]         = useState(1);
-  const ITENS_POR_PAGINA            = 20;
+  const [pagina, setPagina] = useState(1);
+  const ITENS_POR_PAGINA = 20;
 
-
- 
-
-// Reset para página 1 quando o filtro muda
-useEffect(() => { setPagina(1); }, [search, filtroCulto, filtroTipo]);
+  // Reset para página 1 quando o filtro muda
+  useEffect(() => {
+    setPagina(1);
+  }, [search, filtroCulto, filtroTipo]);
 
   const fetchTudo = async () => {
     setLoading(true);
@@ -518,12 +914,11 @@ useEffect(() => { setPagina(1); }, [search, filtroCulto, filtroTipo]);
       );
     });
 
-
-     const totalPaginas = Math.ceil(visitantesFiltrados.length / ITENS_POR_PAGINA);
+  const totalPaginas = Math.ceil(visitantesFiltrados.length / ITENS_POR_PAGINA);
   const visitantesPagina = visitantesFiltrados.slice(
-  (pagina - 1) * ITENS_POR_PAGINA,
-  pagina * ITENS_POR_PAGINA
-);
+    (pagina - 1) * ITENS_POR_PAGINA,
+    pagina * ITENS_POR_PAGINA,
+  );
 
   if (loading)
     return (
@@ -540,6 +935,15 @@ useEffect(() => { setPagina(1); }, [search, filtroCulto, filtroTipo]);
           cultos={cultos}
           branches={branches}
           onFechar={() => setModalRegistar(false)}
+          onGuardado={fetchTudo}
+        />
+      )}
+      {modalEditar && (
+        <ModalEditar
+          visitante={modalEditar}
+          cultos={cultos}
+          branches={branches}
+          onFechar={() => setModalEditar(null)}
           onGuardado={fetchTudo}
         />
       )}
@@ -729,7 +1133,7 @@ useEffect(() => { setPagina(1); }, [search, filtroCulto, filtroTipo]);
                     </td>
                   </tr>
                 ) : (
-                 visitantesPagina.map((v, i) => (
+                  visitantesPagina.map((v, i) => (
                     <tr
                       key={v.id ?? i}
                       className="hover:bg-amber-50/30 transition-colors group"
@@ -769,7 +1173,7 @@ useEffect(() => { setPagina(1); }, [search, filtroCulto, filtroTipo]);
                           {v.tipo_culto ?? "—"}
                         </span>
                       </td>
-                        <td className="px-4 py-3.5 text-[13px] text-slate-600">
+                      <td className="px-4 py-3.5 text-[13px] text-slate-600">
                         {v.igreja_origem ?? "—"}
                       </td>
                       <td className="px-4 py-3.5">
@@ -784,7 +1188,7 @@ useEffect(() => { setPagina(1); }, [search, filtroCulto, filtroTipo]);
                         )}
                       </td>
                       <td className="px-4 py-3.5">
-                        <div className="flex items-center gap-2  group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-2 group-hover:opacity-100 transition-opacity">
                           {!v.membro_id && (
                             <button
                               onClick={() => setModalConverter(v)}
@@ -793,6 +1197,13 @@ useEffect(() => { setPagina(1); }, [search, filtroCulto, filtroTipo]);
                               <UserPlus size={12} /> Converter
                             </button>
                           )}
+                          <button
+                            onClick={() => setModalEditar(v)}
+                            className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-500 hover:text-amber-700 transition-colors"
+                            title="Editar visitante"
+                          >
+                            <Pencil size={13} />
+                          </button>
                           <button
                             onClick={() => apagarVisitante(v.id)}
                             className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 hover:text-red-600 transition-colors"
@@ -808,67 +1219,86 @@ useEffect(() => { setPagina(1); }, [search, filtroCulto, filtroTipo]);
             </table>
           </div>
 
-          
           {visitantesFiltrados.length > 0 && (
-  <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between flex-wrap gap-3">
-    <p className="text-[11px] text-slate-400">
-      A mostrar{" "}
-      <span className="font-semibold text-slate-600">
-        {(pagina - 1) * ITENS_POR_PAGINA + 1}–{Math.min(pagina * ITENS_POR_PAGINA, visitantesFiltrados.length)}
-      </span>{" "}
-      de{" "}
-      <span className="font-semibold text-slate-600">{visitantesFiltrados.length}</span>{" "}
-      visitantes
-    </p>
+            <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between flex-wrap gap-3">
+              <p className="text-[11px] text-slate-400">
+                A mostrar{" "}
+                <span className="font-semibold text-slate-600">
+                  {(pagina - 1) * ITENS_POR_PAGINA + 1}–
+                  {Math.min(
+                    pagina * ITENS_POR_PAGINA,
+                    visitantesFiltrados.length,
+                  )}
+                </span>{" "}
+                de{" "}
+                <span className="font-semibold text-slate-600">
+                  {visitantesFiltrados.length}
+                </span>{" "}
+                visitantes
+              </p>
 
-    {totalPaginas > 1 && (
-      <div className="flex items-center gap-1">
-        {/* Anterior */}
-        <button
-          onClick={() => setPagina((p) => Math.max(1, p - 1))}
-          disabled={pagina === 1}
-          className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-        >
-          ←
-        </button>
+              {totalPaginas > 1 && (
+                <div className="flex items-center gap-1">
+                  {/* Anterior */}
+                  <button
+                    onClick={() => setPagina((p) => Math.max(1, p - 1))}
+                    disabled={pagina === 1}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    ←
+                  </button>
 
-        {/* Números */}
-        {Array.from({ length: totalPaginas }, (_, i) => i + 1)
-          .filter((p) => p === 1 || p === totalPaginas || Math.abs(p - pagina) <= 1)
-          .reduce((acc, p, idx, arr) => {
-            if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
-            acc.push(p);
-            return acc;
-          }, [])
-          .map((p, i) =>
-            p === "..." ? (
-              <span key={`dots-${i}`} className="px-2 text-slate-400 text-xs">…</span>
-            ) : (
-              <button
-                key={p}
-                onClick={() => setPagina(p)}
-                className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all
-                  ${pagina === p
-                    ? "bg-primary text-white shadow-sm"
-                    : "border border-slate-200 text-slate-600 hover:bg-slate-50"}`}
-              >
-                {p}
-              </button>
-            )
+                  {/* Números */}
+                  {Array.from({ length: totalPaginas }, (_, i) => i + 1)
+                    .filter(
+                      (p) =>
+                        p === 1 ||
+                        p === totalPaginas ||
+                        Math.abs(p - pagina) <= 1,
+                    )
+                    .reduce((acc, p, idx, arr) => {
+                      if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
+                      acc.push(p);
+                      return acc;
+                    }, [])
+                    .map((p, i) =>
+                      p === "..." ? (
+                        <span
+                          key={`dots-${i}`}
+                          className="px-2 text-slate-400 text-xs"
+                        >
+                          …
+                        </span>
+                      ) : (
+                        <button
+                          key={p}
+                          onClick={() => setPagina(p)}
+                          className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all
+                  ${
+                    pagina === p
+                      ? "bg-primary text-white shadow-sm"
+                      : "border border-slate-200 text-slate-600 hover:bg-slate-50"
+                  }`}
+                        >
+                          {p}
+                        </button>
+                      ),
+                    )}
+
+                  {/* Próximo */}
+                  <button
+                    onClick={() =>
+                      setPagina((p) => Math.min(totalPaginas, p + 1))
+                    }
+                    disabled={pagina === totalPaginas}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    →
+                  </button>
+                </div>
+              )}
+            </div>
           )}
-
-        {/* Próximo */}
-        <button
-          onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-          disabled={pagina === totalPaginas}
-          className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-        >
-          →
-        </button>
-      </div>
-    )}
-  </div>
-)}
         </div>
       )}
 

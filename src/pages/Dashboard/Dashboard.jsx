@@ -863,7 +863,12 @@ const Dashboard = () => {
 
                 {/*Cultos*/}
                 {(activeTab === "cultos" || activeTab === "cultos") &&
-                  temAcesso("cultos", currentUser?.role_id) && <Cultos />}
+                  temAcesso("cultos", currentUser?.role_id) && (
+                    <Cultos
+                      onIrParaVisitantes={() => setActiveTab("visitantes")}
+                      onIrParaConvertidos={() => setActiveTab("convertidos")}
+                    />
+                  )}
 
                 {/*Visitas*/}
                 {(activeTab === "visitantes" || activeTab === "visitantes") &&

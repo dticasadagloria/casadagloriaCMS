@@ -16,7 +16,9 @@ import {
   Check,
   X,
   Calendar,
-  Pencil
+  Pencil,
+  Users2,
+  Calendar1Icon
 } from "lucide-react";
 
 // ─── Componentes auxiliares FORA de tudo ─────────────────────────────────────
@@ -36,7 +38,7 @@ const Field = ({ label, children }) => (
 // ═══════════════════════════════════════════════════════════
 // SECÇÃO 1 — LISTA DE CULTOS
 // ═══════════════════════════════════════════════════════════
-const ListaCultos = ({ onSelecionar, onEditar, onCriar }) => {
+const ListaCultos = ({ onSelecionar, onEditar, onCriar, onIrParaVisitantes, onIrParaConvertidos }) => {
   const [cultos, setCultos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -121,6 +123,7 @@ const ListaCultos = ({ onSelecionar, onEditar, onCriar }) => {
                     "Horário",
                     "Filial",
                     "Inter Filial",
+                    "Registo",
                     "Presentes",
                     "",
                   ].map((h) => (
@@ -137,7 +140,14 @@ const ListaCultos = ({ onSelecionar, onEditar, onCriar }) => {
                 {cultos.map((c) => (
                   <tr
                     key={c.id}
-                    onClick={() => onSelecionar(c)}
+                    onClick={() => {
+                      if (c.tipo_registo === "visitantes") {
+                        sessionStorage.setItem("filtroVisitantesCulto", c.id);
+                        onIrParaVisitantes && onIrParaVisitantes();
+                      } else {
+                        onSelecionar(c);
+                      }
+                    }}
                     className="hover:bg-amber-50/40 transition-colors cursor-pointer group"
                   >
                     <td className="px-4 py-3.5">
@@ -184,23 +194,42 @@ const ListaCultos = ({ onSelecionar, onEditar, onCriar }) => {
                       )}
                     </td>
                     <td className="px-4 py-3.5">
+                      {c.tipo_registo === "visitantes" ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-100">
+                          Cruzada
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-50 text-slate-500 border border-slate-200">
+                          Normal
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3.5">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
                         <UserCheck size={11} /> {c.total_presentes ?? 0}
                       </span>
                     </td>
                     <td className="px-4 py-3.5">
-                      <div className="flex items-center gap-2  group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => onSelecionar(c)}
-                          className="flex items-center gap-1 text-[11px] text-amber-600 font-semibold hover:text-amber-700"
-                        >
-                          Presenças <ChevronRight size={12} />
-                        </button>
-
+                      <div className="flex items-center gap-2 group-hover:opacity-100 transition-opacity">
+                        {c.tipo_registo === "visitantes" ? (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); sessionStorage.setItem("filtroVisitantesCulto", c.id); onIrParaVisitantes && onIrParaVisitantes(); }}
+                            className="flex items-center gap-1 text-[11px] text-sky-600 font-semibold hover:text-sky-700"
+                          >
+                            Visitantes <ChevronRight size={12} />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); onSelecionar(c); }}
+                            className="flex items-center gap-1 text-[11px] text-amber-600 font-semibold hover:text-amber-700"
+                          >
+                            Presenças <ChevronRight size={12} />
+                          </button>
+                        )}
                         <button onClick={(e) => { e.stopPropagation(); onEditar(c); }}
-      className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-500 hover:text-amber-700 transition-colors">
-      <Pencil size={13} />  
-    </button>
+                          className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-500 hover:text-amber-700 transition-colors">
+                          <Pencil size={13} />
+                        </button>
                         <button
                           onClick={(e) => apagarCulto(c.id, e)}
                           className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 hover:text-red-600 transition-colors"
@@ -232,6 +261,7 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
     horario: "",
     branch_id: "",
     inter_filial: false,
+    tipo_registo: "presencas",
   });
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -360,6 +390,31 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
               ))}
             </select>
           </Field>
+        </div>
+
+        {/* Toggle tipo_registo */}
+        <div className="space-y-2">
+          <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+            Tipo de Registo
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { key: "presencas", label: "Culto Normal", desc: "Foco em presenças de membros", icon: <Users2 className="w-5 h-5 text-gold-dark" /> },
+              { key: "visitantes", label: "Cruzada", desc: "Foco em visitantes externos", icon: <Calendar1Icon className="w-5 h-5 text-gold-dark" /> },
+            ].map(({ key, label, desc, icon }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setForm((prev) => ({ ...prev, tipo_registo: key }))}
+                className={`flex flex-col items-start gap-1 px-4 py-3 rounded-xl border-2 transition-all text-left
+                  ${form.tipo_registo === key ? "border-amber-400 bg-amber-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
+              >
+                <span className="text-lg">{icon}</span>
+                <p className={`text-sm font-semibold ${form.tipo_registo === key ? "text-amber-700" : "text-slate-700"}`}>{label}</p>
+                <p className="text-[11px] text-slate-400">{desc}</p>
+              </button>
+            ))}
+          </div>
         </div>
 
         {erro && (
@@ -959,6 +1014,7 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
     horario:      culto.horario || "",
     branch_id:    culto.branch_id || "",
     inter_filial: culto.inter_filial || false,
+    tipo_registo: culto.tipo_registo || "presencas",
   });
   const [branches, setBranches] = useState([]);
   const [loading, setLoading]   = useState(false);
@@ -1047,6 +1103,31 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
           </Field>
         </div>
 
+        {/* Toggle tipo_registo */}
+        <div className="space-y-2">
+          <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+            Tipo de Registo
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { key: "presencas", label: "Culto Normal", desc: "Foco em presenças de membros", icon: "👥" },
+              { key: "visitantes", label: "Cruzada / Conferência", desc: "Foco em visitantes externos", icon: "🌟" },
+            ].map(({ key, label, desc, icon }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setForm((prev) => ({ ...prev, tipo_registo: key }))}
+                className={`flex flex-col items-start gap-1 px-4 py-3 rounded-xl border-2 transition-all text-left
+                  ${form.tipo_registo === key ? "border-amber-400 bg-amber-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
+              >
+                <span className="text-lg">{icon}</span>
+                <p className={`text-sm font-semibold ${form.tipo_registo === key ? "text-amber-700" : "text-slate-700"}`}>{label}</p>
+                <p className="text-[11px] text-slate-400">{desc}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Toggle inter-filial */}
         <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-slate-50 border border-slate-200">
           <div>
@@ -1095,7 +1176,7 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
 // ═══════════════════════════════════════════════════════════
 // CONTENTOR PRINCIPAL
 // ═══════════════════════════════════════════════════════════
-const Cultos = () => {
+const Cultos = ({ onIrParaVisitantes, onIrParaConvertidos }) => {
   const [vista, setVista] = useState("lista");
   const [cultoActivo, setCultoActivo] = useState(null);
 
@@ -1118,18 +1199,20 @@ const Cultos = () => {
       )}
 
       {vista === "lista" && (
-  <ListaCultos
-    onSelecionar={(culto) => {
-      setCultoActivo(culto);
-      setVista("presencas");
-    }}
-    onEditar={(culto) => {       
-      setCultoActivo(culto);
-      setVista("editar");
-    }}
-    onCriar={() => setVista("criar")}
-  />
-)}
+        <ListaCultos
+          onSelecionar={(culto) => {
+            setCultoActivo(culto);
+            setVista("presencas");
+          }}
+          onEditar={(culto) => {
+            setCultoActivo(culto);
+            setVista("editar");
+          }}
+          onCriar={() => setVista("criar")}
+          onIrParaVisitantes={onIrParaVisitantes}
+          onIrParaConvertidos={onIrParaConvertidos}
+        />
+      )}
 
       {vista === "criar" && (
         <CriarCulto
