@@ -256,7 +256,7 @@ const SosDashboard = () => {
             <Headphones className="w-5 h-5 text-amber-600" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-800 tracking-tight">Call Center</h2>
+            <h2 className="text-lg font-bold text-slate-800 tracking-tight">SOS Socorros e Call Center</h2>
             <p className="text-sm text-slate-400 mt-0.5">Membros sem célula para contactar</p>
           </div>
         </div>

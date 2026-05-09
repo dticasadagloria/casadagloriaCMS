@@ -73,10 +73,6 @@ const router = createBrowserRouter([
       </AuthProvider>
     ),
   },
-  {
-    path: "/register",
-    element: <Register />,
-  },
   //Rotas para membros
   {
     path: "/member-login",

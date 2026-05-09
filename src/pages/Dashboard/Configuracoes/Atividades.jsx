@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import api from "@/api/api.js";
-import { Activity, Search, Filter, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button.jsx";
+import { Activity, Search, Filter, ChevronLeft, ChevronRight, RefreshCw, FileDown } from "lucide-react";
 
 // ─── Badge de acção ──────────────────────────────────────────────────────────
 const ACTION_CONFIG = {
@@ -89,6 +90,18 @@ const Atividades = () => {
     setPage(1);
   };
 
+  const exportarPDF = () => {
+    const params = new URLSearchParams();
+    const token  = localStorage.getItem("token");
+    if (filtros.search)      params.set("search",      filtros.search);
+    if (filtros.action)      params.set("action",      filtros.action);
+    if (filtros.entity_type) params.set("entity_type", filtros.entity_type);
+    if (filtros.from)        params.set("from",        filtros.from);
+    if (filtros.to)          params.set("to",          filtros.to);
+    params.set("token", token);
+    window.open(`${import.meta.env.VITE_API_URL}/api/logs/exportar/pdf?${params}`, "_blank");
+  };
+
   const limparFiltros = () => {
     setFiltros({ search: "", action: "", entity_type: "", from: "", to: "" });
     setInputSearch("");
@@ -173,12 +186,14 @@ const Atividades = () => {
             className={selectClass}
           />
 
-          <button
+          <Button
+          variant="hero"
+          size="sm"
             onClick={aplicarFiltros}
-            className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-colors shadow-sm"
+            // className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-colors shadow-sm"
           >
             Pesquisar
-          </button>
+          </Button>
 
           <button
             onClick={limparFiltros}
@@ -193,6 +208,14 @@ const Atividades = () => {
             className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+          </button>
+
+          <button
+            onClick={exportarPDF}
+            title="Exportar PDF"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 text-sm font-semibold border border-amber-200 transition-colors"
+          >
+            <FileDown size={14} /> PDF
           </button>
         </div>
       </div>

@@ -50,6 +50,7 @@ import LinhaCrescimento from "@/components/charts/LinhaCrescimento.jsx";
 import DashboardSocorros from "./Socorros/DashboardSocorros";
 import Departamentos from "./Departamentos/Departamentos";
 import Atividades from "./Configuracoes/Atividades";
+import NovoUsuario from "./Configuracoes/NewUser";
 import api from "@/api/api";
 import { Activity } from "lucide-react";
 // ─── TABS CONFIG ─────────────────────────────────────────────────────────────
@@ -130,7 +131,7 @@ const tabs = [
     children: [
       { key: "usuarios", label: "Usuários", icon: User },
       { key: "perfil", label: "Perfil", icon: User },
-      { key: "permissoes", label: "Permissões", icon: Shield },
+      { key: "novo-usuario", label: "Novo Usuário", icon: UserPlus },
       { key: "atividades", label: "Actividades", icon: Activity },
     ],
   },
@@ -360,6 +361,7 @@ const Dashboard = () => {
       ROLES.ESTATISTICA,
       ROLES.CALLCENTER,
       ROLES.SOSSOCORROS,
+      ROLES.MEMBROSESTATISTICA,
       ROLES.IICGPALBAZINE,
       ROLES.IICGPMAXIXE,
       ROLES.IICGPSEDE,
@@ -369,6 +371,7 @@ const Dashboard = () => {
       ROLES.PASTOR,
       ROLES.SECRETARIO,
       ROLES.ESTATISTICA,
+      ROLES.MEMBROSESTATISTICA,
       ROLES.IICGPSEDE,
       ROLES.IICGPALBAZINE,
       ROLES.IICGPMAXIXE
@@ -423,6 +426,7 @@ const Dashboard = () => {
     departamentos: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE, ROLES.CALLCENTER],
     requisicoes: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
     "relatorios-financas": [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
+    "atividades": [ROLES.ADMIN, ROLES.IICGPSEDE, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE],
   };
 
   // ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
@@ -433,7 +437,13 @@ const Dashboard = () => {
   };
 
   const toggleMenu = (key) =>
-    setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
+    setOpenMenus((prev) => {
+      const isCurrentlyOpen = !!prev[key];
+      // fecha todos os outros e alterna o clicado
+      const next = {};
+      if (!isCurrentlyOpen) next[key] = true;
+      return next;
+    });
 
   const closeSidebar = () => setIsSidebarOpen(false);
 
@@ -900,6 +910,12 @@ const Dashboard = () => {
                     <RelatoriosFinancas />
                   )}
 
+                {/* Novo usuario */}
+                {activeTab === "novo-usuario" &&
+                  temAcesso("novo-usuario", currentUser?.role_id) && (
+                    <NovoUsuario />
+                  )}
+
 
                 {/* ── PLACEHOLDER PAGES ── */}
                 {![
@@ -928,6 +944,7 @@ const Dashboard = () => {
                   "relatorio",
                   "atividades",
                   "relatorios-financas",
+                  "novo-usuario",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">

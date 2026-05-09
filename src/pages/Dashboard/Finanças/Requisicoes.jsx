@@ -348,6 +348,7 @@ const ModalDetalhe = ({ requisicao, onFechar, onActualizado, userRole }) => {
                 { label: "Filial",       value: dados.requisicao.nome_filial },
                 { label: "Departamento", value: dados.requisicao.nome_departamento || "—" },
                 { label: "Solicitante",  value: dados.requisicao.nome_solicitante  || "—" },
+                { label: "Contacto",     value: dados.requisicao.contacto_solicitante || "—" },
                 { label: "Data",         value: new Date(dados.requisicao.data_requisicao).toLocaleDateString("pt-MZ") },
                 { label: "Valor",        value: formatMt(dados.requisicao.valor) },
                 { label: "Estado",       value: <BadgeStatus status={dados.requisicao.status} /> },
@@ -432,10 +433,12 @@ const ModalDetalhe = ({ requisicao, onFechar, onActualizado, userRole }) => {
                     className={inputClass}
                   />
                 </div>
-                <button onClick={actualizarStatus} disabled={saving}
-                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60">
+                <Button onClick={actualizarStatus} disabled={saving}
+                variant="hero"
+                size="md"
+                  >
                   {saving ? "A guardar..." : "Guardar Estado"}
-                </button>
+                </Button>
               </div>
             )}
 
@@ -531,7 +534,8 @@ const Requisicoes = ({ userRole }) => {
       r.codigo?.toLowerCase().includes(q) ||
       r.descricao?.toLowerCase().includes(q) ||
       r.nome_filial?.toLowerCase().includes(q) ||
-      r.nome_departamento?.toLowerCase().includes(q)
+      r.nome_departamento?.toLowerCase().includes(q) ||
+      r.nome_solicitante?.toLowerCase().includes(q)
     );
   });
 
