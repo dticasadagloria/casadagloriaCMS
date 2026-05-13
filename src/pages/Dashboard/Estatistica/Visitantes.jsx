@@ -376,20 +376,38 @@ const ModalRegistar = ({
             )}
 
             <div className="col-span-2">
-              <Field label="Local do Culto - Filial">
-                <select
-                  value={form.branch_id}
-                  onChange={set("branch_id")}
-                  className={inputClass}
-                >
-                  {branches.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.nome}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-            </div>
+  <Field label="Local do Culto - Filial">
+    <select
+      value={form.branch_id}
+      onChange={set("branch_id")}
+      className={inputClass}
+    >
+      <option value="">-- Selecionar --</option>
+
+      {/* Opções da tabela */}
+      {branches.map((b) => (
+        <option key={b.id} value={b.id}>
+          {b.nome}
+        </option>
+      ))}
+
+      {/* Opções fixas extras */}
+      <option value="outro">Outro</option>
+      <option value="fora">Fora</option>
+    </select>
+
+    {/* Campo extra se selecionar "Outro" ou "Fora" */}
+    {(form.branch_id === "outro" || form.branch_id === "fora") && (
+      <input
+        type="text"
+        placeholder="Especifica o local..."
+        value={form.branch_outro || ""}
+        onChange={set("branch_outro")}
+        className={`${inputClass} mt-2`}
+      />
+    )}
+  </Field>
+</div>
 
             {/* <Toggle
               label="Visitante Externo"
@@ -463,6 +481,8 @@ const ModalRegistar = ({
         <option value="">Selecionar igreja</option>
         {[
           'Igreja International Casa Da Glória da Palavra',
+          'AGC Living Water',
+          'Igreja Evangélica Assembleia de Deus Alfa & Omega',
           'MEA',
           'AGC Living Water',
           'Ministério Âncora da Graça',
@@ -471,15 +491,18 @@ const ModalRegistar = ({
           'Movimento A Cruz Que Salva',
           'Ilha de Patmos',
           'Ministério Buscando Almas para Cristo (BAC)',
+          'Ministério Valentes na Fé',
+          'Ministério Divina Esperança',
           'Igreja Evangélica Assembleia de Deus',
           'Living Jesus Embassy',
           'Igreja Universal do Reino de Deus',
+          'Igreja Pentecostal Deus É Amor',
           'Igreja Católica',
           'Igreja Apostólica',
           'Igreja Zione',
           'Igreja Presbiteriana',
           'Igreja Metodista Unida',
-          'Igreja/Ministério Explosão da Benção (EBD)',
+          'Igreja/Ministério Explosão da Benção de Deus (EBD)',
         ].map((igreja) => (
           <option key={igreja} value={igreja}>
             {igreja}

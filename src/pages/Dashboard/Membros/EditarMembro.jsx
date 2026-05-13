@@ -250,13 +250,12 @@ const EditarMembro = () => {
       };
       console.log("payload enviado:", JSON.stringify(payload));
 
-      const res = await fetch(`https://iicgp-backend-cms.onrender.com/api/membros/${id}`, {
-        method: "PUT",
+      
+     const res = await api.put(`/api/membros/${id}`, payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
