@@ -9,9 +9,38 @@ import {
   ChevronUp,
   ChevronDown,
   ChevronsUpDown,
+  FileDown,
+  Sheet,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui/button";
+
+// ── Calcula a idade a partir da data de nascimento ────────────────────────────
+const calcularIdade = (dataNasc) => {
+  if (!dataNasc) return null;
+  const hoje = new Date();
+  const nasc = new Date(dataNasc);
+  let idade  = hoje.getFullYear() - nasc.getFullYear();
+  const m    = hoje.getMonth() - nasc.getMonth();
+  if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
+  return idade;
+};
+
+// ── Labels para o badge do filtro activo ─────────────────────────────────────
+const FILTRO_LABELS = {
+  ativos:             "Activos",
+  inativos:           "Inactivos",
+  batizados:          "Batizados",
+  nao_batizados:      "Não Batizados",
+  escola_concluido:   "Escola Concluída",
+  escola_emcurso:     "Escola Em Curso",
+  escola_naofrequenta:"Escola Não Frequenta",
+  lideres:            "Líderes",
+  parceiros:          "Parceiros",
+  nao_parceiros:      "Não Parceiros",
+  maiores_18:         "Maiores de 18 anos",
+  menores_18:         "Menores de 18 anos",
+};
 
 // ── Função pura de filtro — fora do componente ────────────────────────────────
 const aplicarFiltro = (lista, filtro) => {
@@ -36,6 +65,16 @@ const aplicarFiltro = (lista, filtro) => {
       return lista.filter((m) => m.parceiro === true);
     case "nao_parceiros":
       return lista.filter((m) => m.parceiro !== true);
+    case "maiores_18":
+      return lista.filter((m) => {
+        const idade = calcularIdade(m.data_nascimento);
+        return idade !== null && idade >= 18;
+      });
+    case "menores_18":
+      return lista.filter((m) => {
+        const idade = calcularIdade(m.data_nascimento);
+        return idade !== null && idade < 18;
+      });
     default:
       return lista; // "todos" ou null — mostra tudo
   }
@@ -96,7 +135,20 @@ export default function MembrosPage() {
     fetchMembros();
   }, []);
 
-  // ── Limpar filtro e mostrar todos ─────────────────────────────────────────
+  // ── Exportação PDF / Excel ────────────────────────────────────────────────
+  const exportar = (formato) => {
+    const token  = localStorage.getItem("token");
+    const params = new URLSearchParams({ token });
+    if (filtroActivo) params.set("filtro", filtroActivo);
+    window.open(`${import.meta.env.VITE_API_URL}/api/membros/exportar/${formato}?${params}`, "_blank");
+  };
+
+  // ── Aplicar / limpar filtro ───────────────────────────────────────────────
+  const setFiltro = (chave) => {
+    setFiltroActivo(chave);
+    setMembros(aplicarFiltro(membrosOriginais, chave));
+  };
+
   const limparFiltro = () => {
     setFiltroActivo(null);
     setMembros(membrosOriginais);
@@ -218,15 +270,29 @@ useEffect(() => { setPagina(1); }, [search, filtroActivo]);
           <RefreshCw size={14} />
           Actualizar
         </button> */}
-        <Button
-        variant="hero"
-        size="sm"
-          onClick={() => fetchMembros(filtroActivo)} // ← passa o filtro activo
-         
-        >
-          <RefreshCw size={14} />
-          Actualizar
-        </Button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => exportar("pdf")}
+            title={filtroActivo ? `Exportar PDF — ${FILTRO_LABELS[filtroActivo]}` : "Exportar PDF"}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold border border-red-200 transition-colors"
+          >
+            <FileDown size={13} /> PDF
+          </button>
+          <button
+            onClick={() => exportar("excel")}
+            title={filtroActivo ? `Exportar Excel — ${FILTRO_LABELS[filtroActivo]}` : "Exportar Excel"}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold border border-emerald-200 transition-colors"
+          >
+            <Sheet size={13} /> Excel
+          </button>
+          <Button
+            variant="hero"
+            size="sm"
+            onClick={() => fetchMembros(filtroActivo)}
+          >
+            <RefreshCw size={14} /> Actualizar
+          </Button>
+        </div>
       </div>
 
       {/* ── FILTRO ACTIVO BADGE ── */}
@@ -234,7 +300,7 @@ useEffect(() => { setPagina(1); }, [search, filtroActivo]);
         <div className="flex items-center gap-2">
           <span className="text-xs text-slate-500">A mostrar:</span>
           <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold border border-amber-200">
-            {filtroActivo}
+            {FILTRO_LABELS[filtroActivo] ?? filtroActivo}
             <button
               onClick={limparFiltro}
               className="ml-1 hover:text-amber-900 transition-colors font-bold"
@@ -288,6 +354,27 @@ useEffect(() => { setPagina(1); }, [search, filtroActivo]);
             </p>
           </div>
         </div>
+      </div>
+
+      {/* ── FILTROS DE IDADE ── */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Idade:</span>
+        {[
+          { chave: "maiores_18", label: "≥ 18 anos" },
+          { chave: "menores_18", label: "< 18 anos" },
+        ].map(({ chave, label }) => (
+          <button
+            key={chave}
+            onClick={() => filtroActivo === chave ? limparFiltro() : setFiltro(chave)}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+              filtroActivo === chave
+                ? "bg-amber-500 text-white border-amber-500 shadow-sm"
+                : "bg-white text-slate-600 border-slate-200 hover:border-amber-300 hover:text-amber-700"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* ── SEARCH ── */}
