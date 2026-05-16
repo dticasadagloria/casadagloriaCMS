@@ -89,10 +89,14 @@ export default function MembrosPage() {
   const [sortKey, setSortKey] = useState("nome");
   const [sortDir, setSortDir] = useState("asc");
   const [filtroActivo, setFiltroActivo] = useState(() => {
-  
     const f = sessionStorage.getItem("filtroMembros");
     sessionStorage.removeItem("filtroMembros");
     return f || null;
+  });
+  const [filtroAno, setFiltroAno] = useState(() => {
+    const a = sessionStorage.getItem("filtroMembrosAno");
+    sessionStorage.removeItem("filtroMembrosAno");
+    return a || null;
   });
   const navigate = useNavigate();
   const [pagina, setPagina]         = useState(1);
@@ -163,9 +167,15 @@ export default function MembrosPage() {
     }
   };
 
+  // ── Anos disponíveis para o selector ─────────────────────────────────────
+  const anosDisponiveis = [...new Set(
+    membrosOriginais.map((m) => m.ano_ingresso).filter(Boolean)
+  )].sort((a, b) => b - a);
+
   // ── Filter + Sort ─────────────────────────────────────────────────────────
   const filtered = membros
     .filter((m) => {
+      if (filtroAno && String(m.ano_ingresso) !== String(filtroAno)) return false;
       const q = search.toLowerCase();
       return (
         m.nome_membro?.toLowerCase().includes(q) ||
@@ -179,17 +189,17 @@ export default function MembrosPage() {
       return sortDir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
     });
 
-  const total = membros.length;
-  const ativos = membros.filter((m) => m.ativo).length;
+  const total   = membros.length;
+  const ativos  = membros.filter((m) => m.ativo).length;
   const inativos = total - ativos;
 
-  const totalPaginas    = Math.ceil(filtered.length / ITENS_POR_PAGINA);
-const filteredPagina  = filtered.slice(
-  (pagina - 1) * ITENS_POR_PAGINA,
-  pagina * ITENS_POR_PAGINA
-);
+  const totalPaginas   = Math.ceil(filtered.length / ITENS_POR_PAGINA);
+  const filteredPagina = filtered.slice(
+    (pagina - 1) * ITENS_POR_PAGINA,
+    pagina * ITENS_POR_PAGINA
+  );
 
-useEffect(() => { setPagina(1); }, [search, filtroActivo]);
+  useEffect(() => { setPagina(1); }, [search, filtroActivo, filtroAno]);
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   const SortIcon = ({ col }) => {
@@ -356,7 +366,8 @@ useEffect(() => { setPagina(1); }, [search, filtroActivo]);
         </div>
       </div>
 
-      {/* ── FILTROS DE IDADE ── */}
+      <div className="flex flex-col md:flex-row md:items-center gap-4">
+        {/* ── FILTROS DE IDADE ── */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Idade:</span>
         {[
@@ -368,13 +379,47 @@ useEffect(() => { setPagina(1); }, [search, filtroActivo]);
             onClick={() => filtroActivo === chave ? limparFiltro() : setFiltro(chave)}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
               filtroActivo === chave
-                ? "bg-amber-500 text-white border-amber-500 shadow-sm"
-                : "bg-white text-slate-600 border-slate-200 hover:border-amber-300 hover:text-amber-700"
+                ? "bg-secondary text-white border-amber-500 shadow-sm"
+                : "bg-white text-slate-600 border-slate-200 hover:border-secondary hover:text-amber-700"
             }`}
           >
             {label}
           </button>
         ))}
+      </div>
+
+      {/* ── FILTRO DE ANO ── */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Ano de Ingresso:</span>
+        <div className="relative">
+          <select
+            value={filtroAno || ""}
+            onChange={(e) => setFiltroAno(e.target.value || null)}
+            className={`pl-3 pr-7 py-1.5 rounded-xl text-xs font-semibold border transition-all appearance-none cursor-pointer ${
+              filtroAno
+                ? "bg-primary text-white border-sky-500 shadow-sm"
+                : "bg-white text-slate-600 border-slate-200 hover:border-sky-300"
+            }`}
+          >
+            <option value="">Todos os anos</option>
+            {anosDisponiveis.map((ano) => (
+              <option key={ano} value={ano}>{ano}</option>
+            ))}
+          </select>
+          <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[10px]">
+            {filtroAno ? "▾" : "▾"}
+          </span>
+        </div>
+        {filtroAno && (
+          <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-sky-100 text-sky-700 text-[11px] font-bold border border-sky-200">
+            {filtroAno}
+            <button
+              onClick={() => setFiltroAno(null)}
+              className="ml-0.5 hover:text-sky-900 font-bold leading-none"
+            >×</button>
+          </span>
+        )}
+      </div>
       </div>
 
       {/* ── SEARCH ── */}

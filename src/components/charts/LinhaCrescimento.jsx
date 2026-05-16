@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   LineChart,
   Line,
@@ -9,7 +10,7 @@ import {
   ReferenceLine,
 } from "recharts";
 
-const LinhaCrescimento = ({ membros }) => {
+const LinhaCrescimento = ({ membros, onAnoClick }) => {
   // ── Agrupa membros por ano de ingresso ─────────────────────────────────
   const contagemPorAno = membros.reduce((acc, m) => {
     const ano = m.ano_ingresso;
@@ -18,28 +19,66 @@ const LinhaCrescimento = ({ membros }) => {
     return acc;
   }, {});
 
-  // Ordena por ano e calcula total acumulado
   const data = Object.entries(contagemPorAno)
     .sort(([a], [b]) => Number(a) - Number(b))
     .reduce((acc, [ano, novos]) => {
       const anterior = acc.length > 0 ? acc[acc.length - 1].total : 0;
-      acc.push({
-        ano,
-        novos,
-        total: anterior + novos,
-      });
+      acc.push({ ano, novos, total: anterior + novos });
       return acc;
     }, []);
 
-  const maxNovos = Math.max(...data.map((d) => d.novos), 0);
+  const maxNovos    = Math.max(...data.map((d) => d.novos), 0);
   const anoMaisNovos = data.find((d) => d.novos === maxNovos)?.ano;
 
-  // ── Tooltip customizado ────────────────────────────────────────────────
+  // ── Tick clicável no eixo X ────────────────────────────────────────────
+  const ClickableTick = ({ x, y, payload }) => {
+    const isMax     = payload.value === anoMaisNovos;
+    const clickable = !!onAnoClick;
+    return (
+      <g
+        transform={`translate(${x},${y})`}
+        style={{ cursor: clickable ? "pointer" : "default" }}
+        onClick={() => clickable && onAnoClick(payload.value)}
+      >
+        {clickable && (
+          <rect
+            x={-18} y={2} width={36} height={18} rx={5}
+            fill={isMax ? "#fef3c7" : "transparent"}
+            stroke={isMax ? "#f59e0b" : "transparent"}
+            strokeWidth={1}
+          />
+        )}
+        <text
+          x={0} y={0} dy={14}
+          textAnchor="middle"
+          fontSize={11}
+          fontWeight={isMax ? 700 : 600}
+          fill={isMax ? "#b45309" : clickable ? "#64748b" : "#94a3b8"}
+        >
+          {payload.value}
+        </text>
+        {clickable && (
+          <text x={0} y={0} dy={28} textAnchor="middle" fontSize={7} fill="#cbd5e1">
+            ↑ ver
+          </text>
+        )}
+      </g>
+    );
+  };
+
+  // ── Tooltip ────────────────────────────────────────────────────────────
   const CustomTooltip = ({ active, payload, label }) => {
     if (!active || !payload?.length) return null;
     return (
       <div className="bg-white border border-slate-100 rounded-xl px-4 py-3 shadow-lg text-sm space-y-1">
-        <p className="font-bold text-slate-700">{label}</p>
+        <div className="flex items-center justify-between gap-4 mb-1">
+          <p className="font-bold text-slate-700">{label}</p>
+          {onAnoClick && (
+            <span className="text-[10px] text-secondary font-semibold px-1.5 py-0.5 bg-secondary/10 rounded-md">
+              Clique para ver
+            </span>
+          )}
+        </div>
         {payload.map((p) => (
           <p key={p.dataKey} style={{ color: p.color }} className="font-semibold">
             {p.dataKey === "novos" ? "Novos membros" : "Total acumulado"}:{" "}
@@ -50,17 +89,19 @@ const LinhaCrescimento = ({ membros }) => {
     );
   };
 
-  // ── Dot customizado ────────────────────────────────────────────────────
+  // ── Dot ───────────────────────────────────────────────────────────────
   const CustomDot = ({ cx, cy, payload, color }) => {
-    const isMax = payload.ano === anoMaisNovos;
+    const isMax     = payload.ano === anoMaisNovos;
+    const clickable = !!onAnoClick;
     return (
       <circle
-        cx={cx}
-        cy={cy}
+        cx={cx} cy={cy}
         r={isMax ? 6 : 4}
         fill={isMax ? "#f59e0b" : color}
         stroke="white"
         strokeWidth={2}
+        style={{ cursor: clickable ? "pointer" : "default" }}
+        onClick={() => clickable && onAnoClick(payload.ano)}
       />
     );
   };
@@ -76,7 +117,7 @@ const LinhaCrescimento = ({ membros }) => {
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all duration-200">
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex items-start justify-between mb-5">
         <div>
           <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">
             Crescimento da Igreja
@@ -84,33 +125,47 @@ const LinhaCrescimento = ({ membros }) => {
           <p className="text-xs text-slate-400 mt-0.5">
             Novos membros e total acumulado por ano
           </p>
+          {onAnoClick && (
+            <p className="text-[10px] text-secondary font-semibold mt-1 flex items-center gap-1">
+              <span>↑</span> Clique num ano para ver os membros
+            </p>
+          )}
         </div>
 
-        {/* Badge do ano com mais membros */}
         {anoMaisNovos && (
-          <div className="flex flex-col items-end">
+          <div
+            className={`flex flex-col items-end ${onAnoClick ? "cursor-pointer group" : ""}`}
+            onClick={() => onAnoClick && onAnoClick(anoMaisNovos)}
+          >
             <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">
               Melhor ano
             </span>
-            <span className="text-lg font-bold text-amber-500">{anoMaisNovos}</span>
+            <span className="text-lg font-bold text-amber-500 group-hover:text-amber-600 transition-colors">
+              {anoMaisNovos}
+            </span>
             <span className="text-[10px] text-slate-400">{maxNovos} novos</span>
           </div>
         )}
       </div>
 
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={220}>
+      <ResponsiveContainer width="100%" height={230}>
         <LineChart
           data={data}
-          margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+          margin={{ top: 10, right: 10, left: -20, bottom: 12 }}
+          onClick={(e) => {
+            if (onAnoClick && e?.activeLabel) onAnoClick(e.activeLabel);
+          }}
+          style={{ cursor: onAnoClick ? "pointer" : "default" }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
           <XAxis
             dataKey="ano"
-            tick={{ fontSize: 11, fill: "#94a3b8", fontWeight: 600 }}
+            tick={<ClickableTick />}
             axisLine={false}
             tickLine={false}
-            interval="preserveStartEnd"  // evita labels sobrepostos em mobile
+            interval="preserveStartEnd"
+            height={40}
           />
           <YAxis
             tick={{ fontSize: 11, fill: "#94a3b8" }}
@@ -121,7 +176,6 @@ const LinhaCrescimento = ({ membros }) => {
           />
           <Tooltip content={<CustomTooltip />} />
 
-          {/* Linha de referência no ano com mais membros */}
           {anoMaisNovos && (
             <ReferenceLine
               x={anoMaisNovos}
@@ -131,7 +185,6 @@ const LinhaCrescimento = ({ membros }) => {
             />
           )}
 
-          {/* Linha de novos membros por ano */}
           <Line
             type="monotone"
             dataKey="novos"
@@ -140,8 +193,6 @@ const LinhaCrescimento = ({ membros }) => {
             dot={<CustomDot color="#f59e0b" />}
             activeDot={{ r: 7, fill: "#f59e0b", stroke: "white", strokeWidth: 2 }}
           />
-
-          {/* Linha de total acumulado */}
           <Line
             type="monotone"
             dataKey="total"
@@ -155,7 +206,7 @@ const LinhaCrescimento = ({ membros }) => {
       </ResponsiveContainer>
 
       {/* Legenda */}
-      <div className="flex flex-wrap justify-center gap-4 mt-4">
+      <div className="flex flex-wrap justify-center gap-4 mt-2">
         <div className="flex items-center gap-2">
           <span className="w-6 h-0.5 rounded-full bg-amber-400 inline-block" />
           <span className="text-xs font-semibold text-slate-500">Novos por ano</span>

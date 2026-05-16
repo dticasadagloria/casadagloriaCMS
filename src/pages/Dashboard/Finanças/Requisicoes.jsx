@@ -296,9 +296,7 @@ const ModalDetalhe = ({ requisicao, onFechar, onActualizado, userRole }) => {
     try {
       const formData = new FormData();
       formData.append("ficheiro", file);
-      await api.post(`/api/requisicoes/${requisicao.id}/comprovativo`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await api.post(`/api/requisicoes/${requisicao.id}/comprovativo`, formData);
       setMensagem({ tipo: "sucesso", texto: "Comprovativo enviado!" });
       fetchDetalhe();
     } catch {

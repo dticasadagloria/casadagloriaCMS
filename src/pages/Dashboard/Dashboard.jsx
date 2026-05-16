@@ -245,43 +245,42 @@ const NavItem = ({
 };
 
 // ─── STATS CARD ──────────────────────────────────────────────────────────────
-const StatCard = ({
-  title,
-  value,
-  change,
-  changeType,
-  Icon,
-  gradient,
-  onClick,
-}) => (
+const StatCard = ({ title, value, change, changeType, Icon, onClick }) => (
   <div
     onClick={onClick}
-    className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100/60 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+    className={`group relative bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden ${onClick ? "cursor-pointer" : ""}`}
   >
-    <div className="flex items-start justify-between mb-4">
-      <div>
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-          {title}
-        </p>
-        <p
-          className={`text-3xl font-bold mt-1 bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}
-        >
-          {value}
-        </p>
+    {/* Gold accent stripe */}
+    <div className="h-[3px] bg-gradient-to-r from-secondary to-primary" />
+
+    <div className="p-5">
+      {/* Icon + indicator */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="w-11 h-11 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors duration-200">
+          <Icon size={20} className="text-secondary" />
+        </div>
+        <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
+          changeType === "up"   ? "bg-emerald-50 text-emerald-600" :
+          changeType === "down" ? "bg-red-50 text-red-500" :
+          "bg-secondary/10 text-secondary"
+        }`}>
+          {changeType === "up" ? "▲" : changeType === "down" ? "▼" : "●"}
+        </span>
       </div>
-      <div
-        className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-200`}
-      >
-        <Icon className="w-5 h-5 text-white" />
+
+      {/* Value */}
+      <p className="text-[34px] font-bold text-slate-800 leading-none tabular-nums tracking-tight">
+        {value}
+      </p>
+      {/* Label */}
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 truncate">
+        {title}
+      </p>
+
+      {/* Footer */}
+      <div className="mt-4 pt-3 border-t border-slate-50">
+        <p className="text-[11px] font-medium text-slate-500">{change}</p>
       </div>
-    </div>
-    <div
-      className={`flex items-center gap-1.5 text-xs font-medium ${changeType === "up" ? "text-emerald-600" : changeType === "down" ? "text-red-500" : "text-amber-500"}`}
-    >
-      <span>
-        {changeType === "up" ? "↑" : changeType === "down" ? "↓" : "→"}
-      </span>
-      <span>{change}</span>
     </div>
   </div>
 );
@@ -394,7 +393,7 @@ const Dashboard = () => {
     financas: [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
     "call-center": [ROLES.ADMIN, ROLES.PASTOR, ROLES.CALLCENTER, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
     "sos-socorros": [ROLES.ADMIN, ROLES.PASTOR, ROLES.SOSSOCORROS, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
-    usuarios:    [ROLES.ADMIN, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
+    usuarios:    [ROLES.ADMIN, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE, ROLES.ESTATISTICA, ROLES.CALLCENTER],
     atividades:  [ROLES.ADMIN],
     perfil: null,
     permissoes: [
@@ -423,10 +422,10 @@ const Dashboard = () => {
       ROLES.IICGPMAXIXE,
       ROLES.IICGPALBAZINE,
     ],
-    departamentos: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE, ROLES.CALLCENTER],
+    departamentos: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE, ROLES.CALLCENTER, ROLES.ESTATISTICA],
     requisicoes: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
     "relatorios-financas": [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
-    "atividades": [ROLES.ADMIN, ROLES.IICGPSEDE, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE],
+    "atividades": [ROLES.ADMIN, ROLES.IICGPSEDE, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.ESTATISTICA],
   };
 
   // ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
@@ -699,7 +698,6 @@ const Dashboard = () => {
                         change="Ver todos os membros"
                         changeType="up"
                         Icon={Users}
-                        gradient="from-amber-500 to-amber-600"
                         onClick={() => handleCardClick("todos")}
                       />
                       <StatCard
@@ -708,16 +706,14 @@ const Dashboard = () => {
                         change="Ver membros activos"
                         changeType="up"
                         Icon={Users}
-                        gradient="from-yellow-500 to-amber-500"
                         onClick={() => handleCardClick("ativos")}
                       />
                       <StatCard
                         title="Membros Inactivos"
                         value={inativos}
                         change="Ver membros inactivos"
-                        changeType="neutral"
+                        changeType="down"
                         Icon={UserX}
-                        gradient="from-red-600 to-red-600"
                         onClick={() => handleCardClick("inativos")}
                       />
                       <StatCard
@@ -726,16 +722,14 @@ const Dashboard = () => {
                         change="Ver líderes"
                         changeType="up"
                         Icon={Users}
-                        gradient="from-yellow-500 to-amber-600"
                         onClick={() => handleCardClick("lideres")}
                       />
                       <StatCard
                         title="Departamentos"
                         value={statsDepartamentos?.total ?? 0}
                         change={`${statsDepartamentos?.activos ?? 0} activos`}
-                        changeType="up"
+                        changeType="neutral"
                         Icon={Building2}
-                        gradient="from-violet-500 to-purple-600"
                         onClick={() => handleCardClick("departamentos")}
                       />
                       {/* <StatCard
@@ -786,7 +780,13 @@ const Dashboard = () => {
                         onFiltrar={handleCardClick}
                       />
                     </div>
-                    <LinhaCrescimento membros={membros} />
+                    <LinhaCrescimento
+                      membros={membros}
+                      onAnoClick={(ano) => {
+                        sessionStorage.setItem("filtroMembrosAno", String(ano));
+                        setActiveTab("lista-membros");
+                      }}
+                    />
                   </div>
                 )}
 
