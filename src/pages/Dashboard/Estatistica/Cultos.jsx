@@ -726,18 +726,18 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                 ))}
               </div>
               <div className="flex gap-2">
-                <button
+                {/* <button
                   onClick={() => marcarTodos(true)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold border border-emerald-100 transition-colors"
                 >
                   <Check size={12} /> Todos presentes
-                </button>
-                <button
+                </button> */}
+                {/* <button
                   onClick={() => marcarTodos(false)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold border border-red-100 transition-colors"
                 >
                   <X size={12} /> Todos ausentes
-                </button>
+                </button> */}
               </div>
               <label
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer ${importando ? "opacity-60 pointer-events-none" : ""}`}
