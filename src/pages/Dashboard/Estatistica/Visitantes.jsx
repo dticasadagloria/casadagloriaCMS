@@ -437,7 +437,7 @@ const ModalRegistar = ({
   sublabel="Vem de outra igreja"
   value={form.externo}
   onChange={() =>
-    setForm((prev) => ({ ...prev, externo: !prev.externo, igreja_origem: '', branch_id: '' }))
+    setForm((prev) => ({ ...prev, externo: !prev.externo, igreja_origem: '' }))
   }
   cor="amber"
 />
@@ -448,20 +448,13 @@ const ModalRegistar = ({
   <div className="col-span-2">
     <Field label="Filial de Origem">
       <select
-        value={form.branch_id}
-        onChange={(e) => {
-          const selectedBranch = branches.find(b => String(b.id) === e.target.value);
-          setForm((prev) => ({
-            ...prev,
-            branch_id: e.target.value,
-            igreja_origem: selectedBranch?.nome || '', // ← guarda o nome aqui
-          }));
-        }}
+        value={form.igreja_origem}
+        onChange={set("igreja_origem")}
         className={inputClass}
       >
         <option value="">Selecionar filial</option>
         {branches.map((b) => (
-          <option key={b.id} value={b.id}>
+          <option key={b.id} value={b.nome}>
             {b.nome}
           </option>
         ))}
