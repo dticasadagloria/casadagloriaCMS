@@ -46,6 +46,9 @@ const Login = () => {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      // Novo login → começa sempre no Dashboard, nunca na página do user anterior.
+      localStorage.setItem("activeTab", "dashboard");
+      sessionStorage.clear();
       setSuccess("Login realizado com sucesso!");
       setTimeout(() => navigate("/dashboard"), 1000);
 

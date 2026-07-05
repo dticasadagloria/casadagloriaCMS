@@ -49,7 +49,9 @@ export const AuthProvider = ({ children }) => {
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+    // 5s era curto demais: em redes móveis lentas ou com o backend (Render) em
+    // cold start, o pedido era abortado e a sessão do utilizador caía sem motivo.
+    const timeout = setTimeout(() => controller.abort(), 30000);
 
     const res = await fetch("https://iicgp-backend-cms.onrender.com/auth/me", {
       headers: { Authorization: `Bearer ${token}` },
@@ -95,6 +97,9 @@ export const AuthProvider = ({ children }) => {
       // Guarda token (compatível com o teu ProtectedRoute)
       localStorage.setItem("token", data.token);
 
+      // Novo login → começa sempre no Dashboard, nunca na página do user anterior.
+      localStorage.setItem("activeTab", "dashboard");
+
       // Carrega o user completo com role_nome
       await fetchMe();
 
@@ -105,8 +110,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ── LOGOUT ────────────────────────────────────────────────────────────────
+  // Limpa toda a sessão para que o próximo utilizador não herde a página/estado
+  // do anterior (activeTab, filtros guardados, dados do user).
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("activeTab");
+    sessionStorage.clear();
     setUser(null);
   };
 

@@ -92,6 +92,17 @@ const router = createBrowserRouter([
     path: "/requisicao-publica",
     element: <RequisicaoPublica />,
   },
+  // Utilizador sem permissão para a rota → volta ao dashboard.
+  {
+    path: "/unauthorized",
+    element: <Navigate to="/dashboard" replace />,
+  },
+  // Catch-all: qualquer URL desconhecido (ou refresh num caminho inválido)
+  // volta ao início em vez de mostrar a página de erro do router.
+  {
+    path: "*",
+    element: <Navigate to="/" replace />,
+  },
 ]);
 
 export default router;
