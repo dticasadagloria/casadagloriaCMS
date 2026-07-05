@@ -5,6 +5,24 @@ import { UserPlus, Eye, EyeOff, Check, X } from "lucide-react";
 
 const inputClass = "w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all";
 
+// Labels personalizadas por role (chave = id do role na DB).
+// Os roles continuam a ser puxados da DB; isto só troca o texto mostrado.
+// Se surgir um role novo sem entrada aqui, usa o `nome` vindo da DB.
+const ROLE_LABELS = {
+  1:  "Administrador do Sistema",
+  2:  "Pastor / Responsável Local",
+  3:  "Finanças",
+  8:  "Estatística / Gestão de Membros",
+  9:  "Call Center",
+  10: "SOS — Socorros",
+  11: "Membro — Estatística (Cultos e Presenças)",
+  12: "IICGP Maxixe",
+  13: "IICGP Albazine",
+  14: "IICGP Zimpeto (Sede)",
+};
+
+const labelDoRole = (role) => ROLE_LABELS[role.id] || role.nome;
+
 const Field = ({ label, required, children }) => (
   <div className="space-y-1.5">
     <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
@@ -175,7 +193,7 @@ const NovoUsuario = () => {
           <select value={form.role_id} onChange={set("role_id")} className={inputClass}>
             <option value="">Selecionar role</option>
             {roles.map((r) => (
-              <option key={r.id} value={r.id}>{r.nome}</option>
+              <option key={r.id} value={r.id}>{labelDoRole(r)}</option>
             ))}
           </select>
         </Field>
