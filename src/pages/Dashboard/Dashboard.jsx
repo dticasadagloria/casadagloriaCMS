@@ -24,7 +24,7 @@ import {
   HandCoins,
   LayoutPanelTop,
   Proportions,
-  Church 
+  Church,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Membros from "./Membros/Membros";
@@ -51,6 +51,9 @@ import DashboardSocorros from "./Socorros/DashboardSocorros";
 import Departamentos from "./Departamentos/Departamentos";
 import Atividades from "./Configuracoes/Atividades";
 import NovoUsuario from "./Configuracoes/NewUser";
+import ListaCriancas from "./EscolinhaVerdade/ListaCriancas";
+import CadastroCrianca from "./EscolinhaVerdade/CadastroCrianca";
+import CriancaPResenca from "./EscolinhaVerdade/Presencas";
 import api from "@/api/api";
 import { Activity } from "lucide-react";
 // ─── TABS CONFIG ─────────────────────────────────────────────────────────────
@@ -77,11 +80,24 @@ const tabs = [
     icon: BarChart3,
     children: [
       { key: "painel", label: "Painel de Controle", icon: BarChart3 },
-      { key: "cultos", label: "Cultos", icon: Church  },
+      { key: "cultos", label: "Cultos", icon: Church },
       { key: "visitantes", label: "Visitas", icon: Users },
-      { key: "convertidos", label: "Novos Convertidos", icon: UserPlus},
-      { key: "relatorio", label: "Relátorios", icon: Proportions},
-
+      { key: "convertidos", label: "Novos Convertidos", icon: UserPlus },
+      { key: "relatorio", label: "Relátorios", icon: Proportions },
+    ],
+  },
+  {
+    key: "escolinha",
+    label: "Escolinha da Verdade",
+    icon: BookOpen,
+    children: [
+      { key: "escolinha-lista", label: "Lista de Crianças", icon: BookOpen },
+      { key: "escolinha-presencas", label: "Presenças", icon: Calendar },
+      {
+        key: "escolinha-cadastro",
+        label: "Cadastro de Crianças",
+        icon: UserPlus,
+      },
     ],
   },
   {
@@ -259,11 +275,15 @@ const StatCard = ({ title, value, change, changeType, Icon, onClick }) => (
         <div className="w-11 h-11 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors duration-200">
           <Icon size={20} className="text-secondary" />
         </div>
-        <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
-          changeType === "up"   ? "bg-emerald-50 text-emerald-600" :
-          changeType === "down" ? "bg-red-50 text-red-500" :
-          "bg-secondary/10 text-secondary"
-        }`}>
+        <span
+          className={`text-[10px] font-bold px-2 py-1 rounded-full ${
+            changeType === "up"
+              ? "bg-emerald-50 text-emerald-600"
+              : changeType === "down"
+                ? "bg-red-50 text-red-500"
+                : "bg-secondary/10 text-secondary"
+          }`}
+        >
           {changeType === "up" ? "▲" : changeType === "down" ? "▼" : "●"}
         </span>
       </div>
@@ -373,10 +393,23 @@ const Dashboard = () => {
       ROLES.MEMBROSESTATISTICA,
       ROLES.IICGPSEDE,
       ROLES.IICGPALBAZINE,
-      ROLES.IICGPMAXIXE
+      ROLES.IICGPMAXIXE,
     ],
-    restauracoes: [ROLES.ADMIN, ROLES.PASTOR,ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE ,ROLES.IICGPSEDE,],
-    departamentos: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE, ROLES.CALLCENTER],
+    restauracoes: [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+    ],
+    departamentos: [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+      ROLES.CALLCENTER,
+    ],
     estatistica: [
       ROLES.ADMIN,
       ROLES.PASTOR,
@@ -387,14 +420,66 @@ const Dashboard = () => {
       ROLES.IICGPMAXIXE,
       ROLES.IICGPALBAZINE,
     ],
-    painel: [ROLES.ADMIN, ROLES.PASTOR, ROLES.ESTATISTICA, ROLES.CALLCENTER, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
-    cultos: [ROLES.ADMIN, ROLES.ESTATISTICA, ROLES.MEMBROSESTATISTICA, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE,ROLES.CALLCENTER],
-    visitas: [ROLES.ADMIN, ROLES.ESTATISTICA, ROLES.MEMBROSESTATISTICA, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE, ROLES.CALLCENTER],
-    financas: [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
-    "call-center": [ROLES.ADMIN, ROLES.PASTOR, ROLES.CALLCENTER, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
-    "sos-socorros": [ROLES.ADMIN, ROLES.PASTOR, ROLES.SOSSOCORROS, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
-    usuarios:    [ROLES.ADMIN, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE, ROLES.ESTATISTICA, ROLES.CALLCENTER],
-    atividades:  [ROLES.ADMIN],
+    painel: [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.ESTATISTICA,
+      ROLES.CALLCENTER,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+    ],
+    cultos: [
+      ROLES.ADMIN,
+      ROLES.ESTATISTICA,
+      ROLES.MEMBROSESTATISTICA,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+      ROLES.CALLCENTER,
+    ],
+    visitas: [
+      ROLES.ADMIN,
+      ROLES.ESTATISTICA,
+      ROLES.MEMBROSESTATISTICA,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+      ROLES.CALLCENTER,
+    ],
+    financas: [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.FINANCAS,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+    ],
+    "call-center": [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.CALLCENTER,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+    ],
+    "sos-socorros": [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.SOSSOCORROS,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+    ],
+    usuarios: [
+      ROLES.ADMIN,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+      ROLES.ESTATISTICA,
+      ROLES.CALLCENTER,
+    ],
+    atividades: [ROLES.ADMIN],
     perfil: null,
     permissoes: [
       ROLES.ADMIN,
@@ -422,10 +507,40 @@ const Dashboard = () => {
       ROLES.IICGPMAXIXE,
       ROLES.IICGPALBAZINE,
     ],
-    departamentos: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE, ROLES.CALLCENTER, ROLES.ESTATISTICA],
-    requisicoes: [ROLES.ADMIN, ROLES.PASTOR, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
-    "relatorios-financas": [ROLES.ADMIN, ROLES.PASTOR, ROLES.FINANCAS, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.IICGPSEDE],
-    "atividades": [ROLES.ADMIN, ROLES.IICGPSEDE, ROLES.IICGPMAXIXE, ROLES.IICGPALBAZINE, ROLES.ESTATISTICA],
+    departamentos: [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+      ROLES.CALLCENTER,
+      ROLES.ESTATISTICA,
+    ],
+    requisicoes: [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+    ],
+    "relatorios-financas": [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.FINANCAS,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.IICGPSEDE,
+    ],
+    atividades: [
+      ROLES.ADMIN,
+      ROLES.IICGPSEDE,
+      ROLES.IICGPMAXIXE,
+      ROLES.IICGPALBAZINE,
+      ROLES.ESTATISTICA,
+    ],
+    "escolinha-lista": null,
+    "escolinha-cadastro": null,
+    "escolinha-presencas": null,
   };
 
   // ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
@@ -916,6 +1031,23 @@ const Dashboard = () => {
                     <NovoUsuario />
                   )}
 
+                {/* Escolinha da Verdade — Lista */}
+                {activeTab === "escolinha-lista" &&
+                  temAcesso("escolinha-lista", currentUser?.role_id) && (
+                    <ListaCriancas />
+                  )}
+
+                {/* Escolinha da Verdade — Cadastro */}
+                {activeTab === "escolinha-cadastro" &&
+                  temAcesso("escolinha-cadastro", currentUser?.role_id) && (
+                    <CadastroCrianca />
+                  )}
+
+                {/* Escolinha da Verdade — Presenças */}
+                {activeTab === "escolinha-presencas" &&
+                  temAcesso("escolinha-presencas", currentUser?.role_id) && (
+                    <CriancaPResenca />
+                  )}
 
                 {/* ── PLACEHOLDER PAGES ── */}
                 {![
@@ -945,6 +1077,9 @@ const Dashboard = () => {
                   "atividades",
                   "relatorios-financas",
                   "novo-usuario",
+                  "escolinha-lista",
+                  "escolinha-presencas",
+                  "escolinha-cadastro",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import api from "@/api/api.js";
 import {
   User,
   Lock,
@@ -278,31 +279,13 @@ const ProfilePage = () => {
     setPwError("");
 
     try {
-      const token = localStorage.getItem("token");
-      const res   = await fetch("https://iicgp-backend-cms.onrender.com/auth/change-password", {
-        method:  "PUT",
-        headers: {
-          "Content-Type":  "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setPwError(data.message || "Erro ao alterar senha");
-        return;
-      }
-
+      await api.put("/auth/change-password", form);
       setPwSuccess(true);
       setForm({ senhaActual: "", novaSenha: "", confirmarSenha: "" });
-
       // auto-hide success after 4s
       setTimeout(() => setPwSuccess(false), 4000);
-
-    } catch {
-      setPwError("Erro ao conectar com o servidor");
+    } catch (err) {
+      setPwError(err.response?.data?.message || "Erro ao alterar senha");
     } finally {
       setPwLoading(false);
     }

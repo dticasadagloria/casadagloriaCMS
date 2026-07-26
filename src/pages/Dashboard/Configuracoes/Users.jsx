@@ -211,7 +211,7 @@ const UsersPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.get("/test/users");
+      const res = await api.get("/auth/users");
     const data = res.data;
     const lista = Array.isArray(data)
       ? data
