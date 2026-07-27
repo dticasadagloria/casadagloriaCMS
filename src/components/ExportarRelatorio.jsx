@@ -48,14 +48,11 @@ const ExportarRelatorio = () => {
       ? { culto_id: filtro.culto_id }
       : { mes: filtro.mes };
 
-    const res = await api.get("/api/relatorios/exportar/pdf", { params, responseType: "blob" });
-    const url = window.URL.createObjectURL(new Blob([res.data], { type: "application/pdf" }));
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "relatorio-presencas.pdf");
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    const res = await api.get("/api/relatorios/exportar/pdf", { params, responseType: "text" });
+    const win = window.open("", "_blank");
+    win.document.write(res.data);
+    win.document.close();
+    setTimeout(() => win.print(), 500);
   };
 
   const inputClass = "px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all";

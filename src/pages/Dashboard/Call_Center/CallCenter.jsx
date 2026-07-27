@@ -13,14 +13,11 @@ const CallCenter = () => {
   const exportarPDF = async () => {
     setExporting(true);
     try {
-      const res = await api.get("/api/membros/exportar/call-center/pdf", { responseType: "blob" });
-      const url = window.URL.createObjectURL(new Blob([res.data], { type: "application/pdf" }));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "call-center.pdf");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      const res = await api.get("/api/membros/exportar/call-center/pdf", { responseType: "text" });
+      const win = window.open("", "_blank");
+      win.document.write(res.data);
+      win.document.close();
+      setTimeout(() => win.print(), 500);
     } catch (err) {
       console.error("Erro ao exportar PDF:", err);
     } finally {
