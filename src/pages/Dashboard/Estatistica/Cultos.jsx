@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import api from "@/api/api.js";
 import {
@@ -488,34 +488,89 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
   const [vista, setVista] = useState("presencas");
   const [interFilial, setInterFilial] = useState(false);
   const [modificados, setModificados] = useState(new Set());
+  const [lastSync, setLastSync] = useState(null);
+  const [tick, setTick] = useState(0); // força re-render para actualizar "há Xs"
 
-  const fetchPresencas = async () => {
-    setLoading(true);
+  // Ref com o valor mais recente de `modificados`, para o polling (que corre
+  // num setInterval de vida longa) conseguir ver alterações locais sem
+  // precisar reiniciar o intervalo a cada toggle.
+  const modificadosRef = useRef(modificados);
+  useEffect(() => {
+    modificadosRef.current = modificados;
+  }, [modificados]);
+
+  const fetchPresencas = async ({ background = false } = {}) => {
+    if (!background) setLoading(true);
     try {
       const res = await api.get(`/api/cultos/${culto.id}/presencas`);
-      setMembros(res.data.membros || []);
+      const membrosServidor = res.data.membros || [];
+
+      setMembros((prev) => {
+        if (modificadosRef.current.size === 0) return membrosServidor;
+        // Preserva localmente qualquer membro já alterado nesta sessão e
+        // ainda não guardado; só actualiza os restantes com o servidor.
+        const locaisPorId = new Map(prev.map((m) => [m.membro_id, m]));
+        return membrosServidor.map((m) =>
+          modificadosRef.current.has(m.membro_id)
+            ? (locaisPorId.get(m.membro_id) ?? m)
+            : m
+        );
+      });
       setStats(res.data.stats || {});
       setInterFilial(res.data.inter_filial || false);
+      setLastSync(Date.now());
     } catch (err) {
-      console.error(err);
+      // Em polling de fundo falha silenciosamente e tenta de novo no
+      // próximo ciclo; só mostra erro no carregamento inicial.
+      if (!background) console.error(err);
     } finally {
-      setLoading(false);
+      if (!background) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchPresencas();
 
-    // Refresh a cada 30 segundos para sincronizar com outros users
-    const intervalo = setInterval(
-      () => {
-        fetchPresencas();
-      },
-      5 * 60 * 1000,
-    );
+    let intervalo = null;
 
-    return () => clearInterval(intervalo);
+    const iniciarPolling = () => {
+      if (intervalo) return;
+      intervalo = setInterval(() => {
+        fetchPresencas({ background: true });
+      }, 8000);
+    };
+
+    const pararPolling = () => {
+      if (intervalo) {
+        clearInterval(intervalo);
+        intervalo = null;
+      }
+    };
+
+    const handleVisibilidade = () => {
+      if (document.hidden) {
+        pararPolling();
+      } else {
+        // Ao voltar à aba, sincroniza de imediato e retoma o polling.
+        fetchPresencas({ background: true });
+        iniciarPolling();
+      }
+    };
+
+    if (!document.hidden) iniciarPolling();
+    document.addEventListener("visibilitychange", handleVisibilidade);
+
+    return () => {
+      pararPolling();
+      document.removeEventListener("visibilitychange", handleVisibilidade);
+    };
   }, [culto.id]);
+
+  // Actualiza o indicador "Sincronizado há Xs" a cada segundo.
+  useEffect(() => {
+    const t = setInterval(() => setTick((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
 
   const togglePresenca = (membro_id) => {
   setModificados((prev) => new Set([...prev, membro_id])); 
@@ -552,9 +607,9 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
       })),
     });
 
-    setModificados(new Set()); 
+    setModificados(new Set());
     setMensagem({ tipo: "sucesso", texto: `${aEnviar.length} presenças guardadas!` });
-    fetchPresencas();
+    fetchPresencas({ background: true });
   } catch {
     setMensagem({ tipo: "erro", texto: "Erro ao guardar presenças." });
   } finally {
@@ -627,6 +682,14 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
             {culto.horario && ` · ${culto.horario}`}
             {culto.nome_branch && ` · ${culto.nome_branch}`}
           </p>
+          {vista === "presencas" && (
+            <p className="flex items-center gap-1.5 mt-0.5 text-[11px] text-slate-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+              {lastSync
+                ? `Sincronizado há ${Math.max(0, Math.round((Date.now() - lastSync) / 1000))}s`
+                : "A sincronizar..."}
+            </p>
+          )}
         </div>
         <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
           {[
