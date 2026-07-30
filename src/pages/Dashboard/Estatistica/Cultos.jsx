@@ -582,9 +582,21 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
 };
 
   const marcarTodos = (valor) => {
-  setModificados(new Set(membros.map((m) => m.membro_id))); 
+  setModificados(new Set(membros.map((m) => m.membro_id)));
   setMembros((prev) => prev.map((m) => ({ ...m, presente: valor })));
 };
+
+  // Actualiza só a observação do membro — independente do estado de presença
+  // (mesmo padrão de estado do togglePresenca: marca como modificado e
+  // actualiza `membros`, para ser incluído no payload de "salvar").
+  const atualizarObservacao = (membro_id, valor) => {
+    setModificados((prev) => new Set([...prev, membro_id]));
+    setMembros((prev) =>
+      prev.map((m) =>
+        m.membro_id === membro_id ? { ...m, observacao: valor } : m
+      )
+    );
+  };
 
  const salvar = async () => {
   setSaving(true);
@@ -868,6 +880,14 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                     <p className="text-[11px] text-slate-400">
                       {m.nome_branch ?? "—"} · {m.codigo ?? "—"}
                     </p>
+                    <input
+                      type="text"
+                      value={m.observacao || ""}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => atualizarObservacao(m.membro_id, e.target.value)}
+                      placeholder="Observação (opcional)"
+                      className="mt-1 w-full px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 text-[11px] text-slate-600 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all"
+                    />
                   </div>
                   <span
                     className={`flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border
