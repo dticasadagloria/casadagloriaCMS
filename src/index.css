@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
 
 @theme {
   /* Tipografia — Ubuntu em todo o texto, Ubuntu Mono só para dados tabulares

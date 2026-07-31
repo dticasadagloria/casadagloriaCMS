@@ -52,8 +52,6 @@ import Departamentos from "./Departamentos/Departamentos";
 import Atividades from "./Configuracoes/Atividades";
 import NovoUsuario from "./Configuracoes/NewUser";
 import ListaCriancas from "./EscolinhaVerdade/ListaCriancas";
-import CadastroCrianca from "./EscolinhaVerdade/CadastroCrianca";
-import CriancaPResenca from "./EscolinhaVerdade/Presencas";
 import api from "@/api/api";
 import { Activity } from "lucide-react";
 // ─── TABS CONFIG ─────────────────────────────────────────────────────────────
@@ -92,12 +90,6 @@ const tabs = [
     icon: BookOpen,
     children: [
       { key: "escolinha-lista", label: "Lista de Crianças", icon: BookOpen },
-      { key: "escolinha-presencas", label: "Presenças", icon: Calendar },
-      {
-        key: "escolinha-cadastro",
-        label: "Cadastro de Crianças",
-        icon: UserPlus,
-      },
     ],
   },
   {
@@ -347,6 +339,7 @@ const Dashboard = () => {
     ADMIN: 1,
     PASTOR: 2,
     FINANCAS: 3,
+    ESCOLINHA: 5,
     ESTATISTICA: 8,
     CALLCENTER: 9,
     SOSSOCORROS: 10,
@@ -539,8 +532,6 @@ const Dashboard = () => {
       ROLES.ESTATISTICA,
     ],
     "escolinha-lista": null,
-    "escolinha-cadastro": null,
-    "escolinha-presencas": null,
   };
 
   // ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
@@ -982,22 +973,12 @@ const Dashboard = () => {
                     <NovoUsuario />
                   )}
 
-                {/* Escolinha da Verdade — Lista */}
+                {/* Escolinha da Verdade — Lista (Cadastro, Presenças, Aulas e
+                    Relatório vivem em rotas próprias — ver Router.jsx — e são
+                    acedidos a partir dos botões dentro de ListaCriancas) */}
                 {activeTab === "escolinha-lista" &&
                   temAcesso("escolinha-lista", currentUser?.role_id) && (
                     <ListaCriancas />
-                  )}
-
-                {/* Escolinha da Verdade — Cadastro */}
-                {activeTab === "escolinha-cadastro" &&
-                  temAcesso("escolinha-cadastro", currentUser?.role_id) && (
-                    <CadastroCrianca />
-                  )}
-
-                {/* Escolinha da Verdade — Presenças */}
-                {activeTab === "escolinha-presencas" &&
-                  temAcesso("escolinha-presencas", currentUser?.role_id) && (
-                    <CriancaPResenca />
                   )}
 
                 {/* ── PLACEHOLDER PAGES ── */}
@@ -1029,8 +1010,6 @@ const Dashboard = () => {
                   "relatorios-financas",
                   "novo-usuario",
                   "escolinha-lista",
-                  "escolinha-presencas",
-                  "escolinha-cadastro",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
