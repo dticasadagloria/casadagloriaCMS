@@ -18,7 +18,8 @@ import {
   Calendar,
   Pencil,
   Users2,
-  Calendar1Icon
+  Calendar1Icon,
+  Sparkles,
 } from "lucide-react";
 
 // ─── Componentes auxiliares FORA de tudo ─────────────────────────────────────
@@ -862,7 +863,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                   </div>
                   <div
                     className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm
-                    ${m.presente ? "bg-gradient-to-br from-emerald-400 to-emerald-500" : "bg-gradient-to-br from-slate-300 to-slate-400"}`}
+                    ${m.presente ? "bg-emerald-500" : "bg-slate-400"}`}
                   >
                     <span className="text-white text-[11px] font-bold">
                       {m.nome_membro
@@ -939,22 +940,22 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
               {
                 label: "Total Membros",
                 value: stats.total,
-                cor: "from-slate-500 to-slate-600",
+                cor: "text-slate-800",
               },
               {
                 label: "Presentes",
                 value: stats.presentes,
-                cor: "from-emerald-500 to-teal-500",
+                cor: "text-emerald-600",
               },
               {
                 label: "Ausentes",
                 value: stats.ausentes,
-                cor: "from-red-400 to-rose-500",
+                cor: "text-red-500",
               },
               {
                 label: "Taxa Presença",
                 value: `${stats.percentagem}%`,
-                cor: "from-amber-500 to-yellow-500",
+                cor: "text-primary",
               },
             ].map(({ label, value, cor }) => (
               <div
@@ -965,7 +966,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                   {label}
                 </p>
                 <p
-                  className={`text-3xl font-bold mt-1 bg-gradient-to-r ${cor} bg-clip-text text-transparent`}
+                  className={`text-3xl font-bold mt-1 tabular-nums ${cor}`}
                 >
                   {value ?? "—"}
                 </p>
@@ -984,7 +985,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
             </div>
             <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-700"
+                className="h-full bg-primary rounded-full transition-all duration-700"
                 style={{ width: `${stats.percentagem}%` }}
               />
             </div>
@@ -1014,7 +1015,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                         key={m.membro_id}
                         className="flex items-center gap-3 px-5 py-3"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center flex-shrink-0">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center flex-shrink-0">
                           <span className="text-white text-[10px] font-bold">
                             {m.nome_membro
                               ?.split(" ")
@@ -1057,7 +1058,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                         key={m.membro_id}
                         className="flex items-center gap-3 px-5 py-3"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center flex-shrink-0">
+                        <div className="w-7 h-7 rounded-lg bg-red-500 flex items-center justify-center flex-shrink-0">
                           <span className="text-white text-[10px] font-bold">
                             {m.nome_membro
                               ?.split(" ")
@@ -1193,9 +1194,9 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
           </p>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { key: "presencas", label: "Culto Normal", desc: "Foco em presenças de membros", icon: "👥" },
-              { key: "visitantes", label: "Cruzada / Conferência", desc: "Foco em visitantes externos", icon: "🌟" },
-            ].map(({ key, label, desc, icon }) => (
+              { key: "presencas", label: "Culto Normal", desc: "Foco em presenças de membros", icon: Users },
+              { key: "visitantes", label: "Cruzada / Conferência", desc: "Foco em visitantes externos", icon: Sparkles },
+            ].map(({ key, label, desc, icon: Icon }) => (
               <button
                 key={key}
                 type="button"
@@ -1203,7 +1204,7 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
                 className={`flex flex-col items-start gap-1 px-4 py-3 rounded-xl border-2 transition-all text-left
                   ${form.tipo_registo === key ? "border-amber-400 bg-amber-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
               >
-                <span className="text-lg">{icon}</span>
+                <Icon size={18} className={form.tipo_registo === key ? "text-amber-600" : "text-slate-400"} />
                 <p className={`text-sm font-semibold ${form.tipo_registo === key ? "text-amber-700" : "text-slate-700"}`}>{label}</p>
                 <p className="text-[11px] text-slate-400">{desc}</p>
               </button>

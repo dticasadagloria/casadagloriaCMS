@@ -140,7 +140,7 @@ export default function RelatoriosFinancas() {
         <>
           {/* Info do culto */}
           <div className="bg-white rounded-2xl border border-amber-100 shadow-sm overflow-hidden">
-            <div className="px-5 py-4 bg-gradient-to-r from-primary/10 to-secondary/5 border-b border-amber-100 flex items-center justify-between">
+            <div className="px-5 py-4 bg-primary/10 border-b border-amber-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <FileText size={15} className="text-amber-600" />
                 <span className="text-sm font-bold text-amber-800">Resumo do Culto</span>
@@ -195,7 +195,7 @@ export default function RelatoriosFinancas() {
                     </div>
                   );
                 })}
-                <div className="bg-gradient-to-br from-secondary to-primary/50 rounded-xl p-3 shadow-sm">
+                <div className="bg-primary rounded-xl p-3 shadow-sm">
                   <div className="flex items-center gap-1.5 mb-2">
                     <TrendingUp size={13} className="text-amber-100" />
                     <p className="text-[11px] font-semibold text-amber-100">Total geral</p>

@@ -343,7 +343,7 @@ const ModalRegistar = ({
                     <option value="">Selecionar culto</option>
                     {cultosLocal.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.tipo_registo === "visitantes" ? "🌟 " : ""}
+                        {c.tipo_registo === "visitantes" ? "[Cruzada] " : ""}
                         {c.tipo} —{" "}
                         {new Date(c.data).toLocaleDateString("pt-MZ")}
                       </option>
@@ -1156,7 +1156,7 @@ const Visitantes = () => {
                     >
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-sky-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+                          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 shadow-sm">
                             <span className="text-white text-[11px] font-bold">
                               {v.nome
                                 ?.split(" ")

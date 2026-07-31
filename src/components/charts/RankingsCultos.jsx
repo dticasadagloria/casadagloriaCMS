@@ -35,12 +35,12 @@ const RankingsCultos = () => {
       </div>
     );
 
-  // ── Medal colour por posição ─────────────────────────────────────────────
+  // ── Medal colour por posição — cor sólida, sem gradiente ─────────────────
   const medalCor = (i) => {
-    if (i === 0) return { bg: "from-yellow-400 to-amber-500",  text: "text-yellow-600", border: "border-yellow-200" };
-    if (i === 1) return { bg: "from-slate-400 to-slate-500",   text: "text-slate-500",  border: "border-slate-200" };
-    if (i === 2) return { bg: "from-amber-600 to-amber-700",   text: "text-amber-700",  border: "border-amber-200" };
-    return       { bg: "from-slate-300 to-slate-400",          text: "text-slate-400",  border: "border-slate-100" };
+    if (i === 0) return { bg: "bg-primary",     text: "text-primary",   border: "border-primary/20" };
+    if (i === 1) return { bg: "bg-slate-400",   text: "text-slate-500", border: "border-slate-200" };
+    if (i === 2) return { bg: "bg-amber-700",   text: "text-amber-700", border: "border-amber-200" };
+    return       { bg: "bg-slate-300",          text: "text-slate-400", border: "border-slate-100" };
   };
 
   // ── Componente de tabela reutilizável ────────────────────────────────────
@@ -77,12 +77,12 @@ const RankingsCultos = () => {
                 className="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50/60 transition-colors group">
 
                 {/* Posição */}
-                <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${medal.bg} flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                <div className={`w-7 h-7 rounded-lg ${medal.bg} flex items-center justify-center flex-shrink-0 shadow-sm`}>
                   <span className="text-white text-[11px] font-bold">{i + 1}</span>
                 </div>
 
                 {/* Avatar */}
-                <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${medal.bg} flex items-center justify-center flex-shrink-0 opacity-80`}>
+                <div className={`w-8 h-8 rounded-lg ${medal.bg} flex items-center justify-center flex-shrink-0 opacity-80`}>
                   <span className="text-white text-[11px] font-bold">
                     {(item.nome_membro || item.tipo)
                       ?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?"}
@@ -111,7 +111,7 @@ const RankingsCultos = () => {
                 <div className="w-16 hidden sm:block">
                   <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                     <div
-                      className={`h-full bg-gradient-to-r ${medal.bg} rounded-full`}
+                      className={`h-full ${medal.bg} rounded-full`}
                       style={{
                         width: `${dados[0]?.[colunaValor] > 0
                           ? (item[colunaValor] / dados[0][colunaValor]) * 100
@@ -142,7 +142,7 @@ const RankingsCultos = () => {
           titulo="Mais Assíduos"
           subtitulo="Membros com mais presenças"
           icon={Trophy}
-          corIcon="bg-gradient-to-br from-yellow-400 to-amber-500"
+          corIcon="bg-emerald-600"
           dados={maisAssiduos}
           colunaValor="total_presencas"
           labelValor="presenças"
@@ -152,7 +152,7 @@ const RankingsCultos = () => {
           titulo="Mais Faltas"
           subtitulo="Membros com mais ausências"
           icon={UserX}
-          corIcon="bg-gradient-to-br from-red-400 to-rose-500"
+          corIcon="bg-red-500"
           dados={maisFaltas}
           colunaValor="total_faltas"
           labelValor="faltas"
@@ -162,11 +162,11 @@ const RankingsCultos = () => {
           titulo="Melhor Culto"
           subtitulo="Cultos com maior afluência"
           icon={TrendingUp}
-          corIcon="bg-gradient-to-br from-sky-500 to-blue-500"
+          corIcon="bg-primary"
           dados={melhorCulto}
           colunaValor="presentes"
           labelValor="presentes"
-          corValor="text-sky-600"
+          corValor="text-primary"
         />
       </div>
     </div>

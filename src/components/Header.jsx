@@ -145,9 +145,6 @@ const Header = ({ setActiveTab }) => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-        .gdm-header, .gdm-header * { font-family: 'Outfit', sans-serif; }
-        .gdm-mono { font-family: 'JetBrains Mono', monospace !important; }
         @keyframes dropIn {
           from { opacity:0; transform: translateY(-8px) scale(0.97); }
           to   { opacity:1; transform: translateY(0) scale(1); }
@@ -160,7 +157,7 @@ const Header = ({ setActiveTab }) => {
         .badge-pulse { animation: pulseBadge 2.2s  infinite; }
       `}</style>
 
-     <header className={`gdm-header sticky top-0 z-50 h-16 bg-white/95 backdrop-blur-xl border-b border-slate-100 transition-shadow duration-300 ${scrolled ? "shadow-[0_2px_20px_rgba(15,23,42,0.08)]" : ""}`}>
+     <header className={`sticky top-0 z-50 h-16 bg-white/95 backdrop-blur-xl border-b border-slate-100 transition-shadow duration-300 ${scrolled ? "shadow-[0_2px_20px_rgba(15,23,42,0.08)]" : ""}`}>
   <div className="max-w-screen-2xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between gap-3">
 
     {/* ── LOGO ─────────────────────────────────────────── */}
@@ -170,7 +167,7 @@ const Header = ({ setActiveTab }) => {
       </div>
       <div className="hidden sm:flex flex-col leading-none">
         <span className="text-[15px] font-bold text-slate-900 tracking-tight">IICGP</span>
-        <span className="gdm-mono text-[10px] text-slate-400 tracking-wider uppercase mt-0.5">
+        <span className="font-mono text-[10px] text-slate-400 tracking-wider uppercase mt-0.5">
           Gestão de Membros
         </span>
       </div>
@@ -226,7 +223,7 @@ const Header = ({ setActiveTab }) => {
                   <p className="text-[11.5px] text-slate-400 mt-0.5 leading-snug">{n.desc}</p>
                   <div className="flex items-center gap-1 mt-1.5 text-slate-400">
                     <ClockSmIcon />
-                    <span className="gdm-mono text-[10px]">{n.time} atrás</span>
+                    <span className="font-mono text-[10px]">{n.time} atrás</span>
                   </div>
                 </div>
               </div>

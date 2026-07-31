@@ -588,15 +588,15 @@ const Requisicoes = ({ userRole }) => {
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {[
-          { label: "Total",      value: relatorio?.stats?.total      ?? 0,                    cor: "from-slate-500 to-slate-600"   },
-          { label: "Em Espera",  value: relatorio?.stats?.em_espera  ?? 0,                    cor: "from-amber-500 to-amber-600"   },
-          { label: "Aprovadas",  value: relatorio?.stats?.aprovadas  ?? 0,                    cor: "from-sky-500 to-blue-500"      },
-          { label: "Pagas",      value: relatorio?.stats?.pagas      ?? 0,                    cor: "from-emerald-500 to-teal-500"  },
-          { label: "Total Pago", value: formatMt(relatorio?.stats?.total_pago),               cor: "from-secondary to-primary" },
+          { label: "Total",      value: relatorio?.stats?.total      ?? 0,                    cor: "text-slate-800"   },
+          { label: "Em Espera",  value: relatorio?.stats?.em_espera  ?? 0,                    cor: "text-primary"     },
+          { label: "Aprovadas",  value: relatorio?.stats?.aprovadas  ?? 0,                    cor: "text-emerald-600" },
+          { label: "Pagas",      value: relatorio?.stats?.pagas      ?? 0,                    cor: "text-emerald-600" },
+          { label: "Total Pago", value: formatMt(relatorio?.stats?.total_pago),               cor: "text-primary"     },
         ].map(({ label, value, cor }) => (
           <div key={label} className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 hover:shadow-md transition-all">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{label}</p>
-            <p className={`text-xl font-bold mt-1 bg-gradient-to-r ${cor} bg-clip-text text-transparent`}>{value}</p>
+            <p className={`text-xl font-bold mt-1 tabular-nums ${cor}`}>{value}</p>
           </div>
         ))}
       </div>
@@ -759,10 +759,10 @@ const Requisicoes = ({ userRole }) => {
                   <div key={i} className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <p className="text-[13px] font-semibold text-slate-700">{f.nome_filial}</p>
-                      <p className="text-[13px] font-bold text-amber-600">{formatMt(f.total_pago)}</p>
+                      <p className="text-[13px] font-bold text-primary">{formatMt(f.total_pago)}</p>
                     </div>
                     <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full"
+                      <div className="h-full bg-primary rounded-full"
                         style={{ width: `${relatorio.porFilial[0]?.total_pago > 0 ? (f.total_pago / relatorio.porFilial[0].total_pago) * 100 : 0}%` }} />
                     </div>
                     <p className="text-[11px] text-slate-400">{f.total_requisicoes} requisições · {f.pagas} pagas</p>
@@ -781,10 +781,10 @@ const Requisicoes = ({ userRole }) => {
                   <div key={i} className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <p className="text-[13px] font-semibold text-slate-700">{d.nome_departamento}</p>
-                      <p className="text-[13px] font-bold text-purple-600">{formatMt(d.total_pago)}</p>
+                      <p className="text-[13px] font-bold text-slate-600">{formatMt(d.total_pago)}</p>
                     </div>
                     <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-purple-400 to-purple-500 rounded-full"
+                      <div className="h-full bg-slate-400 rounded-full"
                         style={{ width: `${relatorio.porDepartamento[0]?.total_pago > 0 ? (d.total_pago / relatorio.porDepartamento[0].total_pago) * 100 : 0}%` }} />
                     </div>
                     <p className="text-[11px] text-slate-400">{d.total_requisicoes} requisições</p>
@@ -802,25 +802,19 @@ const Requisicoes = ({ userRole }) => {
             </div>
             <div className="space-y-3">
               {relatorio.topFiliais?.map((f, i) => {
-                const cores = [
-                  "from-yellow-400 to-amber-500",
-                  "from-slate-400 to-slate-500",
-                  "from-amber-600 to-amber-700",
-                  "from-slate-300 to-slate-400",
-                  "from-slate-300 to-slate-400",
-                ];
+                const cores = ["bg-primary", "bg-slate-400", "bg-amber-700", "bg-slate-300", "bg-slate-300"];
                 return (
                   <div key={i} className="flex items-center gap-4">
-                    <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${cores[i]} flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                    <div className={`w-7 h-7 rounded-lg ${cores[i]} flex items-center justify-center flex-shrink-0 shadow-sm`}>
                       <span className="text-white text-[11px] font-bold">{i + 1}</span>
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-[13px] font-semibold text-slate-700">{f.nome_filial}</p>
-                        <p className="text-[13px] font-bold text-amber-600">{formatMt(f.total_gasto)}</p>
+                        <p className="text-[13px] font-bold text-primary">{formatMt(f.total_gasto)}</p>
                       </div>
                       <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div className={`h-full bg-gradient-to-r ${cores[i]} rounded-full`}
+                        <div className={`h-full ${cores[i]} rounded-full`}
                           style={{ width: `${relatorio.topFiliais[0]?.total_gasto > 0 ? (f.total_gasto / relatorio.topFiliais[0].total_gasto) * 100 : 0}%` }} />
                       </div>
                       <p className="text-[11px] text-slate-400 mt-0.5">{f.num_requisicoes} requisições pagas</p>

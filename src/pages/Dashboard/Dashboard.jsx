@@ -187,7 +187,7 @@ const NavItem = ({
           text-sm font-medium transition-all duration-200 select-none
           ${
             isActive
-              ? "bg-gradient-to-r from-amber-500/30 to-yellow-500/20 text-amber-100 shadow-inner border border-amber-500/30"
+              ? "bg-amber-500/20 text-amber-100 shadow-inner border border-amber-500/30"
               : "text-amber-200/80 hover:bg-amber-800/40 hover:text-amber-100 border border-transparent"
           }
         `}
@@ -267,7 +267,7 @@ const StatCard = ({ title, value, change, changeType, Icon, onClick }) => (
     className={`group relative bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden ${onClick ? "cursor-pointer" : ""}`}
   >
     {/* Gold accent stripe */}
-    <div className="h-[3px] bg-gradient-to-r from-secondary to-primary" />
+    <div className="h-[3px] bg-primary" />
 
     <div className="p-5">
       {/* Icon + indicator */}
@@ -617,17 +617,6 @@ const Dashboard = () => {
 
   const total = membros.length;
   const ativos = membros.filter((m) => m.ativo).length;
-  const totalBatizados = membros.filter((m) => m.batizado === true).length;
-  const naoBatizados = membros.filter((m) => m.batizado === false).length;
-  const totalEscolaConcluido = membros.filter(
-    (m) => m.escola_da_verdade === "Concluido",
-  ).length;
-  const totalEscolaEmCurso = membros.filter(
-    (m) => m.escola_da_verdade === "Em curso",
-  ).length;
-  const totalEscolaNaoFrequenta = membros.filter(
-    (m) => m.escola_da_verdade === "Nao frequenta",
-  ).length;
   const inativos = total - ativos;
 
   //fetch departamentos
@@ -650,8 +639,6 @@ const Dashboard = () => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .gdm-dash { font-family: 'Outfit', sans-serif; }
         @keyframes slideDown {
           from { opacity:0; transform:translateY(-6px); }
           to   { opacity:1; transform:translateY(0); }
@@ -659,7 +646,7 @@ const Dashboard = () => {
         .slide-down { animation: slideDown 0.2s ease; }
       `}</style>
 
-      <div className="gdm-dash">
+      <div>
         <Header setActiveTab={setActiveTab} />
 
         <div className="flex min-h-[calc(100vh-64px)] bg-slate-50">
@@ -668,7 +655,7 @@ const Dashboard = () => {
             className={`
               fixed top-16 left-0 h-[calc(100vh-64px)] z-40
               flex flex-col
-              bg-gradient-to-b from-[#3d1f00] via-[#4a2500] to-[#3d1f00]
+              bg-[#3d1f00]
               border-r border-amber-900/40 shadow-2xl
               transition-all duration-300 ease-in-out
               ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
@@ -847,42 +834,6 @@ const Dashboard = () => {
                         Icon={Building2}
                         onClick={() => handleCardClick("departamentos")}
                       />
-                      {/* <StatCard
-                        title="Membros Batizados"
-                        value={totalBatizados}
-                        change="Ver batizados"
-                        changeType="up"
-                        Icon={BookOpen}
-                        gradient="from-emerald-500 to-teal-500"
-                        onClick={() => handleCardClick("batizados")}
-                      />
-                      <StatCard
-                        title="Escola da Verdade (Concluído)"
-                        value={totalEscolaConcluido}
-                        change="Ver concluídos"
-                        changeType="up"
-                        Icon={Calendar}
-                        gradient="from-sky-500 to-blue-500"
-                        onClick={() => handleCardClick("escola_concluido")}
-                      />
-                      <StatCard
-                        title="Escola da Verdade (Em Curso)"
-                        value={totalEscolaEmCurso}
-                        change="Ver em curso"
-                        changeType="neutral"
-                        Icon={Calendar}
-                        gradient="from-yellow-500 to-amber-500"
-                        onClick={() => handleCardClick("escola_emcurso")}
-                      />
-                      <StatCard
-                        title="Escola da Verdade (Não Frequenta)"
-                        value={totalEscolaNaoFrequenta}
-                        change="Ver não frequentam"
-                        changeType="down"
-                        Icon={Calendar}
-                        gradient="from-red-400 to-rose-500"
-                        onClick={() => handleCardClick("escola_naofrequenta")}
-                      /> */}
                     </div>
 
                     <div className="flex flex-wrap gap-5 ">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "@/api/api.js";
-import { Heart, Plus, Trash2, Search, X } from "lucide-react";
+import { Heart, Plus, Trash2, Search, X, Sparkles } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 
 const inputClass = "w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all";
@@ -82,9 +82,10 @@ const ModalCultoRapido = ({ branches, onFechar, onCriado }) => {
               </select>
             </Field>
           </div>
-          <div className="px-4 py-3 rounded-xl bg-sky-50 border border-sky-100">
-            <p className="text-xs font-semibold text-sky-700">
-              🌟 Este culto será criado como <strong>Cruzada/Conferência</strong> — foco em visitantes e convertidos.
+          <div className="px-4 py-3 rounded-xl bg-primary/10 border border-primary/20 flex items-start gap-2">
+            <Sparkles size={14} className="text-primary mt-0.5 flex-shrink-0" />
+            <p className="text-xs font-semibold text-primary">
+              Este culto será criado como <strong>Cruzada/Conferência</strong> — foco em visitantes e convertidos.
             </p>
           </div>
           {erro && <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">{erro}</div>}
@@ -368,7 +369,7 @@ const Convertidos = () => {
                   <tr key={c.id} className="hover:bg-amber-50/30 transition-colors group">
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 shadow-sm">
                           <span className="text-white text-[11px] font-bold">
                             {c.nome?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?"}
                           </span>
