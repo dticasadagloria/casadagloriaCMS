@@ -2,10 +2,20 @@ import { useState, useEffect } from "react";
 import api from "@/api/api.js";
 import { Download, FileText, FileSpreadsheet, Filter, X } from "lucide-react";
 import { Button } from "./ui/button";
+import { useAuth } from "@/context/AuthContext";
+
+// Mesmo conjunto de roles de PERMISSOES.estatistica em Dashboard.jsx — quem
+// tem acesso ao módulo Estatística (Cultos/Visitas/Convertidos/Relatórios).
+const ROLES_ESTATISTICA = [1, 2, 8, 9, 11, 12, 13, 14];
 
 const ExportarRelatorio = () => {
+  const { user } = useAuth();
+  const isAdmin = user?.role_id === 1 || user?.role_id === 2;
+  const temFiltroFilial = ROLES_ESTATISTICA.includes(user?.role_id);
+
   const [cultos, setCultos]       = useState([]);
-  const [filtro, setFiltro]       = useState({ tipo: "mes", culto_id: "", mes: new Date().toISOString().slice(0, 7) });
+  const [branches, setBranches]   = useState([]);
+  const [filtro, setFiltro]       = useState({ tipo: "mes", culto_id: "", mes: new Date().toISOString().slice(0, 7), filial_id: "" });
   const [loading, setLoading]     = useState(false);
   const [dados, setDados]         = useState(null);
 
@@ -15,13 +25,37 @@ const ExportarRelatorio = () => {
       .catch(console.error);
   }, []);
 
+  useEffect(() => {
+    // Só o Admin/Pastor precisam da lista completa (dropdown com todas as
+    // filiais) — os restantes mostram só a própria, já vem em `user.branch_nome`
+    // (GET /auth/me, via findUserById) sem precisar de mais um pedido.
+    if (!isAdmin) return;
+    api.get("/api/branches")
+      .then((res) => setBranches(res.data.branches || []))
+      .catch(console.error);
+  }, [isAdmin]);
+
+  // Admin/Pastor escolhem livremente qualquer filial (incluindo "Todas as
+  // filiais", que corresponde a não enviar filial_id). Os restantes roles
+  // com acesso à Estatística só podem alternar entre "Todas" (comportamento
+  // actual/combinado) e a própria filial — nunca outra: o backend também
+  // impõe isto (resolverFilialId em relatoriosRoutes.js), o dropdown aqui é
+  // só para tornar essa escolha visível/explícita para quem já tem o direito.
+  // Quem não tem acesso à Estatística de todo fica preso à própria filial
+  // sem nenhum controlo visível, tal como antes.
+  const filialIdEfetivo = temFiltroFilial ? (filtro.filial_id || undefined) : user?.branch_id;
+
+  const buildParams = () => {
+    const base = filtro.tipo === "culto"
+      ? { culto_id: filtro.culto_id }
+      : { mes: filtro.mes };
+    return filialIdEfetivo ? { ...base, filial_id: filialIdEfetivo } : base;
+  };
+
   const fetchDados = async () => {
     setLoading(true);
     try {
-      const params = filtro.tipo === "culto"
-        ? { culto_id: filtro.culto_id }
-        : { mes: filtro.mes };
-      const res = await api.get("/api/relatorios/presencas", { params });
+      const res = await api.get("/api/relatorios/presencas", { params: buildParams() });
       setDados(res.data.dados || []);
     } catch (err) {
       console.error(err);
@@ -31,11 +65,7 @@ const ExportarRelatorio = () => {
   };
 
   const exportarCSV = () => {
-    const params = new URLSearchParams(
-      filtro.tipo === "culto"
-        ? { culto_id: filtro.culto_id }
-        : { mes: filtro.mes }
-    );
+    const params = new URLSearchParams(buildParams());
     const token = localStorage.getItem("token");
     window.open(
       `${import.meta.env.VITE_API_URL}/api/relatorios/exportar/csv?${params}&token=${token}`,
@@ -44,11 +74,7 @@ const ExportarRelatorio = () => {
   };
 
   const exportarPDF = async () => {
-    const params = filtro.tipo === "culto"
-      ? { culto_id: filtro.culto_id }
-      : { mes: filtro.mes };
-
-    const res = await api.get("/api/relatorios/exportar/pdf", { params, responseType: "text" });
+    const res = await api.get("/api/relatorios/exportar/pdf", { params: buildParams(), responseType: "text" });
     const win = window.open("", "_blank");
     win.document.write(res.data);
     win.document.close();
@@ -109,6 +135,33 @@ const ExportarRelatorio = () => {
                 </option>
               ))}
             </select>
+          </div>
+        )}
+
+        {temFiltroFilial && (
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Filial</label>
+            <select value={filtro.filial_id}
+              onChange={(e) => setFiltro((f) => ({ ...f, filial_id: e.target.value }))}
+              className={`${inputClass} w-full`}>
+              <option value="">Todas as filiais</option>
+              {isAdmin ? (
+                branches.map((b) => (
+                  <option key={b.id} value={b.id}>{b.nome}</option>
+                ))
+              ) : (
+                user?.branch_id && (
+                  <option value={user.branch_id}>
+                    A minha filial{user.branch_nome ? ` (${user.branch_nome})` : ""}
+                  </option>
+                )
+              )}
+            </select>
+            {filtro.filial_id && (
+              <p className="text-[11px] text-slate-400">
+                Mesmo em cultos inter-filiais, o relatório mostra só dados desta filial.
+              </p>
+            )}
           </div>
         )}
 

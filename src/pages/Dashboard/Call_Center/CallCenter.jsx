@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "@/api/api.js";
 import DonutCelulas from "@/components/charts/DonutCelulas.jsx";
-import { Headphones, Search, Phone, FileText } from "lucide-react";
+import ExportarRelatorio from "@/components/ExportarRelatorio.jsx";
+import { Headphones, Search, Phone, FileText, Users, Proportions } from "lucide-react";
 
 const CallCenter = () => {
+  const [vista, setVista] = useState("sem-celula");
   const [semCelula, setSemCelula] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -70,6 +72,28 @@ const CallCenter = () => {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 w-fit">
+        {[
+          { key: "sem-celula", label: "Sem Célula", icon: Users },
+          { key: "relatorio",  label: "Relatórios",  icon: Proportions },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <button key={tab.key}
+              onClick={() => setVista(tab.key)}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all
+                ${vista === tab.key ? "bg-white text-amber-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+              <Icon size={14} /> {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {vista === "relatorio" && <ExportarRelatorio />}
+
+      {vista === "sem-celula" && (
+        <>
       {/* KPI chips */}
       <div className="flex flex-wrap gap-3">
         {[
@@ -191,6 +215,8 @@ const CallCenter = () => {
           )}
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 };
