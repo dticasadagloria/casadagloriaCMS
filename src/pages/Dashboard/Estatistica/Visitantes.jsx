@@ -496,6 +496,12 @@ const ModalRegistar = ({
           'Igreja Presbiteriana',
           'Igreja Metodista Unida',
           'Igreja/Ministério Explosão da Benção de Deus (EBD)',
+          'Igreja Nazareno',
+          'Igreja Ministério Palavra Viva',
+          'Igreja Ministerial Nacoes para Cristo',
+          'Igreja A Reina da Gloria',
+          'Buscando Almas para Cristo (BAC)',
+          'Outra Igreja'
         ].map((igreja) => (
           <option key={igreja} value={igreja}>
             {igreja}
