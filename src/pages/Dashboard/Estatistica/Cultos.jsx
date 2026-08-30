@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import api from "@/api/api.js";
 import {
@@ -18,7 +18,8 @@ import {
   Calendar,
   Pencil,
   Users2,
-  Calendar1Icon
+  Calendar1Icon,
+  Sparkles,
 } from "lucide-react";
 
 // ─── Componentes auxiliares FORA de tudo ─────────────────────────────────────
@@ -488,34 +489,89 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
   const [vista, setVista] = useState("presencas");
   const [interFilial, setInterFilial] = useState(false);
   const [modificados, setModificados] = useState(new Set());
+  const [lastSync, setLastSync] = useState(null);
+  const [tick, setTick] = useState(0); // força re-render para actualizar "há Xs"
 
-  const fetchPresencas = async () => {
-    setLoading(true);
+  // Ref com o valor mais recente de `modificados`, para o polling (que corre
+  // num setInterval de vida longa) conseguir ver alterações locais sem
+  // precisar reiniciar o intervalo a cada toggle.
+  const modificadosRef = useRef(modificados);
+  useEffect(() => {
+    modificadosRef.current = modificados;
+  }, [modificados]);
+
+  const fetchPresencas = async ({ background = false } = {}) => {
+    if (!background) setLoading(true);
     try {
       const res = await api.get(`/api/cultos/${culto.id}/presencas`);
-      setMembros(res.data.membros || []);
+      const membrosServidor = res.data.membros || [];
+
+      setMembros((prev) => {
+        if (modificadosRef.current.size === 0) return membrosServidor;
+        // Preserva localmente qualquer membro já alterado nesta sessão e
+        // ainda não guardado; só actualiza os restantes com o servidor.
+        const locaisPorId = new Map(prev.map((m) => [m.membro_id, m]));
+        return membrosServidor.map((m) =>
+          modificadosRef.current.has(m.membro_id)
+            ? (locaisPorId.get(m.membro_id) ?? m)
+            : m
+        );
+      });
       setStats(res.data.stats || {});
       setInterFilial(res.data.inter_filial || false);
+      setLastSync(Date.now());
     } catch (err) {
-      console.error(err);
+      // Em polling de fundo falha silenciosamente e tenta de novo no
+      // próximo ciclo; só mostra erro no carregamento inicial.
+      if (!background) console.error(err);
     } finally {
-      setLoading(false);
+      if (!background) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchPresencas();
 
-    // Refresh a cada 30 segundos para sincronizar com outros users
-    const intervalo = setInterval(
-      () => {
-        fetchPresencas();
-      },
-      5 * 60 * 1000,
-    );
+    let intervalo = null;
 
-    return () => clearInterval(intervalo);
+    const iniciarPolling = () => {
+      if (intervalo) return;
+      intervalo = setInterval(() => {
+        fetchPresencas({ background: true });
+      }, 8000);
+    };
+
+    const pararPolling = () => {
+      if (intervalo) {
+        clearInterval(intervalo);
+        intervalo = null;
+      }
+    };
+
+    const handleVisibilidade = () => {
+      if (document.hidden) {
+        pararPolling();
+      } else {
+        // Ao voltar à aba, sincroniza de imediato e retoma o polling.
+        fetchPresencas({ background: true });
+        iniciarPolling();
+      }
+    };
+
+    if (!document.hidden) iniciarPolling();
+    document.addEventListener("visibilitychange", handleVisibilidade);
+
+    return () => {
+      pararPolling();
+      document.removeEventListener("visibilitychange", handleVisibilidade);
+    };
   }, [culto.id]);
+
+  // Actualiza o indicador "Sincronizado há Xs" a cada segundo.
+  useEffect(() => {
+    const t = setInterval(() => setTick((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
 
   const togglePresenca = (membro_id) => {
   setModificados((prev) => new Set([...prev, membro_id])); 
@@ -527,9 +583,21 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
 };
 
   const marcarTodos = (valor) => {
-  setModificados(new Set(membros.map((m) => m.membro_id))); 
+  setModificados(new Set(membros.map((m) => m.membro_id)));
   setMembros((prev) => prev.map((m) => ({ ...m, presente: valor })));
 };
+
+  // Actualiza só a observação do membro — independente do estado de presença
+  // (mesmo padrão de estado do togglePresenca: marca como modificado e
+  // actualiza `membros`, para ser incluído no payload de "salvar").
+  const atualizarObservacao = (membro_id, valor) => {
+    setModificados((prev) => new Set([...prev, membro_id]));
+    setMembros((prev) =>
+      prev.map((m) =>
+        m.membro_id === membro_id ? { ...m, observacao: valor } : m
+      )
+    );
+  };
 
  const salvar = async () => {
   setSaving(true);
@@ -552,9 +620,9 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
       })),
     });
 
-    setModificados(new Set()); 
+    setModificados(new Set());
     setMensagem({ tipo: "sucesso", texto: `${aEnviar.length} presenças guardadas!` });
-    fetchPresencas();
+    fetchPresencas({ background: true });
   } catch {
     setMensagem({ tipo: "erro", texto: "Erro ao guardar presenças." });
   } finally {
@@ -627,6 +695,14 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
             {culto.horario && ` · ${culto.horario}`}
             {culto.nome_branch && ` · ${culto.nome_branch}`}
           </p>
+          {vista === "presencas" && (
+            <p className="flex items-center gap-1.5 mt-0.5 text-[11px] text-slate-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+              {lastSync
+                ? `Sincronizado há ${Math.max(0, Math.round((Date.now() - lastSync) / 1000))}s`
+                : "A sincronizar..."}
+            </p>
+          )}
         </div>
         <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
           {[
@@ -787,7 +863,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                   </div>
                   <div
                     className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm
-                    ${m.presente ? "bg-gradient-to-br from-emerald-400 to-emerald-500" : "bg-gradient-to-br from-slate-300 to-slate-400"}`}
+                    ${m.presente ? "bg-emerald-500" : "bg-slate-400"}`}
                   >
                     <span className="text-white text-[11px] font-bold">
                       {m.nome_membro
@@ -805,6 +881,14 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                     <p className="text-[11px] text-slate-400">
                       {m.nome_branch ?? "—"} · {m.codigo ?? "—"}
                     </p>
+                    <input
+                      type="text"
+                      value={m.observacao || ""}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => atualizarObservacao(m.membro_id, e.target.value)}
+                      placeholder="Observação (opcional)"
+                      className="mt-1 w-full px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 text-[11px] text-slate-600 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all"
+                    />
                   </div>
                   <span
                     className={`flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border
@@ -856,22 +940,22 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
               {
                 label: "Total Membros",
                 value: stats.total,
-                cor: "from-slate-500 to-slate-600",
+                cor: "text-slate-800",
               },
               {
                 label: "Presentes",
                 value: stats.presentes,
-                cor: "from-emerald-500 to-teal-500",
+                cor: "text-emerald-600",
               },
               {
                 label: "Ausentes",
                 value: stats.ausentes,
-                cor: "from-red-400 to-rose-500",
+                cor: "text-red-500",
               },
               {
                 label: "Taxa Presença",
                 value: `${stats.percentagem}%`,
-                cor: "from-amber-500 to-yellow-500",
+                cor: "text-primary",
               },
             ].map(({ label, value, cor }) => (
               <div
@@ -882,7 +966,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                   {label}
                 </p>
                 <p
-                  className={`text-3xl font-bold mt-1 bg-gradient-to-r ${cor} bg-clip-text text-transparent`}
+                  className={`text-3xl font-bold mt-1 tabular-nums ${cor}`}
                 >
                   {value ?? "—"}
                 </p>
@@ -901,7 +985,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
             </div>
             <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-700"
+                className="h-full bg-primary rounded-full transition-all duration-700"
                 style={{ width: `${stats.percentagem}%` }}
               />
             </div>
@@ -931,7 +1015,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                         key={m.membro_id}
                         className="flex items-center gap-3 px-5 py-3"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center flex-shrink-0">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center flex-shrink-0">
                           <span className="text-white text-[10px] font-bold">
                             {m.nome_membro
                               ?.split(" ")
@@ -974,7 +1058,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                         key={m.membro_id}
                         className="flex items-center gap-3 px-5 py-3"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center flex-shrink-0">
+                        <div className="w-7 h-7 rounded-lg bg-red-500 flex items-center justify-center flex-shrink-0">
                           <span className="text-white text-[10px] font-bold">
                             {m.nome_membro
                               ?.split(" ")
@@ -1110,9 +1194,9 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
           </p>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { key: "presencas", label: "Culto Normal", desc: "Foco em presenças de membros", icon: "👥" },
-              { key: "visitantes", label: "Cruzada / Conferência", desc: "Foco em visitantes externos", icon: "🌟" },
-            ].map(({ key, label, desc, icon }) => (
+              { key: "presencas", label: "Culto Normal", desc: "Foco em presenças de membros", icon: Users },
+              { key: "visitantes", label: "Cruzada / Conferência", desc: "Foco em visitantes externos", icon: Sparkles },
+            ].map(({ key, label, desc, icon: Icon }) => (
               <button
                 key={key}
                 type="button"
@@ -1120,7 +1204,7 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
                 className={`flex flex-col items-start gap-1 px-4 py-3 rounded-xl border-2 transition-all text-left
                   ${form.tipo_registo === key ? "border-amber-400 bg-amber-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
               >
-                <span className="text-lg">{icon}</span>
+                <Icon size={18} className={form.tipo_registo === key ? "text-amber-600" : "text-slate-400"} />
                 <p className={`text-sm font-semibold ${form.tipo_registo === key ? "text-amber-700" : "text-slate-700"}`}>{label}</p>
                 <p className="text-[11px] text-slate-400">{desc}</p>
               </button>

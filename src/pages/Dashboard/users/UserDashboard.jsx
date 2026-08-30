@@ -138,12 +138,7 @@ navigate("/dashboard/users");
  
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        .mb-dash { font-family: 'Outfit', sans-serif; background: #f8fafc; min-height: 100vh; }
-      `}</style>
-
-      <div className="mb-dash">
+      <div className="bg-slate-50 min-h-screen">
         {/* ── TOPBAR ── */}
         <div className="sticky top-0 z-50 bg-gradient-to-r from-[#3d1f00] to-[#4a2500] border-b border-amber-900/40 shadow-lg px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">

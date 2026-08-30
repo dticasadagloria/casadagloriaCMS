@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Header from "@/components/Header";
 import api from "@/api/api.js";
 import {
   Save,
   X,
   Baby,
-  Calendar,
+  Hash,
   Users,
   Phone,
   Building,
@@ -27,7 +28,7 @@ const Input = ({ label, name, type = "text", icon: Icon, form, onChange, ...prop
         name={name}
         value={form[name] ?? ""}
         onChange={onChange}
-        className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 focus:bg-white transition-all`}
+        className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 focus:bg-white transition-all`}
         {...props}
       />
     </div>
@@ -45,7 +46,7 @@ const Select = ({ label, name, options, icon: Icon, form, onChange }) => (
         name={name}
         value={form[name] ?? ""}
         onChange={onChange}
-        className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-10 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 focus:bg-white transition-all appearance-none cursor-pointer`}
+        className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-10 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 focus:bg-white transition-all appearance-none cursor-pointer`}
       >
         <option value="">Seleccione...</option>
         {options.map((opt) => (
@@ -58,9 +59,9 @@ const Select = ({ label, name, options, icon: Icon, form, onChange }) => (
 
 const Section = ({ title, icon: Icon, children }) => (
   <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-    <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2.5 bg-gradient-to-r from-sky-50/50 to-transparent">
-      <div className="w-7 h-7 rounded-lg bg-sky-50 flex items-center justify-center">
-        <Icon size={14} className="text-sky-600" />
+    <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2.5 bg-amber-50/50">
+      <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+        <Icon size={14} className="text-primary" />
       </div>
       <h2 className="text-[14px] font-bold text-slate-800">{title}</h2>
     </div>
@@ -74,7 +75,7 @@ const CadastroCrianca = () => {
   const [form, setForm] = useState({
     nome: "",
     genero: "",
-    data_nascimento: "",
+    idade: "",
     turma: "",
     nome_encarregado: "",
     contacto_encarregado: "",
@@ -82,9 +83,16 @@ const CadastroCrianca = () => {
     observacoes: "",
   });
 
+  const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    api.get("/api/branches")
+      .then((res) => setBranches(res.data.branches || []))
+      .catch(console.error);
+  }, []);
 
   const handleChange = (e) => {
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -117,7 +125,9 @@ const CadastroCrianca = () => {
   };
 
   return (
-    <div className="space-y-5 max-w-4xl">
+    <>
+      <Header />
+      <div className="space-y-5 max-w-4xl mx-auto py-9 px-4">
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate("/dashboard/escolinha")}
@@ -143,7 +153,7 @@ const CadastroCrianca = () => {
               onChange={handleChange}
               options={[{ value: "M", label: "Masculino" }, { value: "F", label: "Feminino" }]}
             />
-            <Input label="Data de Nascimento" name="data_nascimento" type="date" icon={Calendar} form={form} onChange={handleChange} />
+            <Input label="Idade" name="idade" type="number" min="0" max="17" placeholder="Ex: 7" icon={Hash} form={form} onChange={handleChange} />
             <Select
               label="Turma *"
               name="turma"
@@ -158,16 +168,7 @@ const CadastroCrianca = () => {
               icon={Building}
               form={form}
               onChange={handleChange}
-              options={[
-                { value: "1", label: "IICGP-ALBAZINE" },
-                { value: "2", label: "IICGP-MAGOANINE" },
-                { value: "3", label: "IICGP-Mathemele" },
-                { value: "4", label: "IICGP-Maxixe" },
-                { value: "5", label: "IICGP-NAMAACHA" },
-                { value: "6", label: "IICGP-Nampula" },
-                { value: "7", label: "IICGP-Xai-Xai" },
-                { value: "8", label: "IICGP-Zimpeto" },
-              ]}
+              options={branches.map((b) => ({ value: String(b.id), label: b.nome }))}
             />
           </div>
         </Section>
@@ -186,7 +187,7 @@ const CadastroCrianca = () => {
             onChange={handleChange}
             rows={3}
             placeholder="Alergias, cuidados especiais, etc. (opcional)"
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 focus:bg-white transition-all resize-none"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 focus:bg-white transition-all resize-none"
           />
         </Section>
 
@@ -207,7 +208,7 @@ const CadastroCrianca = () => {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 disabled:opacity-50 text-white text-sm font-semibold transition-all shadow-sm"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-primary hover:bg-primary/90 disabled:opacity-50 text-white text-sm font-semibold transition-all shadow-sm"
           >
             {loading ? (
               <><div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> A guardar...</>
@@ -224,7 +225,8 @@ const CadastroCrianca = () => {
           </button>
         </div>
       </form>
-    </div>
+      </div>
+    </>
   );
 };
 

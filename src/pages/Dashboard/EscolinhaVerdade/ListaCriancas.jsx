@@ -8,7 +8,7 @@ import {
   UserPlus,
   Users,
   ClipboardCheck,
-  Phone,
+  BarChart3,
 } from "lucide-react";
 
 const TABS = [
@@ -16,6 +16,12 @@ const TABS = [
   { key: "Pequenos", label: "Pequenos" },
   { key: "Grandes",  label: "Grandes"  },
 ];
+
+const Th = ({ children }) => (
+  <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-amber-700/70">
+    {children}
+  </th>
+);
 
 const ListaCriancas = () => {
   const navigate = useNavigate();
@@ -64,14 +70,20 @@ const ListaCriancas = () => {
         </div>
         <div className="flex gap-2">
           <button
+            onClick={() => navigate("/dashboard/escolinha/relatorio")}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-semibold transition-all shadow-sm"
+          >
+            <BarChart3 size={14} /> Relatório
+          </button>
+          <button
             onClick={() => navigate("/dashboard/escolinha/presencas")}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-sky-200 hover:bg-sky-50 text-sky-700 text-sm font-semibold transition-all shadow-sm"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-amber-200 hover:bg-amber-50 text-amber-700 text-sm font-semibold transition-all shadow-sm"
           >
             <ClipboardCheck size={14} /> Fazer Chamada
           </button>
           <button
             onClick={() => navigate("/dashboard/escolinha/novo")}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold transition-all shadow-sm"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-semibold transition-all shadow-sm"
           >
             <UserPlus size={14} /> Nova Criança
           </button>
@@ -80,31 +92,31 @@ const ListaCriancas = () => {
 
       {/* Stats */}
       <div className="flex flex-wrap gap-3">
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-sky-100 shadow-sm">
-          <div className="w-7 h-7 rounded-lg bg-sky-50 flex items-center justify-center">
-            <Baby size={14} className="text-sky-600" />
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-amber-100 shadow-sm">
+          <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Baby size={14} className="text-primary" />
           </div>
           <div>
             <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide leading-none">Total</p>
-            <p className="text-lg font-bold text-slate-800 leading-tight">{criancas.length}</p>
+            <p className="text-lg font-bold text-primary leading-tight">{criancas.length}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-amber-100 shadow-sm">
-          <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
-            <Users size={14} className="text-amber-600" />
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-100 shadow-sm">
+          <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center">
+            <Users size={14} className="text-slate-500" />
           </div>
           <div>
             <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide leading-none">Pequenos</p>
-            <p className="text-lg font-bold text-amber-600 leading-tight">{totalPequenos}</p>
+            <p className="text-lg font-bold text-slate-700 leading-tight">{totalPequenos}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-indigo-100 shadow-sm">
-          <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
-            <Users size={14} className="text-indigo-600" />
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-100 shadow-sm">
+          <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center">
+            <Users size={14} className="text-slate-500" />
           </div>
           <div>
             <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide leading-none">Grandes</p>
-            <p className="text-lg font-bold text-indigo-600 leading-tight">{totalGrandes}</p>
+            <p className="text-lg font-bold text-slate-700 leading-tight">{totalGrandes}</p>
           </div>
         </div>
       </div>
@@ -117,7 +129,7 @@ const ListaCriancas = () => {
               key={t.key}
               onClick={() => setTab(t.key)}
               className={`px-4 py-2 rounded-xl text-[13px] font-semibold transition-all
-                ${tab === t.key ? "bg-sky-500 text-white shadow-sm" : "bg-white text-slate-500 border border-slate-200 hover:border-sky-300"}`}
+                ${tab === t.key ? "bg-primary text-white shadow-sm" : "bg-white text-slate-500 border border-slate-200 hover:border-amber-300"}`}
             >
               {t.label}
             </button>
@@ -131,61 +143,118 @@ const ListaCriancas = () => {
             placeholder="Pesquisar criança..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 transition-all shadow-sm"
+            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all shadow-sm"
           />
         </div>
       </div>
 
-      {/* Grid de cards */}
-      {loading ? (
-        <div className="flex justify-center py-24">
-          <div className="w-10 h-10 rounded-full border-2 border-sky-200 border-t-sky-500 animate-spin" />
+      {/* Tabela */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+          <p className="text-[12px] font-semibold text-slate-500">
+            {filtered.length === criancas.length
+              ? `${criancas.length} crianças`
+              : `${filtered.length} de ${criancas.length} crianças`}
+          </p>
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="text-[11px] text-amber-600 hover:text-amber-700 font-semibold transition-colors"
+            >
+              Limpar pesquisa ×
+            </button>
+          )}
         </div>
-      ) : error ? (
-        <div className="flex flex-col items-center py-24 gap-3">
-          <p className="text-sm text-slate-500">{error}</p>
-          <button onClick={() => fetchCriancas(tab)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-500 text-white text-sm font-semibold">
-            <RefreshCw size={14} /> Tentar novamente
-          </button>
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center py-24 gap-2">
-          <Baby className="w-8 h-8 text-slate-300" />
-          <p className="text-sm text-slate-400 font-medium">Nenhuma criança encontrada</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filtered.map((c) => {
-            const initials = c.nome?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
-            const isGrande = c.turma === "Grandes";
-            return (
-              <div
-                key={c.id}
-                onClick={() => navigate(`/dashboard/escolinha/${c.id}`)}
-                className="group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all p-5 cursor-pointer"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm bg-gradient-to-br ${isGrande ? "from-indigo-400 to-indigo-600" : "from-amber-400 to-amber-500"}`}>
-                    <span className="text-white text-[14px] font-bold">{initials}</span>
-                  </div>
-                  <span className={`px-2.5 py-1 rounded-full text-[10.5px] font-semibold border
-                    ${isGrande ? "bg-indigo-50 text-indigo-700 border-indigo-200" : "bg-amber-50 text-amber-700 border-amber-200"}`}>
-                    {c.turma}
-                  </span>
-                </div>
-                <p className="text-[14.5px] font-bold text-slate-800 truncate">{c.nome}</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">{c.codigo || "Sem código"}</p>
-                {c.contacto_encarregado && (
-                  <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-[11.5px] text-slate-500">
-                    <Phone size={11} className="text-slate-400" />
-                    {c.contacto_encarregado}
-                  </div>
+
+        {loading ? (
+          <div className="flex justify-center py-24">
+            <div className="w-10 h-10 rounded-full border-2 border-amber-200 border-t-amber-500 animate-spin" />
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center py-24 gap-3">
+            <p className="text-sm text-slate-500">{error}</p>
+            <button onClick={() => fetchCriancas(tab)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold">
+              <RefreshCw size={14} /> Tentar novamente
+            </button>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead className="bg-amber-50/60 border-b border-amber-100/60">
+                <tr>
+                  <Th>Código</Th>
+                  <Th>Nome</Th>
+                  <Th>Turma</Th>
+                  <Th>Encarregado</Th>
+                  <Th>Contacto</Th>
+                  <Th>Filial</Th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-16 text-center">
+                      <div className="flex flex-col items-center gap-2">
+                        <Baby className="w-8 h-8 text-slate-300" />
+                        <p className="text-sm text-slate-400 font-medium">
+                          {search ? "Nenhuma criança encontrada" : "Nenhuma criança registada"}
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((c) => {
+                    const initials = c.nome
+                      ?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?";
+                    return (
+                      <tr
+                        key={c.id}
+                        className="hover:bg-amber-50/40 transition-colors group"
+                      >
+                        <td className="px-4 py-3.5">
+                          <span className="font-mono text-[12px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-100">
+                            {c.codigo ?? "—"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 shadow-sm">
+                              <span className="text-white text-[11px] font-bold">{initials}</span>
+                            </div>
+                            <span className="text-[13.5px] font-semibold text-slate-800 group-hover:text-amber-700 transition-colors">
+                              {c.nome ?? "—"}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border bg-slate-50 text-slate-600 border-slate-200">
+                            {c.turma}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <span className="text-[13px] font-semibold text-slate-600">
+                            {c.nome_encarregado ?? "—"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <span className="text-[13px] text-slate-600">
+                            {c.contacto_encarregado ?? "—"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <span className="text-[13px] font-semibold text-slate-600">
+                            {c.nome_branch ?? "—"}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

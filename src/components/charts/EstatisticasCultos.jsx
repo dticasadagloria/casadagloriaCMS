@@ -65,35 +65,47 @@ const EstatisticasCultos = () => {
             label: "Total Cultos",
             value: gerais?.totalCultos ?? 0,
             icon: BookOpen,
-            gradient: "from-amber-500 to-amber-600",
+            variant: "neutral",
           },
           {
             label: "Total Presenças",
             value: gerais?.totalPresencas ?? 0,
             icon: UserCheck,
-            gradient: "from-emerald-500 to-teal-500",
+            variant: "good",
           },
           {
             label: "Membros Activos",
             value: gerais?.totalMembros ?? 0,
             icon: Users,
-            gradient: "from-sky-500 to-blue-500",
+            variant: "neutral",
           },
           {
             label: "Média por Culto",
             value: gerais?.mediaPorCulto ?? 0,
             icon: TrendingUp,
-            gradient: "from-purple-500 to-violet-500",
+            variant: "accent",
           },
-        ].map(({ label, value, icon: Icon, gradient }) => (
+        ].map(({ label, value, icon: Icon, variant }) => (
           <div key={label} className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-all">
             <div className="flex items-start justify-between mb-3">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{label}</p>
-              <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm`}>
-                <Icon className="w-4 h-4 text-white" />
+              <div
+                className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                  variant === "accent"
+                    ? "bg-primary"
+                    : variant === "good"
+                      ? "bg-emerald-50"
+                      : "bg-primary/10"
+                }`}
+              >
+                <Icon
+                  className={`w-4 h-4 ${
+                    variant === "accent" ? "text-white" : variant === "good" ? "text-emerald-600" : "text-primary"
+                  }`}
+                />
               </div>
             </div>
-            <p className={`text-3xl font-bold bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}>
+            <p className={`text-3xl font-bold tabular-nums ${variant === "accent" ? "text-primary" : "text-slate-800"}`}>
               {value}
             </p>
           </div>

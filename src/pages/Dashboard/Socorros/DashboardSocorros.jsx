@@ -206,7 +206,7 @@ const SosDashboard = () => {
                     className="flex items-center justify-between px-5 py-3.5 border-b border-slate-50 hover:bg-red-50/30 transition-colors group"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <div className="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center flex-shrink-0 shadow-sm">
                         <span className="text-white text-[11px] font-bold">
                           {m.nome_membro
                             ?.split(" ")
@@ -327,7 +327,7 @@ const SosDashboard = () => {
                       className="flex items-center justify-between px-5 py-3.5 border-b border-slate-50 hover:bg-amber-50/30 transition-colors group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary to-secondary flex items-center justify-center shrink-0 shadow-sm">
+                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0 shadow-sm">
                           <span className="text-white text-[11px] font-bold">
                             {m.nome_membro?.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?"}
                           </span>
