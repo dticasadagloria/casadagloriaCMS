@@ -491,7 +491,7 @@ const ModalRegistar = ({
           'Igreja Universal do Reino de Deus',
           'Igreja Pentecostal Deus É Amor',
           'Igreja Católica',
-          'Igreja Apostólica',
+          'Igreja Velha Apostólica',
           'Igreja Zione',
           'Igreja Presbiteriana',
           'Igreja Metodista Unida',
