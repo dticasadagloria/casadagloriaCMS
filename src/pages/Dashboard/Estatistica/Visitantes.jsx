@@ -941,6 +941,11 @@ const Visitantes = () => {
     setPagina(1);
   }, [search, filtroCulto, filtroTipo]);
 
+   //Scrool the page from top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const fetchTudo = async () => {
     setLoading(true);
     try {

@@ -531,7 +531,11 @@ const Dashboard = () => {
       ROLES.IICGPALBAZINE,
       ROLES.ESTATISTICA,
     ],
-    "escolinha-lista": null,
+    "escolinha": [
+      ROLES.ADMIN,
+      ROLES.PASTOR,
+      ROLES.ESCOLINHA,
+    ],
   };
 
   // ─── HELPER — verifica se o user tem acesso ──────────────────────────────────
