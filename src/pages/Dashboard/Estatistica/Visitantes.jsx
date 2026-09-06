@@ -376,38 +376,38 @@ const ModalRegistar = ({
             )}
 
             <div className="col-span-2">
-  <Field label="Local do Culto - Filial">
-    <select
-      value={form.branch_id}
-      onChange={set("branch_id")}
-      className={inputClass}
-    >
-      <option value="">-- Selecionar --</option>
+              <Field label="Local do Culto - Filial">
+                <select
+                  value={form.branch_id}
+                  onChange={set("branch_id")}
+                  className={inputClass}
+                >
+                  <option value="">-- Selecionar --</option>
 
-      {/* Opções da tabela */}
-      {branches.map((b) => (
-        <option key={b.id} value={b.id}>
-          {b.nome}
-        </option>
-      ))}
+                  {/* Opções da tabela */}
+                  {branches.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.nome}
+                    </option>
+                  ))}
 
-      {/* Opções fixas extras */}
-      <option value="outro">Outro</option>
-      <option value="fora">Fora</option>
-    </select>
+                  {/* Opções fixas extras */}
+                  <option value="outro">Outro</option>
+                  <option value="fora">Fora</option>
+                </select>
 
-    {/* Campo extra se selecionar "Outro" ou "Fora" */}
-    {(form.branch_id === "outro" || form.branch_id === "fora") && (
-      <input
-        type="text"
-        placeholder="Especifica o local..."
-        value={form.branch_outro || ""}
-        onChange={set("branch_outro")}
-        className={`${inputClass} mt-2`}
-      />
-    )}
-  </Field>
-</div>
+                {/* Campo extra se selecionar "Outro" ou "Fora" */}
+                {(form.branch_id === "outro" || form.branch_id === "fora") && (
+                  <input
+                    type="text"
+                    placeholder="Especifica o local..."
+                    value={form.branch_outro || ""}
+                    onChange={set("branch_outro")}
+                    className={`${inputClass} mt-2`}
+                  />
+                )}
+              </Field>
+            </div>
 
             {/* <Toggle
               label="Visitante Externo"
@@ -433,84 +433,87 @@ const ModalRegistar = ({
               </div>
             )} */}
             <Toggle
-  label="Visitante Externo"
-  sublabel="Vem de outra igreja"
-  value={form.externo}
-  onChange={() =>
-    setForm((prev) => ({ ...prev, externo: !prev.externo, igreja_origem: '' }))
-  }
-  cor="amber"
-/>
+              label="Visitante Externo"
+              sublabel="Vem de outra igreja"
+              value={form.externo}
+              onChange={() =>
+                setForm((prev) => ({
+                  ...prev,
+                  externo: !prev.externo,
+                  igreja_origem: "",
+                }))
+              }
+              cor="amber"
+            />
 
-{/* Visitante INTERNO → escolher filial */}
-{/* Visitante INTERNO → escolher filial */}
-{!form.externo && (
-  <div className="col-span-2">
-    <Field label="Filial de Origem">
-      <select
-        value={form.igreja_origem}
-        onChange={set("igreja_origem")}
-        className={inputClass}
-      >
-        <option value="">Selecionar filial</option>
-        {branches.map((b) => (
-          <option key={b.id} value={b.nome}>
-            {b.nome}
-          </option>
-        ))}
-      </select>
-    </Field>
-  </div>
-)}
-{/* Visitante EXTERNO → escolher igreja */}
-{form.externo && (
-  <div className="col-span-2">
-    <Field label="Igreja de Origem">
-      <select
-        value={form.igreja_origem}
-        onChange={set("igreja_origem")}
-        className={inputClass}
-      >
-        <option value="">Selecionar igreja</option>
-        {[
-          'Igreja International Casa Da Glória da Palavra',
-          'AGC Living Water',
-          'Igreja Evangélica Assembleia de Deus Alfa & Omega',
-          'MEA',
-          'AGC Living Water',
-          'Ministério Âncora da Graça',
-          'IMANA',
-          'Ministério Sangue do Cordeiro',
-          'Movimento A Cruz Que Salva',
-          'Ilha de Patmos',
-          'Ministério Buscando Almas para Cristo (BAC)',
-          'Ministério Valentes na Fé',
-          'Ministério Divina Esperança',
-          'Igreja Evangélica Assembleia de Deus',
-          'Living Jesus Embassy',
-          'Igreja Universal do Reino de Deus',
-          'Igreja Pentecostal Deus É Amor',
-          'Igreja Católica',
-          'Igreja Velha Apostólica',
-          'Igreja Zione',
-          'Igreja Presbiteriana',
-          'Igreja Metodista Unida',
-          'Igreja/Ministério Explosão da Benção de Deus (EBD)',
-          'Igreja Nazareno',
-          'Igreja Ministério Palavra Viva',
-          'Igreja Ministerial Nacoes para Cristo',
-          'Igreja A Reina da Gloria',
-          'Buscando Almas para Cristo (BAC)',
-          'Outra Igreja'
-        ].map((igreja) => (
-          <option key={igreja} value={igreja}>
-            {igreja}
-          </option>
-        ))}
-      </select>
-    </Field>
-  </div>
-)}
+            {/* Visitante INTERNO → escolher filial */}
+            {/* Visitante INTERNO → escolher filial */}
+            {!form.externo && (
+              <div className="col-span-2">
+                <Field label="Filial de Origem">
+                  <select
+                    value={form.igreja_origem}
+                    onChange={set("igreja_origem")}
+                    className={inputClass}
+                  >
+                    <option value="">Selecionar filial</option>
+                    {branches.map((b) => (
+                      <option key={b.id} value={b.nome}>
+                        {b.nome}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+              </div>
+            )}
+            {/* Visitante EXTERNO → escolher igreja */}
+            {form.externo && (
+              <div className="col-span-2">
+                <Field label="Igreja de Origem">
+                  <select
+                    value={form.igreja_origem}
+                    onChange={set("igreja_origem")}
+                    className={inputClass}
+                  >
+                    <option value="">Selecionar igreja</option>
+                    {[
+                      "AGC Living Water",
+                      "Igreja Evangélica Assembleia de Deus Alfa & Omega",
+                      "MEA",
+                      "AGC Living Water",
+                      "Ministério Âncora da Graça",
+                      "IMANA",
+                      "Ministério Sangue do Cordeiro",
+                      "Movimento A Cruz Que Salva",
+                      "Ilha de Patmos",
+                      "Ministério Buscando Almas para Cristo (BAC)",
+                      "Ministério Valentes na Fé",
+                      "Ministério Divina Esperança",
+                      "Igreja Evangélica Assembleia de Deus",
+                      "Living Jesus Embassy",
+                      "Igreja Universal do Reino de Deus",
+                      "Igreja Pentecostal Deus É Amor",
+                      "Igreja Católica",
+                      "Igreja Velha Apostólica",
+                      "Igreja Zione",
+                      "Igreja Presbiteriana",
+                      "Igreja Metodista Unida",
+                      "Igreja/Ministério Explosão da Benção de Deus (EBD)",
+                      "Igreja Nazareno",
+                      "Igreja Ministério Palavra Viva",
+                      "Igreja Ministerial Nacoes para Cristo",
+                      "Igreja A Reina da Gloria",
+                      "Buscando Almas para Cristo (BAC)",
+                      "Outra Igreja",
+                    ].map((igreja) => (
+                      <option key={igreja} value={igreja}>
+                        {igreja}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+              </div>
+            )}
 
             <div className="col-span-2">
               <Field label="Observações">
@@ -560,18 +563,18 @@ const ModalRegistar = ({
 // ═══════════════════════════════════════════════════════════
 const ModalEditar = ({ visitante, cultos, branches, onFechar, onGuardado }) => {
   const [form, setForm] = useState({
-    nome:          visitante.nome || "",
-    genero:        visitante.genero || "",
-    faixa_etaria:  visitante.faixa_etaria || "",
-    contacto:      visitante.contacto || "",
-    bairro:        visitante.bairro || "",
-    culto_id:      visitante.culto_id ? String(visitante.culto_id) : "",
-    externo:       visitante.externo ?? true,
+    nome: visitante.nome || "",
+    genero: visitante.genero || "",
+    faixa_etaria: visitante.faixa_etaria || "",
+    contacto: visitante.contacto || "",
+    bairro: visitante.bairro || "",
+    culto_id: visitante.culto_id ? String(visitante.culto_id) : "",
+    externo: visitante.externo ?? true,
     igreja_origem: visitante.igreja_origem || "",
-    observacoes:   visitante.observacoes || "",
+    observacoes: visitante.observacoes || "",
   });
   const [loading, setLoading] = useState(false);
-  const [erro, setErro]       = useState(null);
+  const [erro, setErro] = useState(null);
 
   const set = (field) => (e) => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -598,10 +601,15 @@ const ModalEditar = ({ visitante, cultos, branches, onFechar, onGuardado }) => {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
           <div>
-            <h3 className="text-base font-bold text-slate-800">Editar Visitante</h3>
+            <h3 className="text-base font-bold text-slate-800">
+              Editar Visitante
+            </h3>
             <p className="text-xs text-slate-400 mt-0.5">{visitante.nome}</p>
           </div>
-          <button onClick={onFechar} className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
+          <button
+            onClick={onFechar}
+            className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors"
+          >
             <X size={18} />
           </button>
         </div>
@@ -610,13 +618,23 @@ const ModalEditar = ({ visitante, cultos, branches, onFechar, onGuardado }) => {
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
               <Field label="Nome *">
-                <input type="text" required placeholder="Nome completo" value={form.nome}
-                  onChange={set("nome")} className={inputClass} />
+                <input
+                  type="text"
+                  required
+                  placeholder="Nome completo"
+                  value={form.nome}
+                  onChange={set("nome")}
+                  className={inputClass}
+                />
               </Field>
             </div>
 
             <Field label="Género">
-              <select value={form.genero} onChange={set("genero")} className={inputClass}>
+              <select
+                value={form.genero}
+                onChange={set("genero")}
+                className={inputClass}
+              >
                 <option value="">Selecionar</option>
                 <option value="Masculino">Masculino</option>
                 <option value="Feminino">Feminino</option>
@@ -624,27 +642,47 @@ const ModalEditar = ({ visitante, cultos, branches, onFechar, onGuardado }) => {
             </Field>
 
             <Field label="Faixa Etária">
-              <select value={form.faixa_etaria} onChange={set("faixa_etaria")} className={inputClass}>
+              <select
+                value={form.faixa_etaria}
+                onChange={set("faixa_etaria")}
+                className={inputClass}
+              >
                 <option value="">Selecionar</option>
-                <option value="Adolescente">Adolescente: entre 12 e 17 anos</option>
+                <option value="Adolescente">
+                  Adolescente: entre 12 e 17 anos
+                </option>
                 <option value="Jovem">Jovem: entre 18 e 35 anos</option>
                 <option value="Adulto">Adulto: acima de 35 anos</option>
               </select>
             </Field>
 
             <Field label="Contacto">
-              <input type="text" placeholder="Ex: 84 000 0000" value={form.contacto}
-                onChange={set("contacto")} className={inputClass} />
+              <input
+                type="text"
+                placeholder="Ex: 84 000 0000"
+                value={form.contacto}
+                onChange={set("contacto")}
+                className={inputClass}
+              />
             </Field>
 
             <Field label="Bairro">
-              <input type="text" placeholder="Bairro" value={form.bairro}
-                onChange={set("bairro")} className={inputClass} />
+              <input
+                type="text"
+                placeholder="Bairro"
+                value={form.bairro}
+                onChange={set("bairro")}
+                className={inputClass}
+              />
             </Field>
 
             <div className="col-span-2">
               <Field label="Culto">
-                <select value={form.culto_id} onChange={set("culto_id")} className={inputClass}>
+                <select
+                  value={form.culto_id}
+                  onChange={set("culto_id")}
+                  className={inputClass}
+                >
                   <option value="">Selecionar culto</option>
                   {cultos.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -659,38 +697,62 @@ const ModalEditar = ({ visitante, cultos, branches, onFechar, onGuardado }) => {
               label="Visitante Externo"
               sublabel="Vem de outra igreja"
               value={form.externo}
-              onChange={() => setForm((prev) => ({ ...prev, externo: !prev.externo, igreja_origem: "" }))}
+              onChange={() =>
+                setForm((prev) => ({
+                  ...prev,
+                  externo: !prev.externo,
+                  igreja_origem: "",
+                }))
+              }
               cor="amber"
             />
 
             {form.externo && (
               <div className="col-span-2">
                 <Field label="Igreja de Origem">
-                  <input type="text" placeholder="Nome da igreja" value={form.igreja_origem}
-                    onChange={set("igreja_origem")} className={inputClass} />
+                  <input
+                    type="text"
+                    placeholder="Nome da igreja"
+                    value={form.igreja_origem}
+                    onChange={set("igreja_origem")}
+                    className={inputClass}
+                  />
                 </Field>
               </div>
             )}
 
             <div className="col-span-2">
               <Field label="Observações">
-                <textarea placeholder="Notas adicionais..." value={form.observacoes}
-                  onChange={set("observacoes")} rows={2} className={`${inputClass} resize-none`} />
+                <textarea
+                  placeholder="Notas adicionais..."
+                  value={form.observacoes}
+                  onChange={set("observacoes")}
+                  rows={2}
+                  className={`${inputClass} resize-none`}
+                />
               </Field>
             </div>
           </div>
 
           {erro && (
-            <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">{erro}</div>
+            <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">
+              {erro}
+            </div>
           )}
 
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onFechar}
-              className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors">
+            <button
+              type="button"
+              onClick={onFechar}
+              className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors"
+            >
               Cancelar
             </button>
-            <button type="submit" disabled={loading}
-              className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60">
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm disabled:opacity-60"
+            >
               {loading ? "A guardar..." : "Guardar Alterações"}
             </button>
           </div>
@@ -868,7 +930,7 @@ const Visitantes = () => {
   const [search, setSearch] = useState("");
   const [filtroCulto, setFiltroCulto] = useState("");
   const [modalRegistar, setModalRegistar] = useState(false);
-  const [modalEditar, setModalEditar]     = useState(null);
+  const [modalEditar, setModalEditar] = useState(null);
   const [modalConverter, setModalConverter] = useState(null);
   const [filtroTipo, setFiltroTipo] = useState("todos");
   const [pagina, setPagina] = useState(1);

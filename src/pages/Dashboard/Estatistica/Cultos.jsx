@@ -39,7 +39,13 @@ const Field = ({ label, children }) => (
 // ═══════════════════════════════════════════════════════════
 // SECÇÃO 1 — LISTA DE CULTOS
 // ═══════════════════════════════════════════════════════════
-const ListaCultos = ({ onSelecionar, onEditar, onCriar, onIrParaVisitantes, onIrParaConvertidos }) => {
+const ListaCultos = ({
+  onSelecionar,
+  onEditar,
+  onCriar,
+  onIrParaVisitantes,
+  onIrParaConvertidos,
+}) => {
   const [cultos, setCultos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -214,21 +220,36 @@ const ListaCultos = ({ onSelecionar, onEditar, onCriar, onIrParaVisitantes, onIr
                       <div className="flex items-center gap-2 group-hover:opacity-100 transition-opacity">
                         {c.tipo_registo === "visitantes" ? (
                           <button
-                            onClick={(e) => { e.stopPropagation(); sessionStorage.setItem("filtroVisitantesCulto", c.id); onIrParaVisitantes && onIrParaVisitantes(); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              sessionStorage.setItem(
+                                "filtroVisitantesCulto",
+                                c.id,
+                              );
+                              onIrParaVisitantes && onIrParaVisitantes();
+                            }}
                             className="flex items-center gap-1 text-[11px] text-sky-600 font-semibold hover:text-sky-700"
                           >
                             Visitantes <ChevronRight size={12} />
                           </button>
                         ) : (
                           <button
-                            onClick={(e) => { e.stopPropagation(); onSelecionar(c); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelecionar(c);
+                            }}
                             className="flex items-center gap-1 text-[11px] text-amber-600 font-semibold hover:text-amber-700"
                           >
                             Presenças <ChevronRight size={12} />
                           </button>
                         )}
-                        <button onClick={(e) => { e.stopPropagation(); onEditar(c); }}
-                          className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-500 hover:text-amber-700 transition-colors">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEditar(c);
+                          }}
+                          className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-500 hover:text-amber-700 transition-colors"
+                        >
                           <Pencil size={13} />
                         </button>
                         <button
@@ -341,13 +362,17 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
               className={inputClass}
             >
               <option value="">Selecionar tipo</option>
-              <option>Culto de Edificação</option>
               <option>Cruzada</option>
-              <option>Escola de Casamento e Família</option>
-              <option>Culto de Páscoa</option>
-              <option>Culto de Domingo - 7h</option>
+              <option>Culto de Adolescentes</option>
               <option>Culto de Domingo - 10h</option>
+              <option>Culto de Domingo - 7h</option>
+              <option>Culto de Edificação</option>
+              <option>Culto de Jovens</option>
+              <option>Culto de Páscoa</option>
+              <option>Culto de Primeiro Domingo - 10h</option>
+              <option>Culto de Primeiro Domingo - 7h</option>
               <option>Daughters of Love</option>
+              <option>Escola de Casamento e Família</option>
               <option>Nova Aliança</option>
               <option>Vigilía</option>
             </select>
@@ -400,18 +425,46 @@ const CriarCulto = ({ onVoltar, onCriado }) => {
           </p>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { key: "presencas", label: "Culto Normal", desc: "Foco em presenças de membros", icon: <Users2 className="w-5 h-5 text-gold-dark" /> },
-              { key: "visitantes", label: "Cruzada", desc: "Foco em visitantes externos", icon: <Calendar1Icon className="w-5 h-5 text-gold-dark" /> },
+              {
+                key: "presencas",
+                label: "Culto Normal",
+                desc: "Foco em presenças de membros",
+                icon: <Users2 className="w-5 h-5 text-gold-dark" />,
+              },
+              {
+                key: "visitantes",
+                label: "Cruzada",
+                desc: "Foco em visitantes externos",
+                icon: <Calendar1Icon className="w-5 h-5 text-gold-dark" />,
+              },
+              {
+                key: "primeiro_domingo",
+                label: "Culto de Primeiro Domingo",
+                desc: "Especial para o primeiro domingo do mês",
+                icon: <Calendar1Icon className="w-5 h-5 text-gold-dark" />,
+              },
+              {
+                key: "jovens",
+                label: "Culto de Jovens",
+                desc: "Especial para jovens",
+                icon: <Calendar1Icon className="w-5 h-5 text-gold-dark" />,
+              },
             ].map(({ key, label, desc, icon }) => (
               <button
                 key={key}
                 type="button"
-                onClick={() => setForm((prev) => ({ ...prev, tipo_registo: key }))}
+                onClick={() =>
+                  setForm((prev) => ({ ...prev, tipo_registo: key }))
+                }
                 className={`flex flex-col items-start gap-1 px-4 py-3 rounded-xl border-2 transition-all text-left
                   ${form.tipo_registo === key ? "border-amber-400 bg-amber-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
               >
                 <span className="text-lg">{icon}</span>
-                <p className={`text-sm font-semibold ${form.tipo_registo === key ? "text-amber-700" : "text-slate-700"}`}>{label}</p>
+                <p
+                  className={`text-sm font-semibold ${form.tipo_registo === key ? "text-amber-700" : "text-slate-700"}`}
+                >
+                  {label}
+                </p>
                 <p className="text-[11px] text-slate-400">{desc}</p>
               </button>
             ))}
@@ -514,7 +567,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
         return membrosServidor.map((m) =>
           modificadosRef.current.has(m.membro_id)
             ? (locaisPorId.get(m.membro_id) ?? m)
-            : m
+            : m,
         );
       });
       setStats(res.data.stats || {});
@@ -574,18 +627,18 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
   }, []);
 
   const togglePresenca = (membro_id) => {
-  setModificados((prev) => new Set([...prev, membro_id])); 
-  setMembros((prev) =>
-    prev.map((m) =>
-      m.membro_id === membro_id ? { ...m, presente: !m.presente } : m
-    )
-  );
-};
+    setModificados((prev) => new Set([...prev, membro_id]));
+    setMembros((prev) =>
+      prev.map((m) =>
+        m.membro_id === membro_id ? { ...m, presente: !m.presente } : m,
+      ),
+    );
+  };
 
   const marcarTodos = (valor) => {
-  setModificados(new Set(membros.map((m) => m.membro_id)));
-  setMembros((prev) => prev.map((m) => ({ ...m, presente: valor })));
-};
+    setModificados(new Set(membros.map((m) => m.membro_id)));
+    setMembros((prev) => prev.map((m) => ({ ...m, presente: valor })));
+  };
 
   // Actualiza só a observação do membro — independente do estado de presença
   // (mesmo padrão de estado do togglePresenca: marca como modificado e
@@ -594,41 +647,47 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
     setModificados((prev) => new Set([...prev, membro_id]));
     setMembros((prev) =>
       prev.map((m) =>
-        m.membro_id === membro_id ? { ...m, observacao: valor } : m
-      )
+        m.membro_id === membro_id ? { ...m, observacao: valor } : m,
+      ),
     );
   };
 
- const salvar = async () => {
-  setSaving(true);
-  setMensagem(null);
+  const salvar = async () => {
+    setSaving(true);
+    setMensagem(null);
 
-  const aEnviar = membros.filter((m) => modificados.has(m.membro_id));
+    const aEnviar = membros.filter((m) => modificados.has(m.membro_id));
 
-  if (aEnviar.length === 0) {
-    setMensagem({ tipo: "sucesso", texto: "Nenhuma alteração para guardar." });
-    setSaving(false);
-    return;
-  }
+    if (aEnviar.length === 0) {
+      setMensagem({
+        tipo: "sucesso",
+        texto: "Nenhuma alteração para guardar.",
+      });
+      setSaving(false);
+      return;
+    }
 
-  try {
-    await api.post(`/api/cultos/${culto.id}/presencas`, {
-      presencas: aEnviar.map((m) => ({
-        membro_id:  m.membro_id,
-        presente:   m.presente,
-        observacao: m.observacao || null,
-      })),
-    });
+    try {
+      await api.post(`/api/cultos/${culto.id}/presencas`, {
+        presencas: aEnviar.map((m) => ({
+          membro_id: m.membro_id,
+          presente: m.presente,
+          observacao: m.observacao || null,
+        })),
+      });
 
-    setModificados(new Set());
-    setMensagem({ tipo: "sucesso", texto: `${aEnviar.length} presenças guardadas!` });
-    fetchPresencas({ background: true });
-  } catch {
-    setMensagem({ tipo: "erro", texto: "Erro ao guardar presenças." });
-  } finally {
-    setSaving(false);
-  }
-};
+      setModificados(new Set());
+      setMensagem({
+        tipo: "sucesso",
+        texto: `${aEnviar.length} presenças guardadas!`,
+      });
+      fetchPresencas({ background: true });
+    } catch {
+      setMensagem({ tipo: "erro", texto: "Erro ao guardar presenças." });
+    } finally {
+      setSaving(false);
+    }
+  };
   const importarCSV = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -885,7 +944,9 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                       type="text"
                       value={m.observacao || ""}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => atualizarObservacao(m.membro_id, e.target.value)}
+                      onChange={(e) =>
+                        atualizarObservacao(m.membro_id, e.target.value)
+                      }
                       placeholder="Observação (opcional)"
                       className="mt-1 w-full px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 text-[11px] text-slate-600 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all"
                     />
@@ -965,9 +1026,7 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                   {label}
                 </p>
-                <p
-                  className={`text-3xl font-bold mt-1 tabular-nums ${cor}`}
-                >
+                <p className={`text-3xl font-bold mt-1 tabular-nums ${cor}`}>
                   {value ?? "—"}
                 </p>
               </div>
@@ -1091,21 +1150,22 @@ const MarcarPresencas = ({ culto, onVoltar }) => {
 // Secçao 4 - Editor de Culto
 const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
   const [form, setForm] = useState({
-    data:         culto.data?.slice(0, 10) || "",
-    tipo:         culto.tipo || "",
-    categoria:    culto.categoria || "Culto",
-    pregador:     culto.pregador || "",
-    horario:      culto.horario || "",
-    branch_id:    culto.branch_id || "",
+    data: culto.data?.slice(0, 10) || "",
+    tipo: culto.tipo || "",
+    categoria: culto.categoria || "Culto",
+    pregador: culto.pregador || "",
+    horario: culto.horario || "",
+    branch_id: culto.branch_id || "",
     inter_filial: culto.inter_filial || false,
     tipo_registo: culto.tipo_registo || "presencas",
   });
   const [branches, setBranches] = useState([]);
-  const [loading, setLoading]   = useState(false);
-  const [erro, setErro]         = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    api.get("/api/branches")
+    api
+      .get("/api/branches")
       .then((res) => setBranches(res.data.branches || []))
       .catch(console.error);
   }, []);
@@ -1132,8 +1192,10 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
   return (
     <div className="max-w-2xl space-y-6">
       <div className="flex items-center gap-3">
-        <button onClick={onVoltar}
-          className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors">
+        <button
+          onClick={onVoltar}
+          className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition-colors"
+        >
           <ArrowLeft size={18} />
         </button>
         <div>
@@ -1142,31 +1204,57 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-5"
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <Field label="Data *">
-            <input type="date" required value={form.data}
-              onChange={set("data")} className={inputClass} />
+            <input
+              type="date"
+              required
+              value={form.data}
+              onChange={set("data")}
+              className={inputClass}
+            />
           </Field>
           <Field label="Horário">
-            <input type="time" value={form.horario}
-              onChange={set("horario")} className={inputClass} />
+            <input
+              type="time"
+              value={form.horario}
+              onChange={set("horario")}
+              className={inputClass}
+            />
           </Field>
           <Field label="Tipo *">
-            <select required value={form.tipo} onChange={set("tipo")} className={inputClass}>
+            <select
+              required
+              value={form.tipo}
+              onChange={set("tipo")}
+              className={inputClass}
+            >
               <option value="">Selecionar tipo</option>
-              <option>Culto de Edificação</option>
-              <option>Escola de Casamento e Família</option>
-              <option>Culto de Páscoa</option>
-              <option>Culto de Domingo - 7h</option>
+              <option>Cruzada</option>
+              <option>Culto de Adolescentes</option>
               <option>Culto de Domingo - 10h</option>
+              <option>Culto de Domingo - 7h</option>
+              <option>Culto de Edificação</option>
+              <option>Culto de Jovens</option>
+              <option>Culto de Páscoa</option>
+              <option>Culto de Primeiro Domingo - 10h</option>
+              <option>Culto de Primeiro Domingo - 7h</option>
               <option>Daughters of Love</option>
+              <option>Escola de Casamento e Família</option>
               <option>Nova Aliança</option>
               <option>Vigilía</option>
             </select>
           </Field>
           <Field label="Categoria">
-            <select value={form.categoria} onChange={set("categoria")} className={inputClass}>
+            <select
+              value={form.categoria}
+              onChange={set("categoria")}
+              className={inputClass}
+            >
               <option>Culto</option>
               <option>Evento</option>
               <option>Conferência</option>
@@ -1174,14 +1262,26 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
             </select>
           </Field>
           <Field label="Pregador">
-            <input type="text" placeholder="Nome do pregador"
-              value={form.pregador} onChange={set("pregador")} className={inputClass} />
+            <input
+              type="text"
+              placeholder="Nome do pregador"
+              value={form.pregador}
+              onChange={set("pregador")}
+              className={inputClass}
+            />
           </Field>
           <Field label="Filial">
-            <select required value={form.branch_id} onChange={set("branch_id")} className={inputClass}>
+            <select
+              required
+              value={form.branch_id}
+              onChange={set("branch_id")}
+              className={inputClass}
+            >
               <option value="">Selecionar filial</option>
               {branches.map((b) => (
-                <option key={b.id} value={b.id}>{b.nome}</option>
+                <option key={b.id} value={b.id}>
+                  {b.nome}
+                </option>
               ))}
             </select>
           </Field>
@@ -1194,18 +1294,59 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
           </p>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { key: "presencas", label: "Culto Normal", desc: "Foco em presenças de membros", icon: Users },
-              { key: "visitantes", label: "Cruzada / Conferência", desc: "Foco em visitantes externos", icon: Sparkles },
+              {
+                key: "presencas",
+                label: "Culto Normal",
+                desc: "Foco em presenças de membros",
+                icon: Users,
+              },
+              {
+                key: "visitantes",
+                label: "Cruzada / Conferência",
+                desc: "Foco em visitantes externos",
+                icon: Sparkles,
+              },
+              {
+                key: "primeiro_domingo",
+                label: "Culto de Primeiro Domingo",
+                desc: "Especial para o primeiro domingo do mês",
+                icon: Calendar1Icon,
+              },
+              {
+                key: "jovens",
+                label: "Culto de Jovens",
+                desc: "Especial para jovens",
+                icon: Calendar1Icon,
+              },
+              {
+                key: "adolescentes",
+                label: "Culto de Adolescentes",
+                desc: "Especial para adolescentes",
+                icon: Calendar1Icon,
+              },
             ].map(({ key, label, desc, icon: Icon }) => (
               <button
                 key={key}
                 type="button"
-                onClick={() => setForm((prev) => ({ ...prev, tipo_registo: key }))}
+                onClick={() =>
+                  setForm((prev) => ({ ...prev, tipo_registo: key }))
+                }
                 className={`flex flex-col items-start gap-1 px-4 py-3 rounded-xl border-2 transition-all text-left
                   ${form.tipo_registo === key ? "border-amber-400 bg-amber-50" : "border-slate-200 bg-white hover:border-slate-300"}`}
               >
-                <Icon size={18} className={form.tipo_registo === key ? "text-amber-600" : "text-slate-400"} />
-                <p className={`text-sm font-semibold ${form.tipo_registo === key ? "text-amber-700" : "text-slate-700"}`}>{label}</p>
+                <Icon
+                  size={18}
+                  className={
+                    form.tipo_registo === key
+                      ? "text-amber-600"
+                      : "text-slate-400"
+                  }
+                />
+                <p
+                  className={`text-sm font-semibold ${form.tipo_registo === key ? "text-amber-700" : "text-slate-700"}`}
+                >
+                  {label}
+                </p>
                 <p className="text-[11px] text-slate-400">{desc}</p>
               </button>
             ))}
@@ -1215,17 +1356,25 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
         {/* Toggle inter-filial */}
         <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-slate-50 border border-slate-200">
           <div>
-            <p className="text-sm font-semibold text-slate-700">Culto Inter-Filial</p>
+            <p className="text-sm font-semibold text-slate-700">
+              Culto Inter-Filial
+            </p>
             <p className="text-xs text-slate-400 mt-0.5">
               Permite marcar presença de membros de outras filiais
             </p>
           </div>
-          <button type="button"
-            onClick={() => setForm((prev) => ({ ...prev, inter_filial: !prev.inter_filial }))}
+          <button
+            type="button"
+            onClick={() =>
+              setForm((prev) => ({ ...prev, inter_filial: !prev.inter_filial }))
+            }
             className={`w-11 h-6 rounded-full transition-all duration-200 relative
-              ${form.inter_filial ? "bg-amber-500" : "bg-slate-200"}`}>
-            <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-200
-              ${form.inter_filial ? "left-5" : "left-0.5"}`} />
+              ${form.inter_filial ? "bg-amber-500" : "bg-slate-200"}`}
+          >
+            <span
+              className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-200
+              ${form.inter_filial ? "left-5" : "left-0.5"}`}
+            />
           </button>
         </div>
 
@@ -1236,19 +1385,10 @@ const EditarCulto = ({ culto, onVoltar, onGuardado }) => {
         )}
 
         <div className="flex gap-3 pt-2">
-          <Button
-           type="button" onClick={onVoltar}
-            variant="cancel"
-            size="md"
-            >
+          <Button type="button" onClick={onVoltar} variant="cancel" size="md">
             Cancelar
           </Button>
-          <Button
-           type="submit" 
-           disabled={loading}
-           variant="hero"
-           size="md"
-           >
+          <Button type="submit" disabled={loading} variant="hero" size="md">
             {loading ? "A guardar..." : "Guardar Alterações"}
           </Button>
         </div>
@@ -1308,8 +1448,14 @@ const Cultos = ({ onIrParaVisitantes, onIrParaConvertidos }) => {
       {vista === "editar" && cultoActivo && (
         <EditarCulto
           culto={cultoActivo}
-          onVoltar={() => { setCultoActivo(null); setVista("lista"); }}
-          onGuardado={() => { setCultoActivo(null); setVista("lista"); }}
+          onVoltar={() => {
+            setCultoActivo(null);
+            setVista("lista");
+          }}
+          onGuardado={() => {
+            setCultoActivo(null);
+            setVista("lista");
+          }}
         />
       )}
 
