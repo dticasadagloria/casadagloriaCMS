@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "@/api/api.js";
+import { useAuth } from "@/context/AuthContext";
 import {
   Baby,
   Search,
@@ -9,6 +9,8 @@ import {
   Users,
   ClipboardCheck,
   BarChart3,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 
 const TABS = [
@@ -23,8 +25,15 @@ const Th = ({ children }) => (
   </th>
 );
 
-const ListaCriancas = () => {
-  const navigate = useNavigate();
+// Vive dentro do Dashboard (tal como Membros/Cultos) — a navegação entre as
+// páginas da Escolinha é feita por props (setActiveTab no Dashboard.jsx),
+// não por rotas próprias, para a sidebar ficar sempre visível.
+const ListaCriancas = ({ onNovaCrianca, onFazerChamada, onRelatorio, onEditarCrianca }) => {
+  const { user } = useAuth();
+  // Espelha requireRole(1) real de deactivateCriancaHandler (criancaRoutes.js)
+  // — apagar (desactivar) é só para Admin, ao contrário de editar, que
+  // qualquer um com acesso a este ecrã já podia fazer via updateCriancaHandler.
+  const isAdmin = user?.role_id === 1;
 
   const [criancas, setCriancas] = useState([]);
   const [loading,  setLoading]  = useState(true);
@@ -52,6 +61,19 @@ const ListaCriancas = () => {
 
   useEffect(() => { fetchCriancas(tab); }, [tab]);
 
+  // Desactiva (ativo = false), não apaga a linha da BD — preserva o
+  // histórico de presenças já ligado a esta criança. Mesmo padrão de
+  // confirmação nativa já usado em Visitantes/Convertidos.
+  const apagar = async (crianca) => {
+    if (!confirm(`Tens a certeza que queres apagar "${crianca.nome}"? A criança deixa de aparecer nas listas e chamadas, mas o histórico de presenças é preservado.`)) return;
+    try {
+      await api.patch(`/api/criancas/${crianca.id}/deactivate`);
+      fetchCriancas(tab);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const filtered = criancas.filter((c) =>
     c.nome?.toLowerCase().includes(search.toLowerCase()) ||
     c.codigo?.toLowerCase().includes(search.toLowerCase())
@@ -70,19 +92,19 @@ const ListaCriancas = () => {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => navigate("/dashboard/escolinha/relatorio")}
+            onClick={onRelatorio}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-semibold transition-all shadow-sm"
           >
             <BarChart3 size={14} /> Relatório
           </button>
           <button
-            onClick={() => navigate("/dashboard/escolinha/presencas")}
+            onClick={onFazerChamada}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-amber-200 hover:bg-amber-50 text-amber-700 text-sm font-semibold transition-all shadow-sm"
           >
             <ClipboardCheck size={14} /> Fazer Chamada
           </button>
           <button
-            onClick={() => navigate("/dashboard/escolinha/novo")}
+            onClick={onNovaCrianca}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-semibold transition-all shadow-sm"
           >
             <UserPlus size={14} /> Nova Criança
@@ -188,12 +210,13 @@ const ListaCriancas = () => {
                   <Th>Encarregado</Th>
                   <Th>Contacto</Th>
                   <Th>Filial</Th>
+                  <Th>Acções</Th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-16 text-center">
+                    <td colSpan={7} className="py-16 text-center">
                       <div className="flex flex-col items-center gap-2">
                         <Baby className="w-8 h-8 text-slate-300" />
                         <p className="text-sm text-slate-400 font-medium">
@@ -245,6 +268,26 @@ const ListaCriancas = () => {
                           <span className="text-[13px] font-semibold text-slate-600">
                             {c.nome_branch ?? "—"}
                           </span>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => onEditarCrianca?.(c)}
+                              title="Editar"
+                              className="w-8 h-8 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-slate-500 hover:text-amber-700 transition-colors"
+                            >
+                              <Pencil size={13} />
+                            </button>
+                            {isAdmin && (
+                              <button
+                                onClick={() => apagar(c)}
+                                title="Apagar"
+                                className="w-8 h-8 rounded-lg border border-slate-200 hover:bg-red-50 flex items-center justify-center text-slate-500 hover:text-red-600 transition-colors"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );

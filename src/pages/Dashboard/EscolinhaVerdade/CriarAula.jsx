@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
 import api from "@/api/api.js";
 import {
   ArrowLeft,
@@ -14,9 +12,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-const CriarAula = () => {
-  const navigate = useNavigate();
-
+const CriarAula = ({ onVoltar, onCriada }) => {
   const [branches, setBranches] = useState([]);
   const [form, setForm] = useState({
     branch_id: "",
@@ -47,7 +43,7 @@ const CriarAula = () => {
     setError("");
     try {
       await api.post("/api/criancas/aulas", form);
-      navigate("/dashboard/escolinha/presencas");
+      onCriada?.();
     } catch (err) {
       setError(err.response?.data?.message || "Erro ao criar aula");
     } finally {
@@ -59,12 +55,10 @@ const CriarAula = () => {
   const labelClass = "block text-[12px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5";
 
   return (
-    <>
-      <Header />
-      <div className="space-y-5 max-w-3xl mx-auto py-9 px-4">
+    <div className="space-y-5">
       <div className="flex items-center gap-3">
         <button
-          onClick={() => navigate("/dashboard/escolinha")}
+          onClick={onVoltar}
           className="w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-500 transition-all"
         >
           <ArrowLeft size={16} />
@@ -159,15 +153,14 @@ const CriarAula = () => {
           </button>
           <button
             type="button"
-            onClick={() => navigate("/dashboard/escolinha")}
+            onClick={onVoltar}
             className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-all"
           >
             <X size={15} /> Cancelar
           </button>
         </div>
       </form>
-      </div>
-    </>
+    </div>
   );
 };
 

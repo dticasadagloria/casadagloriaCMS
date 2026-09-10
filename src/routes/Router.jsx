@@ -12,11 +12,6 @@ import LoginMembro from "../pages/LoginMembro";
 import UserDashboard from "@/pages/Dashboard/users/UserDashboard";
 import ProtectedMemberRoute from "@/components/ProtectedMemberRoute";
 import RequisicaoPublica from "@/pages/publico/RequisicaoPublica";
-import ListaCriancas from "@/pages/Dashboard/EscolinhaVerdade/ListaCriancas";
-import CadastroCrianca from "@/pages/Dashboard/EscolinhaVerdade/CadastroCrianca";
-import PresencasEscolinha from "@/pages/Dashboard/EscolinhaVerdade/Presencas";
-import CriarAula from "@/pages/Dashboard/EscolinhaVerdade/CriarAula";
-import RelatorioEscolinha from "@/pages/Dashboard/EscolinhaVerdade/Relatorio";
 
 const router = createBrowserRouter([
   {
@@ -97,57 +92,9 @@ const router = createBrowserRouter([
     path: "/requisicao-publica",
     element: <RequisicaoPublica />,
   },
-  // Rotas da Escolinha da Verdade
-  {
-    path: "/dashboard/escolinha",
-    element: (
-      <AuthProvider>
-        <ProtectedRoute>
-          <ListaCriancas />
-        </ProtectedRoute>
-      </AuthProvider>
-    ),
-  },
-  {
-    path: "/dashboard/escolinha/novo",
-    element: (
-      <AuthProvider>
-        <ProtectedRoute>
-          <CadastroCrianca />
-        </ProtectedRoute>
-      </AuthProvider>
-    ),
-  },
-  {
-    path: "/dashboard/escolinha/presencas",
-    element: (
-      <AuthProvider>
-        <ProtectedRoute>
-          <PresencasEscolinha />
-        </ProtectedRoute>
-      </AuthProvider>
-    ),
-  },
-  {
-    path: "/dashboard/escolinha/aulas/nova",
-    element: (
-      <AuthProvider>
-        <ProtectedRoute>
-          <CriarAula />
-        </ProtectedRoute>
-      </AuthProvider>
-    ),
-  },
-  {
-    path: "/dashboard/escolinha/relatorio",
-    element: (
-      <AuthProvider>
-        <ProtectedRoute>
-          <RelatorioEscolinha />
-        </ProtectedRoute>
-      </AuthProvider>
-    ),
-  },
+  // Escolinha da Verdade vive dentro de /dashboard (activeTab), tal como
+  // Membros/Cultos/Estatística — não tem rotas próprias, para a sidebar
+  // ficar sempre visível (ver Dashboard.jsx, chave "escolinha-*").
   // Utilizador sem permissão para a rota → volta ao dashboard.
   {
     path: "/unauthorized",

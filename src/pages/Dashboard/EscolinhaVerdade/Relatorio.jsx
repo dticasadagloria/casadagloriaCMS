@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
 import api from "@/api/api.js";
 import { ArrowLeft, FileText, FileSpreadsheet, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const Relatorio = () => {
-  const navigate = useNavigate();
-
+const Relatorio = ({ onVoltar }) => {
   const [aulas, setAulas]     = useState([]);
   const [filtro, setFiltro]   = useState({ tipo: "mes", aula_id: "", mes: new Date().toISOString().slice(0, 7) });
   const [loading, setLoading] = useState(false);
@@ -57,13 +53,11 @@ const Relatorio = () => {
   const inputClass = "px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400 transition-all";
 
   return (
-    <>
-      <Header />
-      <div className="space-y-5 max-w-5xl mx-auto py-9 px-4">
+    <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center gap-3">
         <button
-          onClick={() => navigate("/dashboard/escolinha")}
+          onClick={onVoltar}
           className="w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-500 transition-all"
         >
           <ArrowLeft size={16} />
@@ -194,8 +188,7 @@ const Relatorio = () => {
           </div>
         </div>
       )}
-      </div>
-    </>
+    </div>
   );
 };
 

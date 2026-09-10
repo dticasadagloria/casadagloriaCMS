@@ -52,6 +52,11 @@ import Departamentos from "./Departamentos/Departamentos";
 import Atividades from "./Configuracoes/Atividades";
 import NovoUsuario from "./Configuracoes/NewUser";
 import ListaCriancas from "./EscolinhaVerdade/ListaCriancas";
+import CadastroCrianca from "./EscolinhaVerdade/CadastroCrianca";
+import EditarCrianca from "./EscolinhaVerdade/EditarCrianca";
+import CriarAula from "./EscolinhaVerdade/CriarAula";
+import PresencasEscolinha from "./EscolinhaVerdade/Presencas";
+import RelatorioEscolinha from "./EscolinhaVerdade/Relatorio";
 import api from "@/api/api";
 import { Activity } from "lucide-react";
 import StatCard from "@/components/StatCard.jsx";
@@ -91,6 +96,10 @@ const tabs = [
     icon: BookOpen,
     children: [
       { key: "escolinha-lista", label: "Lista de Crianças", icon: BookOpen },
+      { key: "escolinha-novo", label: "Nova Criança", icon: UserPlus },
+      { key: "escolinha-presencas", label: "Fazer Chamada", icon: Users },
+      { key: "escolinha-aula-nova", label: "Nova Aula", icon: Calendar },
+      { key: "escolinha-relatorio", label: "Relatório", icon: Proportions },
     ],
   },
   {
@@ -312,6 +321,9 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [statsDepartamentos, setStatsDepartamentos] = useState(null);
+  // Criança seleccionada para editar (vinda de uma linha de ListaCriancas) —
+  // não há rota/id na URL, a navegação da Escolinha é toda por activeTab.
+  const [criancaSeleccionada, setCriancaSeleccionada] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("activeTab", activeTab);
@@ -980,12 +992,50 @@ const Dashboard = () => {
                     <NovoUsuario />
                   )}
 
-                {/* Escolinha da Verdade — Lista (Cadastro, Presenças, Aulas e
-                    Relatório vivem em rotas próprias — ver Router.jsx — e são
-                    acedidos a partir dos botões dentro de ListaCriancas) */}
+                {/* Escolinha da Verdade — as 5 páginas vivem todas dentro do
+                    Dashboard (tal como Membros/Cultos/Estatística), para
+                    manterem sempre a sidebar visível — a navegação entre elas
+                    é feita por setActiveTab (props), não por rotas próprias. */}
                 {activeTab === "escolinha-lista" &&
                   temAcesso("escolinha-lista", currentUser?.role_id) && (
-                    <ListaCriancas />
+                    <ListaCriancas
+                      onNovaCrianca={() => setActiveTab("escolinha-novo")}
+                      onFazerChamada={() => setActiveTab("escolinha-presencas")}
+                      onRelatorio={() => setActiveTab("escolinha-relatorio")}
+                      onEditarCrianca={(crianca) => {
+                        setCriancaSeleccionada(crianca);
+                        setActiveTab("escolinha-editar");
+                      }}
+                    />
+                  )}
+                {activeTab === "escolinha-novo" &&
+                  temAcesso("escolinha-novo", currentUser?.role_id) && (
+                    <CadastroCrianca onVoltar={() => setActiveTab("escolinha-lista")} />
+                  )}
+                {activeTab === "escolinha-editar" &&
+                  temAcesso("escolinha-editar", currentUser?.role_id) && (
+                    <EditarCrianca
+                      crianca={criancaSeleccionada}
+                      onVoltar={() => setActiveTab("escolinha-lista")}
+                    />
+                  )}
+                {activeTab === "escolinha-presencas" &&
+                  temAcesso("escolinha-presencas", currentUser?.role_id) && (
+                    <PresencasEscolinha
+                      onVoltar={() => setActiveTab("escolinha-lista")}
+                      onNovaAula={() => setActiveTab("escolinha-aula-nova")}
+                    />
+                  )}
+                {activeTab === "escolinha-aula-nova" &&
+                  temAcesso("escolinha-aula-nova", currentUser?.role_id) && (
+                    <CriarAula
+                      onVoltar={() => setActiveTab("escolinha-lista")}
+                      onCriada={() => setActiveTab("escolinha-presencas")}
+                    />
+                  )}
+                {activeTab === "escolinha-relatorio" &&
+                  temAcesso("escolinha-relatorio", currentUser?.role_id) && (
+                    <RelatorioEscolinha onVoltar={() => setActiveTab("escolinha-lista")} />
                   )}
 
                 {/* ── PLACEHOLDER PAGES ── */}
@@ -1017,6 +1067,11 @@ const Dashboard = () => {
                   "relatorios-financas",
                   "novo-usuario",
                   "escolinha-lista",
+                  "escolinha-novo",
+                  "escolinha-editar",
+                  "escolinha-presencas",
+                  "escolinha-aula-nova",
+                  "escolinha-relatorio",
                 ].includes(activeTab) && (
                   <div className="flex flex-col items-center justify-center py-24 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
