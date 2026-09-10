@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import api from "@/api/api"
+import api from "@/api/api";
 import {
   Users,
   Search,
@@ -22,101 +22,124 @@ import {
 // ─── ROLE CONFIG ──────────────────────────────────────────────────────────────
 const ROLE_CONFIG = {
   1: {
-    label:   "Super Admin",
-    icon:    Crown,
-    avatar:  "from-primary to-secondary",
-    pill:    "bg-amber-50 text-amber-700 border border-amber-200",
-    dot:     "bg-amber-400",
-    card:    "border-amber-200/60 hover:border-amber-300",
-    glow:    "shadow-amber-100",
+    label: "Super Admin",
+    icon: Crown,
+    avatar: "from-primary to-secondary",
+    pill: "bg-amber-50 text-amber-700 border border-amber-200",
+    dot: "bg-amber-400",
+    card: "border-amber-200/60 hover:border-amber-300",
+    glow: "shadow-amber-100",
   },
   2: {
-    label:   "Pastor",
-    icon:    BookOpen,
-    avatar:  "from-secondary to-indigo-600",
-    pill:    "bg-indigo-50 text-indigo-700 border border-indigo-200",
-    dot:     "bg-indigo-500",
-    card:    "border-indigo-200/60 hover:border-indigo-300",
-    glow:    "shadow-indigo-100",
+    label: "Pastor",
+    icon: BookOpen,
+    avatar: "from-secondary to-indigo-600",
+    pill: "bg-indigo-50 text-indigo-700 border border-indigo-200",
+    dot: "bg-indigo-500",
+    card: "border-indigo-200/60 hover:border-indigo-300",
+    glow: "shadow-indigo-100",
   },
   3: {
-    label:   "Finanças",
-    icon:    Landmark,
-    avatar:  "from-emerald-400 to-emerald-600",
-    pill:    "bg-emerald-50 text-emerald-700 border border-emerald-200",
-    dot:     "bg-emerald-500",
-    card:    "border-emerald-200/60 hover:border-emerald-300",
-    glow:    "shadow-emerald-100",
+    label: "Finanças",
+    icon: Landmark,
+    avatar: "from-emerald-400 to-emerald-600",
+    pill: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+    dot: "bg-emerald-500",
+    card: "border-emerald-200/60 hover:border-emerald-300",
+    glow: "shadow-emerald-100",
   },
   4: {
-    label:   "Membro",
-    icon:    User,
-    avatar:  "from-slate-400 to-slate-500",
-    pill:    "bg-slate-100 text-slate-600 border border-slate-200",
-    dot:     "bg-slate-400",
-    card:    "border-slate-200/60 hover:border-slate-300",
-    glow:    "shadow-slate-100",
+    label: "Membro",
+    icon: User,
+    avatar: "from-slate-400 to-slate-500",
+    pill: "bg-slate-100 text-slate-600 border border-slate-200",
+    dot: "bg-slate-400",
+    card: "border-slate-200/60 hover:border-slate-300",
+    glow: "shadow-slate-100",
   },
   9: {
-    label:   "Call Center",
-    icon:    Phone,  
-    avatar:  "from-blue-400 to-blue-600",
-    pill:    "bg-blue-50 text-blue-700 border border-blue-200",
-    dot:     "bg-blue-500",
-    card:    "border-blue-200/60 hover:border-blue-300",
-    glow:    "shadow-blue-100",
+    label: "Call Center",
+    icon: Phone,
+    avatar: "from-blue-400 to-blue-600",
+    pill: "bg-blue-50 text-blue-700 border border-blue-200",
+    dot: "bg-blue-500",
+    card: "border-blue-200/60 hover:border-blue-300",
+    glow: "shadow-blue-100",
   },
   10: {
-    label:   "SOS Socorros",
-    icon:    HeartPulse,  
-    avatar:  "from-red-400 to-red-600",
-    pill:    "bg-red-50 text-red-700 border border-red-200",
-    dot:     "bg-red-500",
-    card:    "border-red-200/60 hover:border-red-300",
-    glow:    "shadow-red-100",
+    label: "SOS Socorros",
+    icon: HeartPulse,
+    avatar: "from-red-400 to-red-600",
+    pill: "bg-red-50 text-red-700 border border-red-200",
+    dot: "bg-red-500",
+    card: "border-red-200/60 hover:border-red-300",
+    glow: "shadow-red-100",
   },
   8: {
-    label:   "Estatística",
-    icon:    BarChart3,  
-    avatar:  "from-green-400 to-green-600",
-    pill:    "bg-green-50 text-green-700 border border-green-200",
-    dot:     "bg-green-500",
-    card:    "border-green-200/60 hover:border-green-300",
-    glow:    "shadow-green-100",
+    label: "Estatística",
+    icon: BarChart3,
+    avatar: "from-green-400 to-green-600",
+    pill: "bg-green-50 text-green-700 border border-green-200",
+    dot: "bg-green-500",
+    card: "border-green-200/60 hover:border-green-300",
+    glow: "shadow-green-100",
   },
   11: {
-     label:   "Estatística",
-    icon:    BarChart3,  
-    avatar:  "",
-    pill:    "bg-green-50 text-green-700 border border-green-200",
-    dot:     "bg-green-500",
-    card:    "border-green-200/60 hover:border-green-300",
-    glow:    "shadow-green-100",
-  }
+    label: "Estatística",
+    icon: BarChart3,
+    avatar: "",
+    pill: "bg-green-50 text-green-700 border border-green-200",
+    dot: "bg-green-500",
+    card: "border-green-200/60 hover:border-green-300",
+    glow: "shadow-green-100",
+  },
+  5: {
+    label: "Escolinha",
+    icon: BookOpen,
+    avatar: "from-yellow-400 to-yellow-600",
+    pill: "bg-yellow-50 text-yellow-700 border border-yellow-200",
+    banner: "from-yellow-500/10 to-yellow-600/5",
+    perms: [
+      { label: "Ver crianças", ok: true },
+      { label: "Criar crianças", ok: true },
+      { label: "Editar crianças", ok: true },
+      { label: "Eliminar crianças", ok: true },
+      { label: "Fazer chamadas", ok: true },
+      { label: "Ver utilizadores", ok: false },
+      { label: "Gerir utilizadores", ok: false },
+      { label: "Acesso a finanças", ok: false },
+      { label: "Configurações globais", ok: false },
+    ],
+  },
 };
 
 const DEFAULT_ROLE = ROLE_CONFIG[4];
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
-const getRole   = (id) => ROLE_CONFIG[id] ?? DEFAULT_ROLE;
+const getRole = (id) => ROLE_CONFIG[id] ?? DEFAULT_ROLE;
 const getInitials = (name = "") =>
-  name.split(" ").slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
+  name
+    .split(" ")
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
 
 // ─── FILTER OPTIONS ───────────────────────────────────────────────────────────
 const FILTERS = [
-  { key: "all",  label: "Todos"       },
-  { key: "1",    label: "Super Admin" },
-  { key: "2",    label: "Pastor"      },
-  { key: "3",    label: "Finanças"    },
-  { key: "4",    label: "Membro"      },
-  { key: "9",    label: "Call Center" },
-  { key: "10",   label: "SOS Socorros" },
-  { key: "8",    label: "Estatística" },
+  { key: "all", label: "Todos" },
+  { key: "1", label: "Super Admin" },
+  { key: "2", label: "Pastor" },
+  { key: "3", label: "Finanças" },
+  { key: "4", label: "Membro" },
+  { key: "9", label: "Call Center" },
+  { key: "10", label: "SOS Socorros" },
+  { key: "8", label: "Estatística" },
+  { key: "5", label: "Escolinha" },
 ];
 
 // ─── USER CARD ────────────────────────────────────────────────────────────────
 const UserCard = ({ user }) => {
-  const role     = getRole(user.role_id);
+  const role = getRole(user.role_id);
   const RoleIcon = role.icon;
   const initials = getInitials(user.username);
 
@@ -129,14 +152,18 @@ const UserCard = ({ user }) => {
       `}
     >
       {/* Top accent line */}
-      <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${role.avatar} opacity-60`} />
+      <div
+        className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${role.avatar} opacity-60`}
+      />
 
       <div className="p-5">
         {/* Header row */}
         <div className="flex items-start justify-between gap-3 mb-4">
           {/* Avatar */}
           <div className="relative flex-shrink-0">
-            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${role.avatar} flex items-center justify-center shadow-sm`}>
+            <div
+              className={`w-12 h-12 rounded-xl bg-gradient-to-br ${role.avatar} flex items-center justify-center shadow-sm`}
+            >
               <span className="text-white text-[14px] font-bold tracking-wide">
                 {initials}
               </span>
@@ -161,7 +188,9 @@ const UserCard = ({ user }) => {
 
         {/* Role pill */}
         <div className="mt-2 flex items-center gap-2">
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${role.pill}`}>
+          <span
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${role.pill}`}
+          >
             <RoleIcon size={11} />
             {role.label}
           </span>
@@ -169,9 +198,13 @@ const UserCard = ({ user }) => {
 
         {/* Footer meta */}
         <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between">
-          <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold
-            ${user.ativo ? "text-emerald-600" : "text-slate-400"}`}>
-            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${user.ativo ? "bg-emerald-400" : "bg-slate-300"}`} />
+          <span
+            className={`inline-flex items-center gap-1.5 text-[11px] font-semibold
+            ${user.ativo ? "text-emerald-600" : "text-slate-400"}`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${user.ativo ? "bg-emerald-400" : "bg-slate-300"}`}
+            />
             {user.ativo ? "Activo" : "Inactivo"}
           </span>
           <span className="text-[10px] font-mono text-slate-400">
@@ -200,10 +233,10 @@ const SkeletonCard = () => (
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 const UsersPage = () => {
-  const [users,      setUsers]      = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [error,      setError]      = useState(null);
-  const [search,     setSearch]     = useState("");
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
 
   // ── Fetch users ──────────────────────────────────────────────────────────
@@ -212,58 +245,67 @@ const UsersPage = () => {
     setError(null);
     try {
       const res = await api.get("/auth/users");
-    const data = res.data;
-    const lista = Array.isArray(data)
-      ? data
-      : Array.isArray(data.users)
-        ? data.users
-        : [];
-    setUsers(lista);
-  } catch (err) {
-    console.error("fetchUsers error:", err);
-    setError(err.response?.data?.message || "Não foi possível carregar os utilizadores.");
-    setUsers([]);
-  } finally {
-    setLoading(false);
-  }
-};
+      const data = res.data;
+      const lista = Array.isArray(data)
+        ? data
+        : Array.isArray(data.users)
+          ? data.users
+          : [];
+      setUsers(lista);
+    } catch (err) {
+      console.error("fetchUsers error:", err);
+      setError(
+        err.response?.data?.message ||
+          "Não foi possível carregar os utilizadores.",
+      );
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   // ── Filter ───────────────────────────────────────────────────────────────
   const filtered = users.filter((u) => {
-    const matchSearch = u.username?.toLowerCase().includes(search.toLowerCase());
-    const matchRole   = roleFilter === "all" || String(u.role_id) === roleFilter;
+    const matchSearch = u.username
+      ?.toLowerCase()
+      .includes(search.toLowerCase());
+    const matchRole = roleFilter === "all" || String(u.role_id) === roleFilter;
     return matchSearch && matchRole;
   });
 
   // ── Stats ────────────────────────────────────────────────────────────────
-  const total   = users.length;
-  const ativos  = users.filter((u) => u.ativo).length;
-  const byRole  = (id) => users.filter((u) => u.role_id === id).length;
+  const total = users.length;
+  const ativos = users.filter((u) => u.ativo).length;
+  const byRole = (id) => users.filter((u) => u.role_id === id).length;
 
   // ── ERROR ─────────────────────────────────────────────────────────────────
-  if (error) return (
-    <div className="flex flex-col items-center justify-center py-32 gap-4">
-      <div className="w-14 h-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center">
-        <UserX className="w-6 h-6 text-red-400" />
+  if (error)
+    return (
+      <div className="flex flex-col items-center justify-center py-32 gap-4">
+        <div className="w-14 h-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center">
+          <UserX className="w-6 h-6 text-red-400" />
+        </div>
+        <div className="text-center">
+          <p className="text-sm font-semibold text-slate-700">
+            Erro ao carregar
+          </p>
+          <p className="text-xs text-slate-400 mt-1">{error}</p>
+        </div>
+        <button
+          onClick={fetchUsers}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-colors shadow-sm"
+        >
+          <RefreshCw size={14} /> Tentar novamente
+        </button>
       </div>
-      <div className="text-center">
-        <p className="text-sm font-semibold text-slate-700">Erro ao carregar</p>
-        <p className="text-xs text-slate-400 mt-1">{error}</p>
-      </div>
-      <button
-        onClick={fetchUsers}
-        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-colors shadow-sm"
-      >
-        <RefreshCw size={14} /> Tentar novamente
-      </button>
-    </div>
-  );
+    );
 
   return (
     <div className="space-y-6">
-
       {/* ── PAGE HEADER ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -275,7 +317,7 @@ const UsersPage = () => {
           </p>
         </div>
         <Button
-        variant="hero"
+          variant="hero"
           onClick={fetchUsers}
           // className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-all shadow-sm hover:shadow-md"
         >
@@ -286,18 +328,53 @@ const UsersPage = () => {
       {/* ── STATS ROW ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Total",       value: total,      icon: Users,     color: "text-primary",   bg: "bg-slate-100"    },
-          { label: "Activos",     value: ativos,     icon: UserCheck, color: "text-emerald-700", bg: "bg-emerald-100"  },
-          { label: "Admins",      value: byRole(1),  icon: Crown,     color: "text-amber-700",   bg: "bg-amber-100"    },
-          { label: "Pastores",    value: byRole(2),  icon: Shield,    color: "text-indigo-700",  bg: "bg-indigo-100"   },
+          {
+            label: "Total",
+            value: total,
+            icon: Users,
+            color: "text-primary",
+            bg: "bg-slate-100",
+          },
+          {
+            label: "Activos",
+            value: ativos,
+            icon: UserCheck,
+            color: "text-emerald-700",
+            bg: "bg-emerald-100",
+          },
+          {
+            label: "Admins",
+            value: byRole(1),
+            icon: Crown,
+            color: "text-amber-700",
+            bg: "bg-amber-100",
+          },
+          {
+            label: "Pastores",
+            value: byRole(2),
+            icon: Shield,
+            color: "text-indigo-700",
+            bg: "bg-indigo-100",
+          },
         ].map((s) => (
-          <div key={s.label} className="bg-white rounded-xl border border-slate-100 shadow-sm px-4 py-3 flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center flex-shrink-0`}>
+          <div
+            key={s.label}
+            className="bg-white rounded-xl border border-slate-100 shadow-sm px-4 py-3 flex items-center gap-3"
+          >
+            <div
+              className={`w-8 h-8 rounded-lg ${s.bg} flex items-center justify-center flex-shrink-0`}
+            >
               <s.icon size={15} className={s.color} />
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">{s.label}</p>
-              <p className={`text-xl font-bold ${s.color} leading-tight mt-0.5`}>{s.value}</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">
+                {s.label}
+              </p>
+              <p
+                className={`text-xl font-bold ${s.color} leading-tight mt-0.5`}
+              >
+                {s.value}
+              </p>
             </div>
           </div>
         ))}
@@ -307,7 +384,10 @@ const UsersPage = () => {
       <div className="flex flex-col sm:flex-row gap-3">
         {/* Search */}
         <div className="relative flex-1 max-w-xs">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+          <Search
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+          />
           <input
             type="text"
             placeholder="Pesquisar utilizador..."
@@ -319,15 +399,19 @@ const UsersPage = () => {
 
         {/* Role filter pills */}
         <div className="flex items-center gap-2 flex-wrap">
-          <SlidersHorizontal size={14} className="text-slate-400 flex-shrink-0" />
+          <SlidersHorizontal
+            size={14}
+            className="text-slate-400 flex-shrink-0"
+          />
           {FILTERS.map((f) => (
             <button
               key={f.key}
               onClick={() => setRoleFilter(f.key)}
               className={`px-3 py-1.5 rounded-full text-[12px] font-semibold border transition-all duration-150
-                ${roleFilter === f.key
-                  ? "bg-secondary text-white border-amber-500 shadow-sm"
-                  : "bg-white text-slate-500 border-slate-200 hover:border-amber-300 hover:text-amber-600"
+                ${
+                  roleFilter === f.key
+                    ? "bg-secondary text-white border-amber-500 shadow-sm"
+                    : "bg-white text-slate-500 border-slate-200 hover:border-amber-300 hover:text-amber-600"
                 }`}
             >
               {f.label}
@@ -344,7 +428,10 @@ const UsersPage = () => {
             : `${filtered.length} de ${total} utilizadores`}
           {(search || roleFilter !== "all") && (
             <button
-              onClick={() => { setSearch(""); setRoleFilter("all"); }}
+              onClick={() => {
+                setSearch("");
+                setRoleFilter("all");
+              }}
               className="ml-2 text-amber-600 hover:text-amber-700 font-semibold"
             >
               Limpar filtros ×
@@ -355,26 +442,27 @@ const UsersPage = () => {
 
       {/* ── CARDS GRID ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {loading
-          ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
-          : filtered.length === 0
-          ? (
-            <div className="col-span-full flex flex-col items-center justify-center py-24 gap-3">
-              <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center">
-                <Users className="w-6 h-6 text-slate-300" />
-              </div>
-              <p className="text-sm font-semibold text-slate-500">
-                {search || roleFilter !== "all" ? "Nenhum utilizador encontrado" : "Nenhum utilizador registado"}
-              </p>
-              <p className="text-xs text-slate-400">
-                {search ? `Sem resultados para "${search}"` : "Tenta mudar os filtros"}
-              </p>
+        {loading ? (
+          Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
+        ) : filtered.length === 0 ? (
+          <div className="col-span-full flex flex-col items-center justify-center py-24 gap-3">
+            <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center">
+              <Users className="w-6 h-6 text-slate-300" />
             </div>
-          )
-          : filtered.map((user) => (
-            <UserCard key={user.id} user={user} />
-          ))
-        }
+            <p className="text-sm font-semibold text-slate-500">
+              {search || roleFilter !== "all"
+                ? "Nenhum utilizador encontrado"
+                : "Nenhum utilizador registado"}
+            </p>
+            <p className="text-xs text-slate-400">
+              {search
+                ? `Sem resultados para "${search}"`
+                : "Tenta mudar os filtros"}
+            </p>
+          </div>
+        ) : (
+          filtered.map((user) => <UserCard key={user.id} user={user} />)
+        )}
       </div>
     </div>
   );
