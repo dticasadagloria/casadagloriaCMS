@@ -54,6 +54,7 @@ import NovoUsuario from "./Configuracoes/NewUser";
 import ListaCriancas from "./EscolinhaVerdade/ListaCriancas";
 import api from "@/api/api";
 import { Activity } from "lucide-react";
+import StatCard from "@/components/StatCard.jsx";
 // ─── TABS CONFIG ─────────────────────────────────────────────────────────────
 const tabs = [
   {
@@ -253,49 +254,49 @@ const NavItem = ({
 };
 
 // ─── STATS CARD ──────────────────────────────────────────────────────────────
-const StatCard = ({ title, value, change, changeType, Icon, onClick }) => (
-  <div
-    onClick={onClick}
-    className={`group relative bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden ${onClick ? "cursor-pointer" : ""}`}
-  >
-    {/* Gold accent stripe */}
-    <div className="h-[3px] bg-primary" />
+// const StatCard = ({ title, value, change, changeType, Icon, onClick }) => (
+//   <div
+//     onClick={onClick}
+//     className={`group relative bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden ${onClick ? "cursor-pointer" : ""}`}
+//   >
+//     {/* Gold accent stripe */}
+//     <div className="h-[3px] bg-primary" />
 
-    <div className="p-5">
-      {/* Icon + indicator */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="w-11 h-11 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors duration-200">
-          <Icon size={20} className="text-secondary" />
-        </div>
-        <span
-          className={`text-[10px] font-bold px-2 py-1 rounded-full ${
-            changeType === "up"
-              ? "bg-emerald-50 text-emerald-600"
-              : changeType === "down"
-                ? "bg-red-50 text-red-500"
-                : "bg-secondary/10 text-secondary"
-          }`}
-        >
-          {changeType === "up" ? "▲" : changeType === "down" ? "▼" : "●"}
-        </span>
-      </div>
+//     <div className="p-5">
+//       {/* Icon + indicator */}
+//       <div className="flex items-center justify-between mb-4">
+//         <div className="w-11 h-11 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors duration-200">
+//           <Icon size={20} className="text-secondary" />
+//         </div>
+//         <span
+//           className={`text-[10px] font-bold px-2 py-1 rounded-full ${
+//             changeType === "up"
+//               ? "bg-emerald-50 text-emerald-600"
+//               : changeType === "down"
+//                 ? "bg-red-50 text-red-500"
+//                 : "bg-secondary/10 text-secondary"
+//           }`}
+//         >
+//           {changeType === "up" ? "▲" : changeType === "down" ? "▼" : "●"}
+//         </span>
+//       </div>
 
-      {/* Value */}
-      <p className="text-[34px] font-bold text-slate-800 leading-none tabular-nums tracking-tight">
-        {value}
-      </p>
-      {/* Label */}
-      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 truncate">
-        {title}
-      </p>
+//       {/* Value */}
+//       <p className="text-[34px] font-bold text-slate-800 leading-none tabular-nums tracking-tight">
+//         {value}
+//       </p>
+//       {/* Label */}
+//       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 truncate">
+//         {title}
+//       </p>
 
-      {/* Footer */}
-      <div className="mt-4 pt-3 border-t border-slate-50">
-        <p className="text-[11px] font-medium text-slate-500">{change}</p>
-      </div>
-    </div>
-  </div>
-);
+//       {/* Footer */}
+//       <div className="mt-4 pt-3 border-t border-slate-50">
+//         <p className="text-[11px] font-medium text-slate-500">{change}</p>
+//       </div>
+//     </div>
+//   </div>
+// );
 
 // ─── DASHBOARD ───────────────────────────────────────────────────────────────
 const Dashboard = () => {
