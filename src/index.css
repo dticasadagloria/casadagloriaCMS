@@ -1,13 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
 @theme {
-  /* Tipografia — Ubuntu em todo o texto, Ubuntu Mono só para dados tabulares
-     (KPIs, valores monetários, percentagens). Substitui --font-sans/--font-mono
-     do Tailwind, por isso body/headings/font-mono já ficam correctos sem
-     regras extra em @layer base. */
-  --font-sans: 'Ubuntu', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'Ubuntu Mono', ui-monospace, monospace;
+  --font-sans:  "Public Sans", sans-serif;
+  --font-mono: 'Fira Code', ui-monospace, monospace;
 
   /* Cores personalizadas - Gold */
   --color-gold: #b6852e;
