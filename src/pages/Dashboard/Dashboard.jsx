@@ -474,6 +474,7 @@ const Dashboard = () => {
     ],
     atividades: [ROLES.ADMIN],
     perfil: null,
+    "novo-usuario": [ROLES.ADMIN],
     permissoes: [
       ROLES.ADMIN,
       ROLES.PASTOR,
@@ -485,6 +486,7 @@ const Dashboard = () => {
       ROLES.IICGPMAXIXE,
       ROLES.IICGPALBAZINE,
       ROLES.IICGPSEDE,
+      ROLES.ESCOLINHA
     ],
     // "novo-tab":    [ROLES.ADMIN],  <-- adiciona aqui futuramente
     estrutura: [
