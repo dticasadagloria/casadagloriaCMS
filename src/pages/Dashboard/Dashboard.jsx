@@ -809,7 +809,7 @@ const Dashboard = () => {
                         value={membros.length}
                         change="Ver todos os membros"
                         changeType="up"
-                        Icon={Users}
+                        icon={Users}
                         onClick={() => handleCardClick("todos")}
                       />
                       <StatCard
@@ -817,7 +817,7 @@ const Dashboard = () => {
                         value={ativos}
                         change="Ver membros activos"
                         changeType="up"
-                        Icon={Users}
+                        icon={Users}
                         onClick={() => handleCardClick("ativos")}
                       />
                       <StatCard
@@ -825,7 +825,7 @@ const Dashboard = () => {
                         value={inativos}
                         change="Ver membros inactivos"
                         changeType="down"
-                        Icon={UserX}
+                        icon={UserX}
                         onClick={() => handleCardClick("inativos")}
                       />
                       <StatCard
@@ -833,7 +833,7 @@ const Dashboard = () => {
                         value="33"
                         change="Ver líderes"
                         changeType="up"
-                        Icon={Users}
+                        icon={Users}
                         onClick={() => handleCardClick("lideres")}
                       />
                       <StatCard
@@ -841,7 +841,7 @@ const Dashboard = () => {
                         value={statsDepartamentos?.total ?? 0}
                         change={`${statsDepartamentos?.activos ?? 0} activos`}
                         changeType="neutral"
-                        Icon={Building2}
+                        icon={Building2}
                         onClick={() => handleCardClick("departamentos")}
                       />
                     </div>

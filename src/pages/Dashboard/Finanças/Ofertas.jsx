@@ -3,9 +3,9 @@ import { BookOpen, ChevronRight, Wallet, ArrowLeft } from 'lucide-react';
 import api from '@/api/api.js';
 import FichaOfertas from '@/components/FichaOfertas';
 
-// ═══════════════════════════════════════════════════════════
+
 // LISTA DE CULTOS (só leitura, para seleccionar)
-// ═══════════════════════════════════════════════════════════
+
 const ListaCultos = ({ onSelecionar }) => {
   const [cultos, setCultos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -112,9 +112,9 @@ const ListaCultos = ({ onSelecionar }) => {
   );
 };
 
-// ═══════════════════════════════════════════════════════════
+
 // FICHA DE OFERTAS DO CULTO SELECCIONADO
-// ═══════════════════════════════════════════════════════════
+
 const VistaOfertas = ({ culto, onVoltar }) => {
   const [saved, setSaved] = useState(false);
 
